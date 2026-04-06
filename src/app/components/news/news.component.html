@@ -1,0 +1,100 @@
+<div class="news-container">
+  <!-- Header Section -->
+  <div class="news-header">
+    <div class="container">
+      <h1 class="news-title">Tech News & Insights</h1>
+      <p class="news-subtitle">Stay updated with the latest in technology, IT industry trends, and course developments</p>
+    </div>
+  </div>
+
+  <!-- Featured News Section -->
+  <div class="container">
+    <div class="featured-news">
+      <div class="featured-card">
+        <div class="featured-image">
+          <img src="assets/photos/course-1.jpg" alt="AI/ML Trends" class="featured-img">
+          <div class="featured-overlay">
+            <span class="featured-tag">Featured</span>
+          </div>
+        </div>
+        <div class="featured-content">
+          <h2>AI & Machine Learning: The Future of Tech Education</h2>
+          <p class="featured-excerpt">Discover how artificial intelligence and machine learning are revolutionizing the tech industry and why these skills are becoming essential for every IT professional.</p>
+          <div class="featured-meta">
+            <span class="date">December 15, 2024</span>
+            <span class="category">Technology Trends</span>
+          </div>
+          <button class="read-more-btn">Read Full Article</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- News Categories -->
+    <div class="news-categories">
+      <div class="category-tabs">
+        <button class="category-tab active" (click)="setActiveCategory('all')">All News</button>
+        <button class="category-tab" (click)="setActiveCategory('courses')">Course Updates</button>
+        <button class="category-tab" (click)="setActiveCategory('industry')">Industry News</button>
+        <button class="category-tab" (click)="setActiveCategory('trends')">Tech Trends</button>
+        <button class="category-tab" (click)="setActiveCategory('companies')">Company Updates</button>
+      </div>
+    </div>
+
+    <!-- News Grid -->
+    <div class="news-grid">
+      <div class="news-card" *ngFor="let news of filteredNews">
+        <div class="news-image">
+          <img [src]="news.image" [alt]="news.title" class="news-img">
+          <div class="news-overlay">
+            <span class="news-tag">{{news.category}}</span>
+          </div>
+        </div>
+        <div class="news-content">
+          <h3 class="news-title">{{news.title}}</h3>
+          <p class="news-excerpt">{{news.excerpt}}</p>
+          <div class="news-meta">
+            <span class="date">{{news.date}}</span>
+            <span class="read-time">{{news.readTime}} min read</span>
+          </div>
+          <div class="news-actions">
+            <button class="read-btn">Read More</button>
+            <button class="share-btn" (click)="shareNews(news)">
+              <i class="fas fa-share"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trending Topics Sidebar -->
+    <div class="trending-sidebar">
+      <h3 class="sidebar-title">Trending Topics</h3>
+      <div class="trending-topics">
+        <div class="trending-topic" *ngFor="let topic of trendingTopics">
+          <div class="topic-icon">
+            <i [class]="topic.icon"></i>
+          </div>
+          <div class="topic-content">
+            <h4>{{topic.title}}</h4>
+            <p>{{topic.description}}</p>
+            <span class="topic-trend">{{topic.trend}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Newsletter Subscription -->
+  <div class="newsletter-section">
+    <div class="container">
+      <div class="newsletter-content">
+        <h2>Stay Updated with Tech News</h2>
+        <p>Get the latest tech news, course updates, and industry insights delivered to your inbox</p>
+        <div class="newsletter-form">
+          <input type="email" placeholder="Enter your email address" class="newsletter-input">
+          <button class="newsletter-btn">Subscribe</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

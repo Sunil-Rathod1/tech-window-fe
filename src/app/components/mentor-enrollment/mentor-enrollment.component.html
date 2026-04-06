@@ -1,0 +1,429 @@
+<!-- Mentor Enrollment Component -->
+<div class="mentor-enrollment-container">
+  <!-- Header Section -->
+  <div class="enrollment-header">
+    <div class="container">
+      <div class="header-content">
+        <h1 class="page-title">Become a Mentor</h1>
+        <p class="page-subtitle">Share your expertise and help shape the next generation of tech professionals</p>
+        
+        <!-- Progress Bar -->
+        <div class="progress-section">
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="getProgressPercentage()"></div>
+          </div>
+          <div class="progress-steps">
+            <div class="step" 
+                 *ngFor="let step of [1,2,3,4]; let i = index"
+                 [class.active]="currentStep === step"
+                 [class.completed]="isStepCompleted(step)"
+                 (click)="goToStep(step)">
+              <div class="step-number">{{ step }}</div>
+              <div class="step-title">{{ getStepTitle(step) }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Section -->
+  <div class="form-section">
+    <div class="container">
+      <form [formGroup]="mentorForm" (ngSubmit)="onSubmit()">
+        
+        <!-- Step 1: Personal Information -->
+        <div class="form-step" *ngIf="currentStep === 1">
+          <div class="step-header">
+            <h2>Personal Information</h2>
+            <p>Tell us about yourself</p>
+          </div>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="firstName">First Name *</label>
+              <input 
+                type="text" 
+                id="firstName"
+                formControlName="firstName"
+                class="form-control"
+                placeholder="Enter your first name">
+              <div class="error-message" *ngIf="mentorForm.get('firstName')?.invalid && mentorForm.get('firstName')?.touched">
+                First name is required and must be at least 2 characters
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="lastName">Last Name *</label>
+              <input 
+                type="text" 
+                id="lastName"
+                formControlName="lastName"
+                class="form-control"
+                placeholder="Enter your last name">
+              <div class="error-message" *ngIf="mentorForm.get('lastName')?.invalid && mentorForm.get('lastName')?.touched">
+                Last name is required and must be at least 2 characters
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="email">Email Address *</label>
+              <input 
+                type="email" 
+                id="email"
+                formControlName="email"
+                class="form-control"
+                placeholder="Enter your email address">
+              <div class="error-message" *ngIf="mentorForm.get('email')?.invalid && mentorForm.get('email')?.touched">
+                Please enter a valid email address
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="phone">Phone Number *</label>
+              <input 
+                type="tel" 
+                id="phone"
+                formControlName="phone"
+                class="form-control"
+                placeholder="Enter your 10-digit phone number">
+              <div class="error-message" *ngIf="mentorForm.get('phone')?.invalid && mentorForm.get('phone')?.touched">
+                Please enter a valid 10-digit phone number
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Professional Details -->
+        <div class="form-step" *ngIf="currentStep === 2">
+          <div class="step-header">
+            <h2>Professional Details</h2>
+            <p>Share your professional background</p>
+          </div>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="title">Professional Title *</label>
+              <input 
+                type="text" 
+                id="title"
+                formControlName="title"
+                class="form-control"
+                placeholder="e.g., Senior Software Engineer, Product Manager">
+              <div class="error-message" *ngIf="mentorForm.get('title')?.invalid && mentorForm.get('title')?.touched">
+                Professional title is required
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="specialization">Specialization *</label>
+              <select 
+                id="specialization"
+                formControlName="specialization"
+                class="form-control">
+                <option value="">Select your specialization</option>
+                <option *ngFor="let spec of specializations" [value]="spec">{{ spec }}</option>
+              </select>
+              <div class="error-message" *ngIf="mentorForm.get('specialization')?.invalid && mentorForm.get('specialization')?.touched">
+                Please select your specialization
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="experience">Years of Experience *</label>
+              <select 
+                id="experience"
+                formControlName="experience"
+                class="form-control">
+                <option value="">Select experience level</option>
+                <option *ngFor="let exp of experienceLevels" [value]="exp">{{ exp }}</option>
+              </select>
+              <div class="error-message" *ngIf="mentorForm.get('experience')?.invalid && mentorForm.get('experience')?.touched">
+                Please select your experience level
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="company">Current Company *</label>
+              <input 
+                type="text" 
+                id="company"
+                formControlName="company"
+                class="form-control"
+                placeholder="Enter your current company name">
+              <div class="error-message" *ngIf="mentorForm.get('company')?.invalid && mentorForm.get('company')?.touched">
+                Company name is required
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="industry">Industry *</label>
+              <select 
+                id="industry"
+                formControlName="industry"
+                class="form-control">
+                <option value="">Select your industry</option>
+                <option *ngFor="let industry of industries" [value]="industry">{{ industry }}</option>
+              </select>
+              <div class="error-message" *ngIf="mentorForm.get('industry')?.invalid && mentorForm.get('industry')?.touched">
+                Please select your industry
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="location">Location *</label>
+              <select 
+                id="location"
+                formControlName="location"
+                class="form-control">
+                <option value="">Select your location</option>
+                <option *ngFor="let location of locations" [value]="location">{{ location }}</option>
+              </select>
+              <div class="error-message" *ngIf="mentorForm.get('location')?.invalid && mentorForm.get('location')?.touched">
+                Please select your location
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Mentoring Preferences -->
+        <div class="form-step" *ngIf="currentStep === 3">
+          <div class="step-header">
+            <h2>Mentoring Preferences</h2>
+            <p>Define your mentoring approach and preferences</p>
+          </div>
+          
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label>Areas of Expertise *</label>
+              <div class="expertise-input">
+                <input 
+                  type="text" 
+                  #expertiseInput
+                  class="form-control"
+                  placeholder="Type and press Enter to add expertise areas"
+                  (keyup.enter)="addExpertise(expertiseInput.value); expertiseInput.value = ''">
+                <div class="expertise-tags">
+                  <span class="tag" *ngFor="let skill of mentorForm.get('expertise')?.value">
+                    {{ skill }}
+                    <i class="fa fa-times" (click)="removeExpertise(skill)"></i>
+                  </span>
+                </div>
+              </div>
+              <div class="error-message" *ngIf="mentorForm.get('expertise')?.invalid && mentorForm.get('expertise')?.touched">
+                Please add at least 3 areas of expertise
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="consultationFee">Consultation Fee (₹/hour) *</label>
+              <input 
+                type="number" 
+                id="consultationFee"
+                formControlName="consultationFee"
+                class="form-control"
+                placeholder="Minimum ₹500/hour"
+                min="500">
+              <div class="error-message" *ngIf="mentorForm.get('consultationFee')?.invalid && mentorForm.get('consultationFee')?.touched">
+                Consultation fee must be at least ₹500/hour
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="maxMentees">Maximum Mentees *</label>
+              <input 
+                type="number" 
+                id="maxMentees"
+                formControlName="maxMentees"
+                class="form-control"
+                placeholder="Maximum number of mentees"
+                min="1"
+                max="50">
+              <div class="error-message" *ngIf="mentorForm.get('maxMentees')?.invalid && mentorForm.get('maxMentees')?.touched">
+                Please specify maximum number of mentees
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="availability">Availability *</label>
+              <select 
+                id="availability"
+                formControlName="availability"
+                class="form-control">
+                <option value="">Select your availability</option>
+                <option value="Weekdays">Weekdays</option>
+                <option value="Weekends">Weekends</option>
+                <option value="Evenings">Evenings</option>
+                <option value="Flexible Schedule">Flexible Schedule</option>
+              </select>
+              <div class="error-message" *ngIf="mentorForm.get('availability')?.invalid && mentorForm.get('availability')?.touched">
+                Please select your availability
+              </div>
+            </div>
+            
+            <div class="form-group full-width">
+              <label>Session Types *</label>
+              <div class="checkbox-group">
+                <label class="checkbox-item" *ngFor="let sessionType of sessionTypes">
+                  <input 
+                    type="checkbox" 
+                    [value]="sessionType"
+                    (change)="onSessionTypeChange($event, sessionType)">
+                  <span class="checkmark"></span>
+                  {{ sessionType }}
+                </label>
+              </div>
+              <div class="error-message" *ngIf="mentorForm.get('sessionTypes')?.invalid && mentorForm.get('sessionTypes')?.touched">
+                Please select at least one session type
+              </div>
+            </div>
+            
+            <div class="form-group full-width">
+              <label>Languages *</label>
+              <div class="checkbox-group">
+                <label class="checkbox-item" *ngFor="let language of languages">
+                  <input 
+                    type="checkbox" 
+                    [value]="language"
+                    (change)="onLanguageChange($event, language)">
+                  <span class="checkmark"></span>
+                  {{ language }}
+                </label>
+              </div>
+              <div class="error-message" *ngIf="mentorForm.get('languages')?.invalid && mentorForm.get('languages')?.touched">
+                Please select at least one language
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Review & Submit -->
+        <div class="form-step" *ngIf="currentStep === 4">
+          <div class="step-header">
+            <h2>Review & Submit</h2>
+            <p>Review your information and submit your application</p>
+          </div>
+          
+          <div class="review-section">
+            <div class="review-item">
+              <label>Description *</label>
+              <textarea 
+                formControlName="description"
+                class="form-control"
+                rows="4"
+                placeholder="Tell us about yourself, your experience, and why you want to become a mentor..."></textarea>
+              <div class="error-message" *ngIf="mentorForm.get('description')?.invalid && mentorForm.get('description')?.touched">
+                Please provide a detailed description (minimum 50 characters)
+              </div>
+            </div>
+            
+            <div class="review-item">
+              <label>Social Links (Optional)</label>
+              <div class="social-inputs">
+                <input 
+                  type="url" 
+                  formControlName="linkedin"
+                  class="form-control"
+                  placeholder="LinkedIn Profile URL">
+                <input 
+                  type="url" 
+                  formControlName="github"
+                  class="form-control"
+                  placeholder="GitHub Profile URL">
+                <input 
+                  type="url" 
+                  formControlName="portfolio"
+                  class="form-control"
+                  placeholder="Portfolio Website URL">
+              </div>
+            </div>
+            
+            <div class="review-item">
+              <label>Terms & Conditions *</label>
+              <div class="checkbox-group">
+                <label class="checkbox-item">
+                  <input 
+                    type="checkbox" 
+                    formControlName="agreeToTerms">
+                  <span class="checkmark"></span>
+                  I agree to the <a href="#" target="_blank">Terms of Service</a> and <a href="#" target="_blank">Mentor Agreement</a>
+                </label>
+                <label class="checkbox-item">
+                  <input 
+                    type="checkbox" 
+                    formControlName="agreeToPrivacy">
+                  <span class="checkmark"></span>
+                  I agree to the <a href="#" target="_blank">Privacy Policy</a> and consent to data processing
+                </label>
+              </div>
+              <div class="error-message" *ngIf="(mentorForm.get('agreeToTerms')?.invalid || mentorForm.get('agreeToPrivacy')?.invalid) && mentorForm.get('agreeToTerms')?.touched">
+                Please accept the terms and conditions
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="form-navigation">
+          <button 
+            type="button" 
+            class="btn btn-secondary"
+            (click)="previousStep()"
+            *ngIf="currentStep > 1">
+            <i class="fa fa-arrow-left"></i>
+            Previous
+          </button>
+          
+          <button 
+            type="button" 
+            class="btn btn-primary"
+            (click)="nextStep()"
+            *ngIf="currentStep < totalSteps"
+            [disabled]="!isCurrentStepValid()">
+            Next
+            <i class="fa fa-arrow-right"></i>
+          </button>
+          
+          <button 
+            type="submit" 
+            class="btn btn-success"
+            *ngIf="currentStep === totalSteps"
+            [disabled]="!mentorForm.valid || isSubmitting">
+            <i class="fa fa-check" *ngIf="!isSubmitting"></i>
+            <i class="fa fa-spinner fa-spin" *ngIf="isSubmitting"></i>
+            {{ isSubmitting ? 'Submitting...' : 'Submit Application' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Benefits Section -->
+  <div class="benefits-section">
+    <div class="container">
+      <h2>Why Become a Mentor?</h2>
+      <div class="benefits-grid">
+        <div class="benefit-item">
+          <i class="fa fa-heart"></i>
+          <h3>Make a Difference</h3>
+          <p>Help aspiring professionals achieve their career goals and make a positive impact on their lives.</p>
+        </div>
+        <div class="benefit-item">
+          <i class="fa fa-users"></i>
+          <h3>Build Your Network</h3>
+          <p>Connect with talented individuals and expand your professional network across different industries.</p>
+        </div>
+        <div class="benefit-item">
+          <i class="fa fa-graduation-cap"></i>
+          <h3>Share Knowledge</h3>
+          <p>Pass on your expertise and experience while staying updated with the latest industry trends.</p>
+        </div>
+        <div class="benefit-item">
+          <i class="fa fa-money"></i>
+          <h3>Earn Income</h3>
+          <p>Generate additional income by sharing your expertise through mentoring sessions.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

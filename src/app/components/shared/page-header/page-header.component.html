@@ -1,0 +1,53 @@
+<header class="page-header">
+  <div class="page-header__top">
+    <button class="page-header__back" type="button" *ngIf="showBack" (click)="onBackClick()">
+      <span class="icon-wrapper">
+        <i class="fas fa-arrow-left"></i>
+      </span>
+      <span class="label">{{ backLabel }}</span>
+    </button>
+
+    <div class="page-header__titles">
+      <h1 class="page-header__title">{{ title }}</h1>
+      <p class="page-header__subtitle" *ngIf="subtitle">{{ subtitle }}</p>
+    </div>
+
+    <div class="page-header__actions">
+      <ng-content></ng-content>
+    </div>
+  </div>
+
+  <nav class="page-header__breadcrumbs" *ngIf="breadcrumbItems?.length">
+    <ng-container *ngFor="let item of breadcrumbItems; let last = last">
+      <ng-container *ngIf="!last">
+        <a
+          class="breadcrumb-link"
+          *ngIf="item.link && !item.isExternal"
+          [routerLink]="item.link"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          >{{ item.label }}</a
+        >
+        <a
+          class="breadcrumb-link"
+          *ngIf="item.link && item.isExternal && isExternalLink(item)"
+          [attr.href]="toExternalUrl(item.link)"
+          target="_blank"
+          rel="noopener"
+          >{{ item.label }}</a
+        >
+        <span class="breadcrumb-link" *ngIf="!item.link">{{ item.label }}</span>
+        <span class="breadcrumb-separator">
+          <i class="fas fa-chevron-right"></i>
+        </span>
+      </ng-container>
+      <span class="breadcrumb-current" *ngIf="last">{{ item.label }}</span>
+    </ng-container>
+  </nav>
+
+  <!-- Search and Filters Section - Projected Content -->
+  <div class="page-header__search-section">
+    <ng-content select="[searchContent]"></ng-content>
+  </div>
+</header>
+

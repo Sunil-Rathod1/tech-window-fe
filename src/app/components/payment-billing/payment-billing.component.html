@@ -1,0 +1,330 @@
+<section class="payment-gateway">
+  <div class="payment-shell">
+    <div class="payment-grid">
+      <div class="checkout-panel">
+        <div class="panel-header">
+          <div class="badge">Secure Checkout</div>
+          <h1>Complete your enrollment</h1>
+          <p>Unlock mentor support, live projects, and verified certification in minutes.</p>
+        </div>
+
+        <div class="account-card glass-card">
+          <div class="card-title">
+            <i class="fas fa-user-circle"></i>
+            Account details
+          </div>
+          <div class="account-content">
+            <div class="account-email">
+              <span>{{ userEmail }}</span>
+              <span class="verified" *ngIf="isAccountVerified">
+                <i class="fas fa-check-circle"></i>
+                Verified
+              </span>
+            </div>
+            <div class="location-selector">
+              <div class="selector">
+                <label>Country</label>
+                <div class="selector-input">
+                  <i class="fas fa-globe"></i>
+                  <select [(ngModel)]="selectedCountry" (change)="onCountryChange(selectedCountry)">
+                    <option *ngFor="let country of countries" [value]="country.name">
+                      {{ country.flag }} {{ country.name }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <div class="selector">
+                <label>State / Region</label>
+                <div class="selector-input">
+                  <i class="fas fa-map-marker-alt"></i>
+                  <select [(ngModel)]="selectedState" (change)="onStateChange(selectedState)">
+                    <option value="">Select...</option>
+                    <option *ngFor="let state of states" [value]="state.name">
+                      {{ state.name }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="payment-card glass-card">
+          <div class="card-title">
+            <i class="fas fa-wallet"></i>
+            Payment method
+          </div>
+
+          <div class="method-switch">
+            <button
+              class="switch-btn"
+              [class.active]="selectedPaymentMethod === 'cards'"
+              (click)="onPaymentMethodChange('cards')">
+              <i class="fas fa-credit-card"></i>
+              Card Payment
+            </button>
+            <button
+              class="switch-btn"
+              [class.active]="selectedPaymentMethod === 'upi'"
+              (click)="onPaymentMethodChange('upi')">
+              <i class="fas fa-mobile-alt"></i>
+              UPI Payment
+            </button>
+            <button
+              class="switch-btn"
+              [class.active]="selectedPaymentMethod === 'cash'"
+              (click)="onPaymentMethodChange('cash')">
+              <i class="fas fa-money-bill-wave"></i>
+              Cash Payment
+            </button>
+          </div>
+
+          <div class="payment-body" *ngIf="selectedPaymentMethod === 'cards'">
+            <div class="card-icons">
+              <i class="fab fa-cc-visa"></i>
+              <i class="fab fa-cc-mastercard"></i>
+              <i class="fab fa-cc-amex"></i>
+              <i class="fab fa-cc-rupay"></i>
+            </div>
+            <div class="card-form">
+              <label>Card holder name</label>
+              <input
+                type="text"
+                placeholder="Name on card"
+                [(ngModel)]="cardDetails.holderName" />
+
+              <label>Card number</label>
+              <div class="card-number">
+                <input
+                  type="text"
+                  maxlength="19"
+                  placeholder="0000 0000 0000 0000"
+                  [(ngModel)]="cardDetails.number">
+                <i class="fas fa-shield-alt"></i>
+              </div>
+
+              <div class="card-row">
+                <div>
+                  <label>Expiry</label>
+                  <input
+                    type="text"
+                    maxlength="5"
+                    placeholder="MM/YY"
+                    [(ngModel)]="cardDetails.expiry"
+                    (input)="handleExpiryInput($event)" />
+                </div>
+                <div>
+                  <label>CVV</label>
+                  <input
+                    type="password"
+                    maxlength="3"
+                    placeholder="•••"
+                    [(ngModel)]="cardDetails.cvv"
+                    (input)="handleCvvInput($event)" />
+                </div>
+              </div>
+              <p class="security-note">
+                <i class="fas fa-lock"></i>
+                Secured with 256-bit encryption
+              </p>
+            </div>
+          </div>
+
+          <div class="payment-body" *ngIf="selectedPaymentMethod === 'upi'">
+            <div class="upi-methods">
+              <button
+                class="switch-btn"
+                [class.active]="selectedUpiMethod === 'qr'"
+                (click)="onUpiMethodChange('qr')">
+                <i class="fas fa-qrcode"></i>
+                Scan QR
+              </button>
+              <button
+                class="switch-btn"
+                [class.active]="selectedUpiMethod === 'id'"
+                (click)="onUpiMethodChange('id')">
+                <i class="fas fa-id-card"></i>
+                Enter UPI ID
+              </button>
+            </div>
+
+            <div class="upi-content" *ngIf="selectedUpiMethod === 'qr'">
+              <div class="qr-preview" [class.generated]="qrGenerated">
+                <i class="fas fa-qrcode"></i>
+                <p *ngIf="!qrGenerated">Click below to generate secure QR code</p>
+                <p *ngIf="qrGenerated">QR code generated! Scan using any UPI app.</p>
+              </div>
+              <button class="btn btn-outline-light" (click)="generateQr()">
+                <i class="fas fa-bolt me-2"></i>
+                {{ qrGenerated ? 'Regenerate QR Code' : 'Generate QR Code' }}
+              </button>
+            </div>
+
+            <div class="upi-content" *ngIf="selectedUpiMethod === 'id'">
+              <label>Enter your UPI ID</label>
+              <input
+                type="text"
+                placeholder="name@bank"
+                [(ngModel)]="upiId" />
+              <p class="upi-hint">
+                Ensure that UPI ID is linked with registered mobile number.
+              </p>
+            </div>
+          </div>
+
+          <div class="payment-body" *ngIf="selectedPaymentMethod === 'cash'">
+            <div class="cash-payment-header">
+              <i class="fas fa-info-circle"></i>
+              <p>Complete the form below to arrange cash payment. Our team will contact you to confirm the payment details.</p>
+            </div>
+            <div class="cash-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Payment Location <span class="required">*</span></label>
+                  <input
+                    type="text"
+                    placeholder="Enter full address where payment will be made"
+                    [(ngModel)]="cashDetails.paymentLocation"
+                    [class.invalid]="selectedPaymentMethod === 'cash' && cashDetails.paymentLocation.trim().length > 0 && cashDetails.paymentLocation.trim().length < 5" />
+                  <small *ngIf="selectedPaymentMethod === 'cash' && cashDetails.paymentLocation.trim().length > 0 && cashDetails.paymentLocation.trim().length < 5" class="error-text">
+                    Please enter a complete address (minimum 5 characters)
+                  </small>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Contact Person Name <span class="required">*</span></label>
+                  <input
+                    type="text"
+                    placeholder="Name of person who will receive payment"
+                    [(ngModel)]="cashDetails.contactPersonName"
+                    [class.invalid]="selectedPaymentMethod === 'cash' && cashDetails.contactPersonName.trim().length > 0 && cashDetails.contactPersonName.trim().length < 2" />
+                  <small *ngIf="selectedPaymentMethod === 'cash' && cashDetails.contactPersonName.trim().length > 0 && cashDetails.contactPersonName.trim().length < 2" class="error-text">
+                    Name must be at least 2 characters
+                  </small>
+                </div>
+                <div class="form-group">
+                  <label>Contact Phone Number <span class="required">*</span></label>
+                  <input
+                    type="tel"
+                    placeholder="10-digit mobile number"
+                    maxlength="10"
+                    [(ngModel)]="cashDetails.contactPhone"
+                    (input)="handlePhoneInput($event)"
+                    [class.invalid]="selectedPaymentMethod === 'cash' && cashDetails.contactPhone.trim().length > 0 && cashDetails.contactPhone.trim().length < 10" />
+                  <small *ngIf="selectedPaymentMethod === 'cash' && cashDetails.contactPhone.trim().length > 0 && cashDetails.contactPhone.trim().length < 10" class="error-text">
+                    Please enter a valid 10-digit phone number
+                  </small>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Preferred Payment Date <span class="required">*</span></label>
+                  <input
+                    type="date"
+                    [min]="getMinDate()"
+                    [(ngModel)]="cashDetails.preferredDate" />
+                </div>
+                <div class="form-group">
+                  <label>Preferred Payment Time <span class="required">*</span></label>
+                  <input
+                    type="time"
+                    [(ngModel)]="cashDetails.preferredTime" />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group full-width">
+                  <label>Additional Notes</label>
+                  <textarea
+                    rows="3"
+                    placeholder="Any special instructions or additional information (optional)"
+                    [(ngModel)]="cashDetails.additionalNotes"
+                    maxlength="500"></textarea>
+                  <small class="hint-text">{{ cashDetails.additionalNotes.length }}/500 characters</small>
+                </div>
+              </div>
+
+              <div class="cash-payment-info">
+                <i class="fas fa-clock"></i>
+                <div>
+                  <strong>What happens next?</strong>
+                  <p>After submitting, our payment coordinator will contact you within 24 hours to confirm the payment arrangement and provide further instructions.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="support-callout glass-card">
+          <div class="icon-badge"><i class="fas fa-headset"></i></div>
+          <div>
+            <h4>Need help with payment?</h4>
+            <p>Our counselors can guide you through EMI options and corporate sponsorships.</p>
+          </div>
+          <button class="btn btn-outline-light">Talk to payment advisor</button>
+        </div>
+      </div>
+
+      <aside class="summary-panel glass-card">
+        <div class="summary-header">
+          <h3>Order Summary</h3>
+          <span class="badge-secondary">{{ orderSummary.courseCount }} course</span>
+        </div>
+        <div class="summary-course">
+          <div class="course-chip">Featured</div>
+          <h4>{{ orderSummary.courseName }}</h4>
+          <p>Includes lifetime access, mentor support, and verified certificate.</p>
+        </div>
+        <div class="summary-breakdown">
+          <div class="item">
+            <span>Original price</span>
+            <span>{{ formatPrice(orderSummary.originalPrice) }}</span>
+          </div>
+          <div class="item savings">
+            <span>Discount ({{ orderSummary.discountPercentage }}%)</span>
+            <span>-{{ formatPrice(orderSummary.discount) }}</span>
+          </div>
+          <div class="divider"></div>
+          <div class="total-line">
+            <div>
+              <span>Total payable</span>
+              <small>All taxes included</small>
+            </div>
+            <strong>{{ formatPrice(orderSummary.total) }}</strong>
+          </div>
+        </div>
+
+        <div class="cta-area">
+            <!-- [disabled]="isPayButtonDisabled()" -->
+
+          <button
+            class="btn btn-gradient"
+            [disabled]="isPayButtonDisabled()"
+            (click)="proceedToPayment()">
+            <i class="fas fa-lock me-2"></i>
+            <span *ngIf="paymentStatus !== 'processing'">
+              {{ selectedPaymentMethod === 'cash' ? 'Submit Payment Request' : 'Proceed to Payment' }}
+            </span>
+            <span *ngIf="paymentStatus === 'processing'">Processing...</span>
+          </button>
+          <p class="assurance">
+            <i class="fas fa-shield-alt"></i>
+            30-day money-back guarantee on all courses
+          </p>
+          <div class="status-message" *ngIf="paymentStatus === 'success'">
+            <i class="fas fa-check-circle"></i>
+            Payment received! Redirecting to your learning dashboard...
+          </div>
+        </div>
+
+        <div class="recent-enrollment">
+          <i class="fas fa-fire"></i>
+          <!-- <p><strong>{{ recentEnrollments }} learners</strong> enrolled in the last 24 hours.</p> -->
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,220 @@
+<!-- Courses Section -->
+<div class="courses-container">
+  <!-- Hero Section -->
+  <div class="hero-section">
+    <div class="container">
+      <div class="hero-content">
+        <h1 class="hero-title">Software Training Courses</h1>
+        <!-- <p class="hero-subtitle">Master in-demand technologies with our comprehensive software development, testing, and data science courses designed by industry experts</p> -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Section -->
+  <div class="search-section">
+    <div class="container">
+      <div class="search-container">
+        <div class="search-box">
+          <i class="fa fa-search search-icon"></i>
+          <input 
+            type="text" 
+            class="search-input" 
+            placeholder="Search for courses, technologies, or skills..." 
+            autocomplete="off"
+            [(ngModel)]="searchTerm"
+            (input)="onSearch()">
+          <button type="button" class="search-button" (click)="onSearch()">
+            <i class="fa fa-search"></i>
+            Search
+          </button>
+        </div>
+        <div class="search-filters">
+          <select class="filter-select" [(ngModel)]="selectedCategory" (change)="onFilterChange()">
+            <option value="">All Categories</option>
+            <option value="web">Web Development</option>
+            <option value="testing">Software Testing</option>
+            <option value="java">Java Development</option>
+            <option value="python">Python & Data Science</option>
+            <option value="devops">DevOps & Cloud</option>
+            <option value="design">UI/UX Design</option>
+            <option value="business">Business Intelligence</option>
+          </select>
+          <select class="filter-select" [(ngModel)]="selectedLevel" (change)="onFilterChange()">
+            <option value="">All Levels</option>
+            <option value="beginner">Beginner</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="advanced">Advanced</option>
+          </select>
+          <select class="filter-select" [(ngModel)]="selectedPrice" (change)="onFilterChange()">
+            <option value="">All Prices</option>
+            <option value="low">Under ₹10,000</option>
+            <option value="medium">₹10,000 - ₹20,000</option>
+            <option value="high">Above ₹20,000</option>
+          </select>
+          <button class="btn btn-outline" (click)="clearFilters()">
+            <i class="fa fa-times"></i>
+            Clear Filters
+          </button>
+        </div>
+        <div class="search-results">
+          <p>Showing {{ filteredCount }} of {{ totalCount }} courses</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Courses Grid -->
+  <div class="courses-grid">
+    <div class="container">
+      <div class="grid-container">
+        <!-- Course Card -->
+        <div class="course-card" *ngFor="let course of filteredCourses" (click)="navigateToCourseInstitutes(course)">
+          <div class="card-header">
+            <!-- <div class="course-banner">
+              <img [src]="'assets/photos/courses/' + course.img" [alt]="course.courseName + ' Course'" class="course-img">
+              <div class="course-overlay">
+                <span class="course-category">{{ course.courseName }}</span>
+                <span class="course-price">{{ course.coursePrice }}</span>
+              </div>
+              <div class="course-badges">
+                <span class="badge badge-popular" *ngIf="course.coursereviewers > 15000">Popular</span>
+                <span class="badge badge-new" *ngIf="course.courseId <= 3">New</span>
+              </div>
+            </div> -->
+          </div>
+          
+          <div class="card-body">
+            <div class="course-info">
+              <h3 class="course-title">
+                {{ course.courseName }}
+              </h3>
+              <p class="course-subtitle">{{ course.courseTitle }}</p>
+              <!-- <p class="course-description">
+                {{ getCourseDescription(course.courseName) }}
+              </p> -->
+            </div>
+            <div class="course-pricing">
+              <div class="price-info">
+                <span class="price-label">Starting from</span>
+                <span class="price-amount">{{ course.coursePrice }}</span>
+              </div>
+              <div class="price-features">
+                <span class="feature">Flexible Payment</span>
+                <span class="feature">Money Back Guarantee</span>
+              </div>
+            </div>
+
+            <div class="course-details">
+              <div class="detail-item">
+                <i class="fa fa-clock-o"></i>
+                <span>{{ getCourseDuration(course.courseName) }}</span>
+              </div>
+              <div class="detail-item">
+                <i class="fa fa-book"></i>
+                <span>{{ getCourseModules(course.courseName) }} Modules</span>
+              </div>
+              <div class="detail-item">
+                <i class="fa fa-users"></i>
+                <span>{{ getCourseStudents(course.courseName) }} Students</span>
+              </div>
+            </div>
+
+            <div class="course-technologies">
+              <h4>Technologies Covered</h4>
+              <div class="tech-tags">
+                <span class="tag" *ngFor="let tech of getCourseTechnologies(course.courseName)">{{ tech }}</span>
+              </div>
+            </div>
+
+            <div class="course-features">
+              <div class="feature-item">
+                <i class="fa fa-certificate"></i>
+                <span>Industry Certification</span>
+              </div>
+              <div class="feature-item">
+                <i class="fa fa-laptop"></i>
+                <span>Hands-on Projects</span>
+              </div>
+              <div class="feature-item">
+                <i class="fa fa-video-camera"></i>
+                <span>Video Tutorials</span>
+              </div>
+              <div class="feature-item">
+                <i class="fa fa-headphones"></i>
+                <span>24/7 Support</span>
+              </div>
+            </div>
+
+            <div class="course-rating">
+              <div class="rating-display">
+                <div class="stars">
+                  <span class="fa fa-star" [class.checked]="star" *ngFor="let star of getRatingStars(course.instituesReviews)"></span>
+                </div>
+                <span class="rating-text">{{ course.instituesReviews }} out of 5</span>
+                <span class="reviewers">({{ course.coursereviewers.toLocaleString() }} reviews)</span>
+              </div>
+            </div>
+
+            <!-- <div class="course-pricing">
+              <div class="price-info">
+                <span class="price-label">Starting from</span>
+                <span class="price-amount">{{ course.coursePrice }}</span>
+              </div>
+              <div class="price-features">
+                <span class="feature">Flexible Payment</span>
+                <span class="feature">Money Back Guarantee</span>
+              </div>
+            </div> -->
+
+            <div class="action-buttons">
+              <button class="btn btn-primary" (click)="navigateToCourseInstitutes(course); $event.stopPropagation()">
+                <i class="fa fa-eye"></i>
+                View Institutes
+              </button>
+              <button class="btn btn-secondary" (click)="addToWishlist(course); $event.stopPropagation()">
+                <i class="fa fa-heart"></i>
+                Wishlist
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- No Results Message -->
+        <div class="no-results" *ngIf="filteredCourses.length === 0">
+          <div class="no-results-content">
+            <i class="fa fa-search fa-3x"></i>
+            <h3>No courses found</h3>
+            <p>Try adjusting your search criteria or filters</p>
+            <button class="btn btn-primary" (click)="clearFilters()">
+              <i class="fa fa-refresh"></i>
+              Clear All Filters
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Call to Action Section -->
+  <div class="cta-section">
+    <div class="container">
+      <div class="cta-content">
+        <h2>Ready to Start Your Tech Journey?</h2>
+        <p>Choose from our extensive collection of software courses and take the first step towards a successful career in technology</p>
+        <div class="cta-buttons">
+          <button class="btn btn-primary btn-large">
+            <i class="fa fa-graduation-cap"></i>
+            Browse All Courses
+          </button>
+          <button class="btn btn-outline btn-large">
+            <i class="fa fa-info-circle"></i>
+            Get Course Guide
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+

@@ -1,0 +1,1242 @@
+<div class="mentor-dashboard">
+  <!-- Sidebar -->
+  <div class="sidebar" [class.collapsed]="sidebarCollapsed">
+    <div class="sidebar-header">
+      <div class="mentor-profile">
+        <div class="profile-avatar">
+          <img src="https://via.placeholder.com/60x60/2196F3/ffffff?text=M" alt="Mentor Avatar">
+        </div>
+        <div class="profile-info" *ngIf="!sidebarCollapsed">
+          <h3>Dr. Sarah Mentor</h3>
+          <p>Senior Industry Expert</p>
+          <div class="rating">
+            <i class="fas fa-star"></i>
+            <span>{{ mentorStats.rating }}</span>
+          </div>
+        </div>
+      </div>
+      <button class="toggle-btn" (click)="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <ul>
+        <li [class.active]="activeSection === 'overview'" (click)="setActiveSection('overview')">
+          <i class="fas fa-chart-pie"></i>
+          <span *ngIf="!sidebarCollapsed">Overview</span>
+        </li>
+        <li [class.active]="activeSection === 'mentees'" (click)="setActiveSection('mentees')">
+          <i class="fas fa-users"></i>
+          <span *ngIf="!sidebarCollapsed">My Mentees</span>
+        </li>
+        <li [class.active]="activeSection === 'programs'" (click)="setActiveSection('programs')">
+          <i class="fas fa-graduation-cap"></i>
+          <span *ngIf="!sidebarCollapsed">Programs</span>
+        </li>
+        <li [class.active]="activeSection === 'sessions'" (click)="setActiveSection('sessions')">
+          <i class="fas fa-calendar-alt"></i>
+          <span *ngIf="!sidebarCollapsed">Sessions</span>
+        </li>
+        <li [class.active]="activeSection === 'analytics'" (click)="setActiveSection('analytics')">
+          <i class="fas fa-chart-line"></i>
+          <span *ngIf="!sidebarCollapsed">Analytics</span>
+        </li>
+        <li [class.active]="activeSection === 'earnings'" (click)="setActiveSection('earnings')">
+          <i class="fas fa-dollar-sign"></i>
+          <span *ngIf="!sidebarCollapsed">Earnings</span>
+        </li>
+        <li [class.active]="activeSection === 'resources'" (click)="setActiveSection('resources')">
+          <i class="fas fa-book-open"></i>
+          <span *ngIf="!sidebarCollapsed">Resources</span>
+        </li>
+        <li [class.active]="activeSection === 'settings'" (click)="setActiveSection('settings')">
+          <i class="fas fa-cog"></i>
+          <span *ngIf="!sidebarCollapsed">Settings</span>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Header -->
+    <header class="dashboard-header">
+      <div class="header-left">
+        <h1>{{ getSectionTitle() }}</h1>
+        <p>{{ getSectionSubtitle() }}</p>
+      </div>
+      <div class="header-right">
+        <div class="notification-bell">
+          <i class="fas fa-bell"></i>
+          <span class="notification-badge">5</span>
+        </div>
+        <div class="user-menu">
+          <img src="https://via.placeholder.com/40x40/2196F3/ffffff?text=SM" alt="Profile">
+          <span>Dr. Sarah Mentor</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+      </div>
+    </header>
+    
+    <!-- Dashboard Content -->
+    <div class="dashboard-content">
+      
+      <!-- Overview Section -->
+      <div *ngIf="activeSection === 'overview'" class="overview-section">
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon mentees">
+              <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-content">
+              <h3>{{ mentorStats.totalMentees }}</h3>
+              <p>Total Mentees</p>
+              <span class="stat-change positive">+8 this month</span>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon programs">
+              <i class="fas fa-graduation-cap"></i>
+            </div>
+            <div class="stat-content">
+              <h3>{{ mentorStats.activeMentorships }}</h3>
+              <p>Active Programs</p>
+              <span class="stat-change positive">+2 new programs</span>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon sessions">
+              <i class="fas fa-handshake"></i>
+            </div>
+            <div class="stat-content">
+              <h3>{{ mentorStats.completedSessions }}</h3>
+              <p>Completed Sessions</p>
+              <span class="stat-change positive">+12 this week</span>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon earnings">
+              <i class="fas fa-dollar-sign"></i>
+            </div>
+            <div class="stat-content">
+              <h3>${{ mentorStats.earnings | number }}</h3>
+              <p>Total Earnings</p>
+              <span class="stat-change positive">+$3,200 this month</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Charts and Activities Row -->
+        <div class="content-row">
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3>Mentorship Impact</h3>
+              <div class="chart-controls">
+                <button class="btn-secondary">Last 6 months</button>
+              </div>
+            </div>
+            <div class="chart-placeholder">
+              <i class="fas fa-chart-line"></i>
+              <p>Mentorship Success Rate Chart</p>
+            </div>
+          </div>
+          
+          <div class="activities-container">
+            <div class="activities-header">
+              <h3>Recent Activities</h3>
+              <button class="btn-secondary">View All</button>
+            </div>
+            <div class="activities-list">
+              <div class="activity-item" *ngFor="let activity of recentActivities">
+                <div class="activity-icon">
+                  <i [class]="activity.icon"></i>
+                </div>
+                <div class="activity-content">
+                  <h4>{{ activity.title }}</h4>
+                  <p>{{ activity.time }}</p>
+                  <span *ngIf="activity.mentees > 0" class="mentees-count">
+                    {{ activity.mentees }} mentee{{ activity.mentees > 1 ? 's' : '' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Mentees Section -->
+      <div *ngIf="activeSection === 'mentees'" class="mentees-section">
+        <div class="section-header">
+          <h2>My Mentees</h2>
+          <button class="btn-primary">
+            <i class="fas fa-plus"></i>
+            Add New Mentee
+          </button>
+        </div>
+        
+        <div class="mentees-grid">
+          <div class="mentee-card" *ngFor="let mentee of menteeProgress">
+            <div class="mentee-header">
+              <div class="mentee-avatar">
+                <img src="https://via.placeholder.com/50x50/2196F3/ffffff?text={{ mentee.name.charAt(0) }}" alt="Mentee">
+              </div>
+              <div class="mentee-info">
+                <h3>{{ mentee.name }}</h3>
+                <p>{{ mentee.program }}</p>
+              </div>
+              <div class="mentee-status" [class]="getStatusClass(mentee.status)">
+                {{ mentee.status }}
+              </div>
+            </div>
+            
+            <div class="progress-section">
+              <div class="progress-header">
+                <span>Progress</span>
+                <span>{{ mentee.progress }}%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" [class]="getProgressClass(mentee.progress)" [style.width.%]="mentee.progress"></div>
+              </div>
+            </div>
+            
+            <div class="mentee-stats">
+              <div class="stat">
+                <span class="stat-value">{{ mentee.sessions }}</span>
+                <span class="stat-label">Sessions</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value">{{ mentee.nextSession }}</span>
+                <span class="stat-label">Next Session</span>
+              </div>
+            </div>
+            
+            <div class="mentee-actions">
+              <button class="btn-secondary">View Details</button>
+              <button class="btn-primary">Schedule Session</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Programs Section -->
+      <div *ngIf="activeSection === 'programs'" class="programs-section">
+        <div class="section-header">
+          <h2>Mentorship Programs</h2>
+          <button class="btn-primary">
+            <i class="fas fa-plus"></i>
+            Create New Program
+          </button>
+        </div>
+        
+        <div class="programs-grid">
+          <div class="program-card" *ngFor="let program of mentorshipPrograms">
+            <div class="program-header">
+              <h3>{{ program.name }}</h3>
+              <div class="program-status" [class]="getStatusClass(program.status)">
+                {{ program.status }}
+              </div>
+            </div>
+            
+            <div class="program-details">
+              <div class="detail">
+                <i class="fas fa-clock"></i>
+                <span>{{ program.duration }}</span>
+              </div>
+              <div class="detail">
+                <i class="fas fa-star"></i>
+                <span>{{ program.rating }}</span>
+              </div>
+            </div>
+            
+            <div class="program-stats">
+              <div class="stat">
+                <span class="stat-value">{{ program.mentees }}</span>
+                <span class="stat-label">Mentees</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value">{{ program.completed }}</span>
+                <span class="stat-label">Completed</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value">${{ program.revenue }}</span>
+                <span class="stat-label">Revenue</span>
+              </div>
+            </div>
+            
+            <div class="program-actions">
+              <button class="btn-secondary">Edit</button>
+              <button class="btn-primary">View Details</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Sessions Section -->
+      <div *ngIf="activeSection === 'sessions'" class="sessions-section">
+        <div class="section-header">
+          <h2>Upcoming Sessions</h2>
+          <button class="btn-primary">
+            <i class="fas fa-plus"></i>
+            Schedule Session
+          </button>
+        </div>
+        
+        <div class="sessions-list">
+          <div class="session-card" *ngFor="let session of upcomingSessions">
+            <div class="session-info">
+              <h3>{{ session.mentee }}</h3>
+              <p class="session-topic">{{ session.topic }}</p>
+              <div class="session-details">
+                <span class="session-date">
+                  <i class="fas fa-calendar"></i>
+                  {{ session.date }}
+                </span>
+                <span class="session-time">
+                  <i class="fas fa-clock"></i>
+                  {{ session.time }}
+                </span>
+                <span class="session-duration">
+                  <i class="fas fa-hourglass-half"></i>
+                  {{ session.duration }}
+                </span>
+              </div>
+            </div>
+            <div class="session-meta">
+              <div class="session-type">
+                <i class="fas fa-users"></i>
+                {{ session.type }}
+              </div>
+              <div class="session-status" [class]="getStatusClass(session.status)">
+                {{ session.status }}
+              </div>
+            </div>
+            <div class="session-actions">
+              <button class="btn-secondary">Reschedule</button>
+              <button class="btn-primary">Start Session</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Earnings & Payments Section -->
+      <div *ngIf="activeSection === 'earnings'" class="earnings-section">
+        <!-- Period Filter -->
+        <div class="section-header">
+          <h2>Earnings & Payments</h2>
+          <div class="period-filter">
+            <button 
+              class="filter-btn" 
+              [class.active]="selectedPeriod === 'week'"
+              (click)="setPeriod('week')">
+              Week
+            </button>
+            <button 
+              class="filter-btn" 
+              [class.active]="selectedPeriod === 'month'"
+              (click)="setPeriod('month')">
+              Month
+            </button>
+            <button 
+              class="filter-btn" 
+              [class.active]="selectedPeriod === 'year'"
+              (click)="setPeriod('year')">
+              Year
+            </button>
+            <button 
+              class="filter-btn" 
+              [class.active]="selectedPeriod === 'all'"
+              (click)="setPeriod('all')">
+              All Time
+            </button>
+          </div>
+        </div>
+
+        <!-- Earnings Overview Cards -->
+        <div class="earnings-overview">
+          <div class="earnings-card total-earnings">
+            <div class="card-icon">
+              <i class="fas fa-rupee-sign"></i>
+            </div>
+            <div class="card-content">
+              <h3>Total Earnings</h3>
+              <p class="amount">{{ formatCurrency(earningsData.totalEarnings) }}</p>
+              <span class="change positive">
+                <i class="fas fa-arrow-up"></i>
+                {{ earningsData.thisMonthGrowth }}% this month
+              </span>
+            </div>
+          </div>
+
+          <div class="earnings-card monthly-earnings">
+            <div class="card-icon">
+              <i class="fas fa-calendar-alt"></i>
+            </div>
+            <div class="card-content">
+              <h3>This Month</h3>
+              <p class="amount">{{ formatCurrency(earningsData.monthlyEarnings) }}</p>
+              <span class="change positive">
+                <i class="fas fa-arrow-up"></i>
+                {{ earningsData.lastMonthGrowth }}% from last month
+              </span>
+            </div>
+          </div>
+
+          <div class="earnings-card pending-payments">
+            <div class="card-icon">
+              <i class="fas fa-clock"></i>
+            </div>
+            <div class="card-content">
+              <h3>Pending Payments</h3>
+              <p class="amount">{{ formatCurrency(earningsData.pendingPayments) }}</p>
+              <span class="change neutral">Processing</span>
+            </div>
+          </div>
+
+          <div class="earnings-card paid-amount">
+            <div class="card-icon">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="card-content">
+              <h3>Paid Amount</h3>
+              <p class="amount">{{ formatCurrency(earningsData.paidAmount) }}</p>
+              <span class="change neutral">Total received</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Earnings Chart -->
+        <div class="earnings-chart-container">
+          <div class="chart-header">
+            <h3>Earnings Trend</h3>
+            <div class="chart-legend">
+              <span class="legend-item">
+                <span class="legend-color earnings"></span>
+                Earnings
+              </span>
+            </div>
+          </div>
+          <div class="chart-content">
+            <div class="chart-bars">
+              <div class="chart-bar" *ngFor="let data of earningsChart; let i = index" [style.height.%]="(data.amount / 60000) * 100">
+                <div class="bar-tooltip">
+                  {{ formatCurrency(data.amount) }}
+                </div>
+                <div class="bar-fill"></div>
+                <span class="bar-label">{{ data.month }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Transactions and Payment Methods Row -->
+        <div class="content-row">
+          <!-- Recent Transactions -->
+          <div class="transactions-container">
+            <div class="transactions-header">
+              <h3>Recent Transactions</h3>
+              <button class="btn-secondary">View All</button>
+            </div>
+            <div class="transactions-list">
+              <div class="transaction-item" *ngFor="let transaction of recentTransactions">
+                <div class="transaction-icon" [class]="getPaymentStatusClass(transaction.status)">
+                  <i [class]="getPaymentTypeIcon(transaction.type)"></i>
+                </div>
+                <div class="transaction-details">
+                  <h4>{{ transaction.description }}</h4>
+                  <p class="transaction-meta">
+                    <span>{{ formatDate(transaction.date) }}</span>
+                    <span class="separator">•</span>
+                    <span>{{ transaction.transactionId }}</span>
+                    <span class="separator">•</span>
+                    <span><i [class]="getPaymentMethodIcon(transaction.paymentMethod.toLowerCase())"></i> {{ transaction.paymentMethod }}</span>
+                  </p>
+                </div>
+                <div class="transaction-amount">
+                  <p class="amount" [class]="getPaymentStatusClass(transaction.status)">
+                    {{ formatCurrency(transaction.amount) }}
+                  </p>
+                  <div class="transaction-status" [class]="getPaymentStatusClass(transaction.status)">
+                    {{ transaction.status | titlecase }}
+                  </div>
+                </div>
+                <div class="transaction-actions">
+                  <button class="btn-icon" (click)="downloadInvoice(transaction.transactionId)" title="Download Invoice">
+                    <i class="fas fa-download"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Payment Methods -->
+          <div class="payment-methods-container">
+            <div class="payment-methods-header">
+              <h3>Payment Methods</h3>
+              <button class="btn-primary" (click)="addPaymentMethod()">
+                <i class="fas fa-plus"></i>
+                Add Method
+              </button>
+            </div>
+            <div class="payment-methods-list">
+              <div class="payment-method-item" *ngFor="let method of paymentMethods">
+                <div class="method-icon">
+                  <i [class]="getPaymentMethodIcon(method.type)"></i>
+                </div>
+                <div class="method-details">
+                  <h4>
+                    {{ method.type === 'bank_account' ? method.bankName : method.provider }}
+                    <span class="badge default" *ngIf="method.isDefault">Default</span>
+                    <span class="badge verified" *ngIf="method.isVerified">
+                      <i class="fas fa-check-circle"></i> Verified
+                    </span>
+                  </h4>
+                  <p>
+                    <span *ngIf="method.type === 'bank_account'">
+                      {{ method.accountNumber }} • {{ method.accountHolderName }}
+                    </span>
+                    <span *ngIf="method.type === 'upi'">
+                      {{ method.upiId }}
+                    </span>
+                  </p>
+                </div>
+                <div class="method-actions">
+                  <button class="btn-icon" title="Edit">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button class="btn-icon" title="Remove" *ngIf="!method.isDefault">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Summary -->
+        <div class="payment-summary">
+          <div class="summary-card">
+            <h3>Payment Summary</h3>
+            <div class="summary-row">
+              <div class="summary-item">
+                <span class="label">Total Sessions</span>
+                <span class="value">{{ mentorStats.completedSessions }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="label">Average per Session</span>
+                <span class="value">{{ formatCurrency(earningsData.totalEarnings / mentorStats.completedSessions) }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="label">Platform Fee (15%)</span>
+                <span class="value">{{ formatCurrency(earningsData.totalEarnings * 0.15) }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="label">Your Earnings</span>
+                <span class="value total">{{ formatCurrency(earningsData.totalEarnings * 0.85) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resources Section -->
+      <div *ngIf="activeSection === 'resources'" class="resources-section">
+        <!-- Header -->
+        <div class="section-header">
+          <div>
+            <h2>Mentor Resources</h2>
+            <p>Access guides, templates, videos, and tools to enhance your mentorship journey</p>
+          </div>
+          <div class="search-resources">
+            <input 
+              type="text" 
+              placeholder="Search resources..."
+              class="search-input"
+              (input)="searchResources($any($event.target).value)">
+            <i class="fas fa-search"></i>
+          </div>
+        </div>
+
+        <!-- Featured Resources -->
+        <div class="featured-resources">
+          <h3>Featured Resources</h3>
+          <div class="featured-grid">
+            <div class="featured-card" *ngFor="let resource of featuredResources" (click)="viewResource(resource.id)">
+              <div class="featured-icon" [style.background]="resource.color + '20'">
+                <i [class]="resource.icon" [style.color]="resource.color"></i>
+              </div>
+              <h4>{{ resource.title }}</h4>
+              <div class="featured-badge">{{ resource.category | titlecase }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resource Categories -->
+        <div class="resource-categories">
+          <div class="category-tabs">
+            <button 
+              *ngFor="let category of resourceCategories"
+              class="category-tab"
+              [class.active]="selectedResourceCategory === category.id"
+              (click)="setResourceCategory(category.id)">
+              <i [class]="category.icon"></i>
+              <span>{{ category.name }}</span>
+              <span class="category-count" *ngIf="category.count > 0">({{ category.count }})</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Resources Grid -->
+        <div class="resources-grid" *ngIf="selectedResourceCategory !== 'faq'">
+          <div class="resource-card" *ngFor="let resource of getFilteredResources()">
+            <div class="resource-header">
+              <div class="resource-type-icon" [style.background]="getResourceTypeColor(resource.type) + '20'">
+                <i [class]="getResourceTypeIcon(resource.type)" [style.color]="getResourceTypeColor(resource.type)"></i>
+              </div>
+              <div class="resource-badge" [class]="resource.category">
+                {{ resource.category | titlecase }}
+              </div>
+            </div>
+            <div class="resource-content">
+              <h3>{{ resource.title }}</h3>
+              <p>{{ resource.description }}</p>
+              <div class="resource-meta">
+                <span class="meta-item">
+                  <i class="fas fa-download"></i>
+                  {{ resource.downloads | number }} downloads
+                </span>
+                <span class="meta-item">
+                  <i class="fas fa-star"></i>
+                  {{ resource.rating }}
+                </span>
+                <span class="meta-item" *ngIf="resource.size">
+                  <i class="fas fa-hdd"></i>
+                  {{ resource.size }}
+                </span>
+                <span class="meta-item" *ngIf="resource.duration">
+                  <i class="fas fa-clock"></i>
+                  {{ resource.duration }}
+                </span>
+              </div>
+              <div class="resource-tags">
+                <span class="tag" *ngFor="let tag of resource.tags">{{ tag }}</span>
+              </div>
+            </div>
+            <div class="resource-footer">
+              <button class="btn-secondary" (click)="viewResource(resource.id)">
+                <i class="fas fa-eye"></i>
+                View
+              </button>
+              <button class="btn-primary" (click)="downloadResource(resource.id)">
+                <i class="fas fa-download"></i>
+                Download
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- FAQs Section -->
+        <div class="faq-section" *ngIf="selectedResourceCategory === 'faq'">
+          <div class="faq-header">
+            <h3>Frequently Asked Questions</h3>
+            <p>Find answers to common questions about mentoring on our platform</p>
+          </div>
+          <div class="faq-list">
+            <div class="faq-item" *ngFor="let faq of faqItems">
+              <div class="faq-question" (click)="toggleFaq(faq.id)">
+                <h4>{{ faq.question }}</h4>
+                <i class="fas fa-chevron-down"></i>
+              </div>
+              <div class="faq-answer">
+                <p>{{ faq.answer }}</p>
+                <div class="faq-category">
+                  <span class="badge">{{ faq.category | titlecase }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="quick-links">
+          <h3>Quick Links</h3>
+          <div class="links-grid">
+            <a href="#" class="quick-link-card">
+              <i class="fas fa-headset"></i>
+              <h4>Contact Support</h4>
+              <p>Get help from our support team</p>
+            </a>
+            <a href="#" class="quick-link-card">
+              <i class="fas fa-users"></i>
+              <h4>Mentor Community</h4>
+              <p>Join our mentor community forum</p>
+            </a>
+            <a href="#" class="quick-link-card">
+              <i class="fas fa-certificate"></i>
+              <h4>Get Certified</h4>
+              <p>Earn mentor certification badges</p>
+            </a>
+            <a href="#" class="quick-link-card">
+              <i class="fas fa-graduation-cap"></i>
+              <h4>Training Programs</h4>
+              <p>Enroll in advanced mentor training</p>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Account Settings Section -->
+      <div *ngIf="activeSection === 'settings'" class="settings-section">
+        <!-- Settings Header -->
+        <div class="settings-header">
+          <div>
+            <h2>Account Settings</h2>
+            <p>Manage your account information, preferences, and security settings</p>
+          </div>
+        </div>
+
+        <!-- Settings Tabs -->
+        <div class="settings-tabs">
+          <button 
+            class="settings-tab"
+            [class.active]="activeSettingsTab === 'profile'"
+            (click)="setSettingsTab('profile')">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+          </button>
+          <button 
+            class="settings-tab"
+            [class.active]="activeSettingsTab === 'security'"
+            (click)="setSettingsTab('security')">
+            <i class="fas fa-shield-alt"></i>
+            <span>Security</span>
+          </button>
+          <button 
+            class="settings-tab"
+            [class.active]="activeSettingsTab === 'notifications'"
+            (click)="setSettingsTab('notifications')">
+            <i class="fas fa-bell"></i>
+            <span>Notifications</span>
+          </button>
+          <button 
+            class="settings-tab"
+            [class.active]="activeSettingsTab === 'availability'"
+            (click)="setSettingsTab('availability')">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Availability</span>
+          </button>
+          <button 
+            class="settings-tab"
+            [class.active]="activeSettingsTab === 'billing'"
+            (click)="setSettingsTab('billing')">
+            <i class="fas fa-credit-card"></i>
+            <span>Billing</span>
+          </button>
+          <button 
+            class="settings-tab"
+            [class.active]="activeSettingsTab === 'privacy'"
+            (click)="setSettingsTab('privacy')">
+            <i class="fas fa-lock"></i>
+            <span>Privacy</span>
+          </button>
+        </div>
+
+        <!-- Profile Settings -->
+        <div *ngIf="activeSettingsTab === 'profile'" class="settings-content">
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <h3>Profile Information</h3>
+              <p>Update your personal information and profile details</p>
+            </div>
+            <div class="settings-form">
+              <div class="avatar-section">
+                <div class="avatar-preview">
+                  <img [src]="mentorProfile.avatar" alt="Avatar">
+                  <div class="avatar-overlay">
+                    <i class="fas fa-camera"></i>
+                  </div>
+                </div>
+                <div>
+                  <label class="file-upload-btn">
+                    <input type="file" accept="image/*" (change)="uploadAvatar($event)" style="display: none;">
+                    <i class="fas fa-upload"></i>
+                    Upload Photo
+                  </label>
+                  <p class="help-text">JPG, PNG or GIF. Max size 2MB</p>
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label>First Name</label>
+                  <input type="text" [(ngModel)]="mentorProfile.firstName" placeholder="First Name">
+                </div>
+                <div class="form-group">
+                  <label>Last Name</label>
+                  <input type="text" [(ngModel)]="mentorProfile.lastName" placeholder="Last Name">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Email Address</label>
+                  <input type="email" [(ngModel)]="mentorProfile.email" placeholder="Email">
+                </div>
+                <div class="form-group">
+                  <label>Phone Number</label>
+                  <input type="tel" [(ngModel)]="mentorProfile.phone" placeholder="Phone">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Location</label>
+                <input type="text" [(ngModel)]="mentorProfile.location" placeholder="City, Country">
+              </div>
+
+              <div class="form-group">
+                <label>Bio</label>
+                <textarea [(ngModel)]="mentorProfile.bio" rows="4" placeholder="Tell us about yourself"></textarea>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Website</label>
+                  <input type="url" [(ngModel)]="mentorProfile.website" placeholder="https://">
+                </div>
+                <div class="form-group">
+                  <label>LinkedIn</label>
+                  <input type="url" [(ngModel)]="mentorProfile.linkedin" placeholder="LinkedIn URL">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Twitter</label>
+                <input type="url" [(ngModel)]="mentorProfile.twitter" placeholder="Twitter URL">
+              </div>
+
+              <div class="form-actions">
+                <button class="btn-primary" (click)="updateProfile()">
+                  <i class="fas fa-save"></i>
+                  Save Changes
+                </button>
+                <button class="btn-secondary">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Security Settings -->
+        <div *ngIf="activeSettingsTab === 'security'" class="settings-content">
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <h3>Change Password</h3>
+              <p>Update your password to keep your account secure</p>
+            </div>
+            <div class="settings-form">
+              <div class="form-group">
+                <label>Current Password</label>
+                <input type="password" [(ngModel)]="passwordForm.currentPassword" placeholder="Enter current password">
+              </div>
+              <div class="form-group">
+                <label>New Password</label>
+                <input type="password" [(ngModel)]="passwordForm.newPassword" placeholder="Enter new password">
+                <p class="help-text">Must be at least 8 characters long</p>
+              </div>
+              <div class="form-group">
+                <label>Confirm New Password</label>
+                <input type="password" [(ngModel)]="passwordForm.confirmPassword" placeholder="Confirm new password">
+              </div>
+              <div class="form-actions">
+                <button class="btn-primary" (click)="changePassword()">
+                  <i class="fas fa-key"></i>
+                  Update Password
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <h3>Two-Factor Authentication</h3>
+              <p>Add an extra layer of security to your account</p>
+            </div>
+            <div class="settings-form">
+              <div class="toggle-setting">
+                <div>
+                  <h4>Enable Two-Factor Authentication</h4>
+                  <p>Require a verification code in addition to your password</p>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" [(ngModel)]="securitySettings.twoFactorAuth" (change)="toggleTwoFactorAuth()">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <h3>Login Alerts</h3>
+              <p>Get notified when someone logs into your account</p>
+            </div>
+            <div class="settings-form">
+              <div class="toggle-setting">
+                <div>
+                  <h4>Email Login Alerts</h4>
+                  <p>Receive email notifications for new login sessions</p>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" [(ngModel)]="securitySettings.loginAlerts" (change)="updateSecurity()">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <h3>Active Sessions</h3>
+              <p>Manage your active login sessions</p>
+            </div>
+            <div class="sessions-list">
+              <div class="session-item" *ngFor="let device of securitySettings.deviceManagement">
+                <div class="session-info">
+                  <i class="fas fa-desktop"></i>
+                  <div>
+                    <h4>{{ device.device }}</h4>
+                    <p>{{ device.location }} • {{ device.lastActive }}</p>
+                  </div>
+                </div>
+                <div class="session-status">
+                  <span class="badge verified" *ngIf="device.trusted">
+                    <i class="fas fa-check-circle"></i> Trusted
+                  </span>
+                  <button class="btn-secondary">Revoke</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notifications Settings -->
+        <div *ngIf="activeSettingsTab === 'notifications'" class="settings-content">
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <h3>Email Notifications</h3>
+              <p>Choose which email notifications you want to receive</p>
+            </div>
+            <div class="settings-form">
+              <div class="toggle-setting" *ngFor="let setting of notificationSettings.emailNotifications | keyvalue">
+                <div>
+                  <h4>{{ setting.key | titlecase }}</h4>
+                  <p>{{ getNotificationDescription(setting.key) }}</p>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" [checked]="getEmailNotificationValue(setting.key)" (change)="setEmailNotificationValue(setting.key, $any($event.target).checked)">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <h3>Push Notifications</h3>
+              <p>Manage browser and mobile push notifications</p>
+            </div>
+            <div class="settings-form">
+              <div class="toggle-setting" *ngFor="let setting of notificationSettings.pushNotifications | keyvalue">
+                <div>
+                  <h4>{{ setting.key | titlecase }}</h4>
+                  <p>{{ getNotificationDescription(setting.key) }}</p>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" [checked]="getPushNotificationValue(setting.key)" (change)="setPushNotificationValue(setting.key, $any($event.target).checked)">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Availability Settings -->
+        <div *ngIf="activeSettingsTab === 'availability'" class="settings-content">
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <h3>Availability Settings</h3>
+              <p>Set your working hours and availability preferences</p>
+            </div>
+            <div class="settings-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Timezone</label>
+                  <select [(ngModel)]="availabilitySettings.timezone">
+                    <option>Asia/Kolkata (IST)</option>
+                    <option>America/New_York (EST)</option>
+                    <option>Europe/London (GMT)</option>
+                    <option>Asia/Tokyo (JST)</option>
+                  </select>
+                </div>
+                <div class="form-row-inline">
+                  <div class="form-group">
+                    <label>Max Mentees</label>
+                    <input type="number" [(ngModel)]="availabilitySettings.maxMentees" min="1" max="50">
+                  </div>
+                  <div class="form-group">
+                    <label>Session Duration (min)</label>
+                    <input type="number" [(ngModel)]="availabilitySettings.sessionDuration" min="30" step="15">
+                  </div>
+                  <div class="form-group">
+                    <label>Buffer Time (min)</label>
+                    <input type="number" [(ngModel)]="availabilitySettings.bufferTime" min="0" step="5">
+                  </div>
+                </div>
+              </div>
+
+              <div class="availability-schedule">
+                <h4>Weekly Schedule</h4>
+                <div class="schedule-item" *ngFor="let day of availabilitySettings.availability">
+                  <div class="schedule-day">
+                    <label class="toggle-switch">
+                      <input type="checkbox" [checked]="day.enabled" (change)="toggleDayAvailability(day.day)">
+                      <span class="slider"></span>
+                    </label>
+                    <span class="day-name">{{ day.day }}</span>
+                  </div>
+                  <div class="schedule-time" *ngIf="day.enabled">
+                    <input type="time" [(ngModel)]="day.startTime">
+                    <span>to</span>
+                    <input type="time" [(ngModel)]="day.endTime">
+                  </div>
+                  <div class="schedule-time" *ngIf="!day.enabled">
+                    <span class="unavailable">Unavailable</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button class="btn-primary" (click)="updateAvailability()">
+                  <i class="fas fa-save"></i>
+                  Save Availability
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Billing Settings -->
+        <div *ngIf="activeSettingsTab === 'billing'" class="settings-content">
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <h3>Billing Information</h3>
+              <p>Manage your billing address and tax information</p>
+            </div>
+            <div class="settings-form">
+              <div class="form-group">
+                <label>Tax ID / GSTIN</label>
+                <input type="text" [(ngModel)]="billingSettings.taxId" placeholder="Tax ID">
+              </div>
+              <div class="form-group">
+                <label>Street Address</label>
+                <input type="text" [(ngModel)]="billingSettings.billingAddress.street" placeholder="Street">
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>City</label>
+                  <input type="text" [(ngModel)]="billingSettings.billingAddress.city" placeholder="City">
+                </div>
+                <div class="form-group">
+                  <label>State</label>
+                  <input type="text" [(ngModel)]="billingSettings.billingAddress.state" placeholder="State">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Zip Code</label>
+                  <input type="text" [(ngModel)]="billingSettings.billingAddress.zipCode" placeholder="Zip Code">
+                </div>
+                <div class="form-group">
+                  <label>Country</label>
+                  <input type="text" [(ngModel)]="billingSettings.billingAddress.country" placeholder="Country">
+                </div>
+              </div>
+              <div class="form-actions">
+                <button class="btn-primary" (click)="updateBilling()">
+                  <i class="fas fa-save"></i>
+                  Save Billing Info
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <h3>Invoice Settings</h3>
+              <p>Configure how invoices are generated and sent</p>
+            </div>
+            <div class="settings-form">
+              <div class="toggle-setting">
+                <div>
+                  <h4>Auto-generate Invoices</h4>
+                  <p>Automatically generate invoices for completed sessions</p>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" [(ngModel)]="billingSettings.invoiceSettings.autoGenerate" (change)="updateBilling()">
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <div class="form-group">
+                <label>Invoice Email</label>
+                <input type="email" [(ngModel)]="billingSettings.invoiceSettings.emailTo" placeholder="Email">
+              </div>
+              <div class="toggle-setting">
+                <div>
+                  <h4>Include Session Details</h4>
+                  <p>Include detailed session information in invoices</p>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" [(ngModel)]="billingSettings.invoiceSettings.includeDetails" (change)="updateBilling()">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Privacy Settings -->
+        <div *ngIf="activeSettingsTab === 'privacy'" class="settings-content">
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <h3>Profile Visibility</h3>
+              <p>Control who can see your profile information</p>
+            </div>
+            <div class="settings-form">
+              <div class="form-group">
+                <label>Profile Visibility</label>
+                <select [(ngModel)]="privacySettings.profileVisibility" (change)="updatePrivacy()">
+                  <option value="public">Public - Visible to everyone</option>
+                  <option value="verified-only">Verified Only - Only verified mentees</option>
+                  <option value="private">Private - Only my mentees</option>
+                </select>
+              </div>
+              <div class="toggle-setting">
+                <div>
+                  <h4>Show Email Address</h4>
+                  <p>Display your email on your public profile</p>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" [(ngModel)]="privacySettings.showEmail" (change)="updatePrivacy()">
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <div class="toggle-setting">
+                <div>
+                  <h4>Show Phone Number</h4>
+                  <p>Display your phone number on your public profile</p>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" [(ngModel)]="privacySettings.showPhone" (change)="updatePrivacy()">
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <div class="toggle-setting">
+                <div>
+                  <h4>Show Location</h4>
+                  <p>Display your location on your public profile</p>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" [(ngModel)]="privacySettings.showLocation" (change)="updatePrivacy()">
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <div class="toggle-setting">
+                <div>
+                  <h4>Allow Direct Messaging</h4>
+                  <p>Allow mentees to send you direct messages</p>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" [(ngModel)]="privacySettings.allowMenteeMessaging" (change)="updatePrivacy()">
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <div class="toggle-setting">
+                <div>
+                  <h4>Allow Session Recordings</h4>
+                  <p>Allow mentees to record sessions for review</p>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" [(ngModel)]="privacySettings.allowSessionRecordings" (change)="updatePrivacy()">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <h3>Data Sharing</h3>
+              <p>Control how your data is used and shared</p>
+            </div>
+            <div class="settings-form">
+              <div class="toggle-setting" *ngFor="let setting of privacySettings.dataSharing | keyvalue">
+                <div>
+                  <h4>{{ setting.key | titlecase }}</h4>
+                  <p>{{ getDataSharingDescription(setting.key) }}</p>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" [checked]="getDataSharingValue(setting.key)" (change)="setDataSharingValue(setting.key, $any($event.target).checked)">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <h3>Data Management</h3>
+              <p>Export or delete your account data</p>
+            </div>
+            <div class="settings-form">
+              <div class="data-actions">
+                <button class="btn-secondary" (click)="exportData()">
+                  <i class="fas fa-download"></i>
+                  Export My Data
+                </button>
+                <p class="help-text">Download a copy of all your account data</p>
+              </div>
+              <div class="danger-zone">
+                <h4>Danger Zone</h4>
+                <div class="danger-actions">
+                  <button class="btn-danger-outline" (click)="deactivateAccount()">
+                    <i class="fas fa-user-slash"></i>
+                    Deactivate Account
+                  </button>
+                  <button class="btn-danger" (click)="deleteAccount()">
+                    <i class="fas fa-trash-alt"></i>
+                    Delete Account
+                  </button>
+                </div>
+                <p class="help-text warning">These actions cannot be undone. Please proceed with caution.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Other sections placeholder -->
+      <div *ngIf="activeSection !== 'overview' && activeSection !== 'mentees' && activeSection !== 'programs' && activeSection !== 'sessions' && activeSection !== 'earnings' && activeSection !== 'resources' && activeSection !== 'settings'" class="placeholder-section">
+        <div class="placeholder-content">
+          <i class="fas fa-cog"></i>
+          <h2>{{ getSectionTitle() }}</h2>
+          <p>This section is under development</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+

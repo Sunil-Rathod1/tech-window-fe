@@ -1,0 +1,804 @@
+<!-- Home Component - Fully Responsive Design -->
+
+<!-- Hero Section -->
+
+
+<!-- Trending Courses Section -->
+<section class="trending-courses-section">
+  <div class="trending-container">
+    <h2 class="trending-title">
+      <span class="trending-light">TRENDING </span>
+      <span class="trending-bold">COURSES</span>
+    </h2>
+
+    <!-- API Data Display (when available) -->
+    <div class="trending-grid" *ngIf="trendingCourses && trendingCourses.length > 0">
+      <div class="trending-card" *ngFor="let course of trendingCourses" (click)="navigateToCoursepopup(course)"
+        style="cursor: pointer;">
+        <div class="trending-icon-bg" [ngClass]="getTrendingCourseBgClass(course.title)">
+          <div class="trending-icon">{{ getTrendingCourseIcon(course.title) }}</div>
+        </div>
+        <div class="trending-label">{{ course.title }}</div>
+        <!-- <div class="trending-stats" *ngIf="course.students || course.rating">
+          <div class="trending-students" *ngIf="course.students">
+            <i class="fa fa-users"></i>
+            {{ course.students | number }} students
+          </div>
+          <div class="trending-rating" *ngIf="course.rating">
+            <i class="fa fa-star"></i>
+            {{ course.rating }}
+          </div>
+        </div> -->
+      </div>
+    </div>
+
+    <!-- Static Data Fallback (when API data is not available) -->
+    <div class="trending-grid">
+      <!-- <div class="trending-card" *ngFor="let course of trendingcoursesList"
+       (click)="navigateToCoursepopup(course)" style="cursor: pointer;">
+        <div class="trending-icon-bg " [ngClass]="course.class">
+          <div class="trending-icon">📊</div>
+        </div>
+        <div class="trending-label">{{course.courseName}}</div>
+      </div> -->
+
+      <!-- <div class="trending-card" (click)="navigateToCourseInstitutes('Power BI')" style="cursor: pointer;">
+        <div class="trending-icon-bg powerbi-bg">
+          <div class="trending-icon">📊</div>
+        </div>
+        <div class="trending-label">Power BI</div>
+      </div>
+      
+      <div class="trending-card" (click)="navigateToCourseInstitutes('Testing Tools')" style="cursor: pointer;">
+        <div class="trending-icon-bg testing-bg">
+          <div class="trending-icon">🔍</div>
+        </div>
+        <div class="trending-label">Testing Tools</div>
+      </div>
+      
+      <div class="trending-card" (click)="navigateToCourseInstitutes('Azure')" style="cursor: pointer;">
+        <div class="trending-icon-bg azure-bg">
+          <div class="trending-icon">☁️</div>
+        </div>
+        <div class="trending-label">Azure</div>
+      </div>
+      
+      <div class="trending-card" (click)="navigateToCourseInstitutes('SAP')" style="cursor: pointer;">
+        <div class="trending-icon-bg sap-bg">
+          <div class="trending-icon">SAP</div>
+        </div>
+        <div class="trending-label">SAP</div>
+      </div>
+      
+      <div class="trending-card" (click)="navigateToCourseInstitutes('AWS')" style="cursor: pointer;">
+        <div class="trending-icon-bg aws-bg">
+          <div class="trending-icon">AWS</div>
+        </div>
+        <div class="trending-label">AWS</div>
+      </div>
+      
+      <div class="trending-card" (click)="navigateToCourseInstitutes('Java')" style="cursor: pointer;">
+        <div class="trending-icon-bg java-bg">
+          <div class="trending-icon">☕</div>
+        </div>
+        <div class="trending-label">Java</div>
+      </div>
+      
+      <div class="trending-card" (click)="navigateToCourseInstitutes('Microsoft .NET')" style="cursor: pointer;">
+        <div class="trending-icon-bg dotnet-bg">
+          <div class="trending-icon">.NET</div>
+        </div>
+        <div class="trending-label">Microsoft .NET</div>
+      </div> -->
+    </div>
+  </div>
+</section>
+
+<!-- Our Highlights Section -->
+<section class="highlights-section">
+  <div class="highlights-container">
+    <h2 class="highlights-title">
+      <span class="highlights-outline">OUR </span>
+      <span class="highlights-solid">HIGHLIGHTS</span>
+    </h2>
+
+    <div class="highlights-stats">
+      <!-- Trainers -->
+      <div class="highlight-stat-card">
+        <div class="stat-icon-wrapper trainers-icon">
+          <i class="fa-solid fa-chalkboard-user"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-number">350+</div>
+          <div class="stat-label">Expert Trainers</div>
+        </div>
+      </div>
+
+      <!-- Students -->
+      <div class="highlight-stat-card">
+        <div class="stat-icon-wrapper students-icon">
+          <i class="fa-solid fa-users"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-number">7000+</div>
+          <div class="stat-label">Happy Students</div>
+        </div>
+      </div>
+
+      <!-- Courses -->
+      <div class="highlight-stat-card">
+        <div class="stat-icon-wrapper courses-icon">
+          <i class="fa-solid fa-graduation-cap"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-number">300+</div>
+          <div class="stat-label">Quality Courses</div>
+        </div>
+      </div>
+
+      <!-- Placements -->
+      <div class="highlight-stat-card">
+        <div class="stat-icon-wrapper placements-icon">
+          <i class="fa-solid fa-briefcase"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-number">3000+</div>
+          <div class="stat-label">Successful Placements</div>
+        </div>
+      </div>
+
+      <!-- Institutes -->
+      <div class="highlight-stat-card">
+        <div class="stat-icon-wrapper institutes-icon">
+          <i class="fa-solid fa-building-columns"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-number">250+</div>
+          <div class="stat-label">Partner Institutes</div>
+        </div>
+      </div>
+
+      <!-- Certificates -->
+      <!-- <div class="highlight-stat-card">
+        <div class="stat-icon-wrapper certificates-icon">
+          <i class="fa fa-certificate"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-number">1500+</div>
+          <div class="stat-label">Certificates Issued</div>
+        </div>
+      </div> -->
+    </div>
+  </div>
+</section>
+
+<!-- Amazing Features Section -->
+<section class="amazing-features-section">
+  <div class="amazing-features-container">
+    <h2 class="amazing-features-title">
+      <span class="amazing-light">AMAZING </span>
+      <span class="amazing-bold">FEATURES</span>
+    </h2>
+
+    <div class="amazing-features-grid">
+      <!-- Resume Building -->
+      <div class="amazing-feature-card">
+        <div class="amazing-feature-icon">
+          <i class="fa fa-file-text-o"></i>
+        </div>
+        <h3 class="amazing-feature-title">RESUME BUILDING</h3>
+        <p class="amazing-feature-description">Professional resumes crafted by our experts to fetch more calls</p>
+      </div>
+
+      <!-- Skill Training -->
+      <div class="amazing-feature-card">
+        <div class="amazing-feature-icon">
+          <i class="fa fa-graduation-cap"></i>
+        </div>
+        <h3 class="amazing-feature-title">SKILL TRAINING</h3>
+        <p class="amazing-feature-description">Learn the latest technologies from our skilled trainers</p>
+      </div>
+
+      <!-- Real-Time Projects -->
+      <div class="amazing-feature-card">
+        <div class="amazing-feature-icon">
+          <i class="fa fa-lightbulb-o"></i>
+        </div>
+        <h3 class="amazing-feature-title">REAL-TIME PROJECTS</h3>
+        <p class="amazing-feature-description">Hands-on experience on real-time projects with our internship program</p>
+      </div>
+
+      <!-- Interview Support -->
+      <div class="amazing-feature-card">
+        <div class="amazing-feature-icon">
+          <i class="fa fa-users"></i>
+        </div>
+        <h3 class="amazing-feature-title">INTERVIEW SUPPORT</h3>
+        <p class="amazing-feature-description">Guided approach to crack the interviews</p>
+      </div>
+
+      <!-- Work Assistance -->
+      <div class="amazing-feature-card">
+        <div class="amazing-feature-icon">
+          <i class="fa fa-laptop"></i>
+        </div>
+        <h3 class="amazing-feature-title">WORK ASSISTANCE</h3>
+        <p class="amazing-feature-description">Get help in your work projects from experts</p>
+      </div>
+
+      <!-- Job Assistance -->
+      <div class="amazing-feature-card">
+        <div class="amazing-feature-icon">
+          <i class="fa fa-briefcase"></i>
+        </div>
+        <h3 class="amazing-feature-title">JOB ASSISTANCE</h3>
+        <p class="amazing-feature-description">Get help in finding and securing your dream job</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Our Achievements Section -->
+<section class="achievements-section">
+  <div class="achievements-container">
+    <h2 class="achievements-title">
+      <span class="achievements-outline">OUR </span>
+      <span class="achievements-solid">ACHIEVEMENTS</span>
+    </h2>
+    <p class="achievements-subtitle">Some of the Companies we've helped recurit excellent applicants over the years</p>
+
+    <div class="achievements-logos" [class.show-all]="showAllAchievements">
+      <div class="company-logo" *ngFor="let logo of companyLogos; let i = index"
+        [class.hidden]="!showAllAchievements && i >= 8" [class]="logo.specialClass">
+        <div class="logo-icon">{{logo.icon}}</div>
+        <div class="logo-text" [innerHTML]="logo.name"></div>
+      </div>
+    </div>
+
+    <!-- View More Button -->
+    <div class="view-more-container">
+      <button class="view-more-btn" (click)="toggleAchievements()">
+        <span *ngIf="!showAllAchievements">View More</span>
+        <span *ngIf="showAllAchievements">View Less</span>
+        <i class="fas" [class.fa-chevron-down]="!showAllAchievements" [class.fa-chevron-up]="showAllAchievements"></i>
+      </button>
+    </div>
+
+    <!-- API Achievements Stats -->
+    <div class="achievements-stats" *ngIf="achievements && achievements.length > 0">
+      <div class="achievement-stat" *ngFor="let achievement of achievements">
+        <div class="achievement-icon">
+          <i [class]="achievement.icon"></i>
+        </div>
+        <div class="achievement-content">
+          <div class="achievement-count">{{achievement.count}}</div>
+          <div class="achievement-title">{{achievement.title}}</div>
+          <div class="achievement-description">{{achievement.description}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+  <div class="features-container">
+    <div class="text-center">
+      <h2 class="features-title">
+        <span class="features-light">EXPLORE </span>
+        <span class="features-bold">OUR SERVICES</span>
+      </h2>
+    </div>
+
+    <div class="features-grid">
+      <!-- Courses Card -->
+      <div class="feature-card" routerLink="/Courses">
+        <div class="feature-icon-bg courses-bg">
+          <div class="feature-icon">📚</div>
+        </div>
+        <div class="feature-label">Courses</div>
+      </div>
+
+      <!-- Institutes Card -->
+      <div class="feature-card" routerLink="/Institutes">
+        <div class="feature-icon-bg institutes-bg">
+          <div class="feature-icon">🏫</div>
+        </div>
+        <div class="feature-label">Institutes</div>
+      </div>
+
+      <!-- Mentors Card -->
+      <div class="feature-card" routerLink="/Mentors">
+        <div class="feature-icon-bg mentors-bg">
+          <div class="feature-icon">👨‍🏫</div>
+        </div>
+        <div class="feature-label">Mentors</div>
+      </div>
+
+      <!-- Internships Card -->
+      <div class="feature-card" routerLink="/Internships">
+        <div class="feature-icon-bg internships-bg">
+          <div class="feature-icon">💼</div>
+        </div>
+        <div class="feature-label">Internships</div>
+      </div>
+
+      <!-- Jobs Card -->
+      <div class="feature-card" routerLink="/Jobs">
+        <div class="feature-icon-bg jobs-bg">
+          <div class="feature-icon">💼</div>
+        </div>
+        <div class="feature-label">Jobs</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Reviews and Feedback Section -->
+<section class="reviews-feedback-section">
+  <div class="reviews-feedback-container">
+    <h2 class="reviews-section-title">
+      <span class="reviews-title-outline">WHAT OUR </span>
+      <span class="reviews-title-solid">STUDENTS SAY</span>
+    </h2>
+    <p class="reviews-section-subtitle">Real feedback from students who transformed their careers with us</p>
+
+    <!-- Pagination Dots -->
+    <div class="pagination-dots" *ngIf="reviews.length > 1">
+      <div class="dot" *ngFor="let review of reviews; let i = index" [class.active]="currentReviewIndex === i"
+        (click)="goToReview(i)">
+      </div>
+    </div>
+
+    <!-- Reviews Container -->
+    <div class="reviews-container">
+      <div class="review-slide" *ngFor="let review of reviews; let i = index" [class.active]="currentReviewIndex === i">
+        <div class="review-content">
+          <div class="review-rating">
+            <span class="star" *ngFor="let star of [1,2,3,4,5]" [class.filled]="star <= (review.rating || 5)">
+              <i class="fa fa-star"></i>
+            </span>
+          </div>
+          <div class="review-text">
+            "{{review.text || review.review}}"
+          </div>
+          <div class="review-author-info">
+            <div class="review-author-avatar">
+              <img *ngIf="review.avatar" [src]="review.avatar" [alt]="review.studentName || review.author"
+                (error)="hideImageOnError($event)">
+              <span *ngIf="!review.avatar" class="avatar-initial">{{getReviewAuthorInitial(review)}}</span>
+            </div>
+            <div class="review-author-details">
+              <div class="review-author">
+                {{review.studentName || review.author}}
+              </div>
+              <div class="review-meta" *ngIf="review.course || review.company">
+                <span *ngIf="review.course">{{review.course}}</span>
+                <span *ngIf="review.company && review.course"> • </span>
+                <span *ngIf="review.company">{{review.company}}</span>
+                <span *ngIf="review.position">, {{review.position}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Arrows -->
+    <div class="navigation-arrows" *ngIf="reviews.length > 1">
+      <button class="nav-arrow prev" (click)="previousReview()">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <button class="nav-arrow next" (click)="nextReview()">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Available Jobs Preview Section -->
+<!-- <section class="home-jobs-section">
+  <div class="home-jobs-container">
+    <div class="home-jobs-header">
+      <h2 class="home-jobs-title">
+        <span class="home-jobs-light">AVAILABLE </span>
+        <span class="home-jobs-bold">JOBS</span>
+      </h2>
+      <a class="home-jobs-viewall" routerLink="/Jobs">View all jobs <i class="fa fa-arrow-right"></i></a>
+    </div>
+
+    <div class="home-jobs-grid">
+      <div class="home-job-card" routerLink="/Jobs">
+        <div class="home-job-header">
+          <img src="assets/photos/company1.png" alt="TechCorp Solutions" class="home-job-logo" onerror="this.src='assets/photos/Courses_Icon.png'">
+          <div class="home-job-meta">
+            <span class="home-job-type home-job-type-fulltime">Full-time</span>
+            <span class="home-job-category">Technology</span>
+          </div>
+        </div>
+        <div class="home-job-body">
+          <h3 class="home-job-title">Senior Software Engineer</h3>
+          <p class="home-job-company">TechCorp Solutions</p>
+          <p class="home-job-location"><i class="fa fa-map-marker"></i> San Francisco</p>
+        </div>
+      </div>
+
+      <div class="home-job-card" routerLink="/Jobs">
+        <div class="home-job-header">
+          <img src="assets/photos/company2.png" alt="Growth Marketing Inc" class="home-job-logo" onerror="this.src='assets/photos/Courses_Icon.png'">
+          <div class="home-job-meta">
+            <span class="home-job-type home-job-type-fulltime">Full-time</span>
+            <span class="home-job-category">Marketing</span>
+          </div>
+        </div>
+        <div class="home-job-body">
+          <h3 class="home-job-title">Digital Marketing Manager</h3>
+          <p class="home-job-company">Growth Marketing Inc</p>
+          <p class="home-job-location"><i class="fa fa-map-marker"></i> New York</p>
+        </div>
+      </div>
+
+      <div class="home-job-card" routerLink="/Jobs">
+        <div class="home-job-header">
+          <img src="assets/photos/company4.png" alt="Analytics Pro" class="home-job-logo" onerror="this.src='assets/photos/Courses_Icon.png'">
+          <div class="home-job-meta">
+            <span class="home-job-type home-job-type-fulltime">Full-time</span>
+            <span class="home-job-category">Technology</span>
+          </div>
+        </div>
+        <div class="home-job-body">
+          <h3 class="home-job-title">Data Scientist</h3>
+          <p class="home-job-company">Analytics Pro</p>
+          <p class="home-job-location"><i class="fa fa-map-marker"></i> Bangalore</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="home-jobs-cta">
+      <a class="btn btn-primary" routerLink="/Jobs"><i class="fa fa-briefcase"></i> Explore all jobs</a>
+    </div>
+  </div>
+</section> -->
+
+<!-- Featured Content Section -->
+<section class="featured-section" *ngIf="false">
+  <div class="featured-container">
+    <!-- Featured Courses -->
+    <div class="featured-category" *ngIf="featuredCourses.length > 0">
+      <h2 class="featured-title">Featured Courses</h2>
+      <div class="featured-grid">
+        <div class="featured-card" *ngFor="let course of featuredCourses.slice(0, 3)"
+          [routerLink]="['/Course-details', course.id]">
+          <div class="featured-image">
+            <img [src]="course.image" [alt]="course.title">
+            <div class="featured-overlay">
+              <span class="featured-price">${{course.price}}</span>
+            </div>
+          </div>
+          <div class="featured-content">
+            <h3 class="featured-card-title">{{course.title}}</h3>
+            <p class="featured-description">{{course.subtitle}}</p>
+            <div class="featured-meta">
+              <span class="featured-rating">
+                <i class="fa fa-star"></i>
+                {{course.rating}}
+              </span>
+              <span class="featured-students">
+                <i class="fa fa-users"></i>
+                {{course.enrolledStudents}} students
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Featured Institutes -->
+    <div class="featured-category" *ngIf="featuredInstitutes.length > 0">
+      <h2 class="featured-title">Featured Institutes</h2>
+      <div class="featured-grid">
+        <div class="featured-card" *ngFor="let institute of featuredInstitutes.slice(0, 3)"
+          [routerLink]="['/institute-details', institute.id]">
+          <div class="featured-image">
+            <img [src]="institute.logo" [alt]="institute.name">
+            <div class="featured-overlay">
+              <span class="featured-verified" *ngIf="institute.isVerified">
+                <i class="fa fa-check-circle"></i> Verified
+              </span>
+            </div>
+          </div>
+          <div class="featured-content">
+            <h3 class="featured-card-title">{{institute.name}}</h3>
+            <p class="featured-description">{{getInstituteDescription(institute)}}</p>
+            <div class="featured-meta">
+              <span class="featured-rating">
+                <i class="fa fa-star"></i>
+                {{getInstituteRating(institute)}}
+              </span>
+              <span class="featured-students">
+                <i class="fa fa-users"></i>
+                {{getInstituteStudentsTotal(institute)}} students
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Featured Trainers -->
+    <div class="featured-category" *ngIf="featuredTrainers.length > 0">
+      <h2 class="featured-title">Featured Trainers</h2>
+      <div class="featured-grid">
+        <div class="featured-card" *ngFor="let trainer of featuredTrainers.slice(0, 3)"
+          [routerLink]="['/trainer-details', trainer.id]">
+          <div class="featured-image">
+            <img [src]="getTrainerAvatar(trainer)" [alt]="getTrainerName(trainer)">
+            <div class="featured-overlay">
+              <span class="featured-price">${{getTrainerHourlyRate(trainer)}}/hr</span>
+            </div>
+          </div>
+          <div class="featured-content">
+            <h3 class="featured-card-title">{{getTrainerName(trainer)}}</h3>
+            <p class="featured-description">{{getTrainerSpecialization(trainer)}}</p>
+            <div class="featured-meta">
+              <span class="featured-rating">
+                <i class="fa fa-star"></i>
+                {{getTrainerRating(trainer)}}
+              </span>
+              <span class="featured-experience">
+                <i class="fa fa-briefcase"></i>
+                {{getTrainerExperience(trainer)}} years
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Featured Mentors -->
+    <div class="featured-category" *ngIf="featuredMentors.length > 0">
+      <h2 class="featured-title">Featured Mentors</h2>
+      <div class="featured-grid">
+        <div class="featured-card" *ngFor="let mentor of featuredMentors.slice(0, 3)"
+          [routerLink]="['/mentor-details', mentor.id]">
+          <div class="featured-image">
+            <img [src]="getMentorAvatar(mentor)" [alt]="getMentorName(mentor)">
+            <div class="featured-overlay">
+              <span class="featured-price">${{getMentorHourlyRate(mentor)}}/hr</span>
+            </div>
+          </div>
+          <div class="featured-content">
+            <h3 class="featured-card-title">{{getMentorName(mentor)}}</h3>
+            <p class="featured-description">{{getMentorDomain(mentor)}}</p>
+            <div class="featured-meta">
+              <span class="featured-rating">
+                <i class="fa fa-star"></i>
+                {{getMentorRating(mentor)}}
+              </span>
+              <span class="featured-experience">
+                <i class="fa fa-briefcase"></i>
+                {{getMentorExperience(mentor)}} years
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Loading State -->
+<!-- <div class="loading-container" *ngIf="loading">
+  <div class="loading-spinner">
+    <i class="fa fa-spinner fa-spin"></i>
+    <p>Loading featured content...</p>
+  </div>
+</div> -->
+
+<!-- Error State -->
+<!-- <div class="error-container" *ngIf="error">ore
+
+<!-- Contact Us Section -->
+<section class="contact-section">
+  <div class="contact-container">
+    <div class="contact-header">
+      <h2 class="contact-title">
+        <span class="contact-light">GET IN </span>
+        <span class="contact-bold">TOUCH</span>
+      </h2>
+      <p class="contact-subtitle">Have questions? We'd love to hear from you. Send us a message and we'll respond as
+        soon as possible.</p>
+    </div>
+
+    <div class="contact-content">
+      <!-- Contact Form -->
+      <div class="contact-form-container">
+        <h3 class="form-title">Send us a Message</h3>
+        <form class="contact-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="firstName">First Name *</label>
+              <input type="text" id="firstName" name="firstName" required>
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name *</label>
+              <input type="text" id="lastName" name="lastName" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address *</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone">
+          </div>
+
+          <div class="form-group">
+            <label for="subject">Subject *</label>
+            <select id="subject" name="subject" required>
+              <option value="">Select a subject</option>
+              <option value="general">General Inquiry</option>
+              <option value="courses">Course Information</option>
+              <option value="support">Technical Support</option>
+              <option value="partnership">Partnership</option>
+              <option value="feedback">Feedback</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="message">Message *</label>
+            <textarea id="message" name="message" rows="5" required
+              placeholder="Tell us more about your inquiry..."></textarea>
+          </div>
+
+          <button type="submit" class="submit-btn">
+            <i class="fa fa-paper-plane"></i>
+            Send Message
+          </button>
+        </form>
+      </div>
+
+      <!-- Contact Information -->
+      <div class="contact-info-container">
+        <h3 class="info-title">Contact Information</h3>
+
+        <div class="contact-info-grid">
+          <div class="contact-info-item">
+            <div class="info-icon">
+              <i class="fa fa-map-marker"></i>
+            </div>
+            <div class="info-content">
+              <h4>Our Office</h4>
+              <p>123 Tech Street, Silicon Valley<br>San Francisco, CA 94105<br>United States</p>
+            </div>
+          </div>
+
+          <div class="contact-info-item">
+            <div class="info-icon">
+              <i class="fa fa-phone"></i>
+            </div>
+            <div class="info-content">
+              <h4>Phone</h4>
+              <p>+1 (555) 123-4567<br>+1 (555) 987-6543</p>
+            </div>
+          </div>
+
+          <div class="contact-info-item">
+            <div class="info-icon">
+              <i class="fa fa-envelope"></i>
+            </div>
+            <div class="info-content">
+              <h4>Email</h4>
+              <p>info@techwindows.com<br>support@techwindows.com</p>
+            </div>
+          </div>
+
+          <div class="contact-info-item">
+            <div class="info-icon">
+              <i class="fa fa-clock-o"></i>
+            </div>
+            <div class="info-content">
+              <h4>Business Hours</h4>
+              <p>Monday - Friday: 9:00 AM - 6:00 PM<br>Saturday: 10:00 AM - 4:00 PM<br>Sunday: Closed</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Social Media Links -->
+        <div class="social-links">
+          <h4>Follow Us</h4>
+          <div class="social-icons">
+            <a href="#" class="social-icon" aria-label="Facebook">
+              <i class="fa fa-facebook"></i>
+            </a>
+            <a href="#" class="social-icon" aria-label="Twitter">
+              <i class="fa fa-twitter"></i>
+            </a>
+            <a href="#" class="social-icon" aria-label="LinkedIn">
+              <i class="fa fa-linkedin"></i>
+            </a>
+            <a href="#" class="social-icon" aria-label="Instagram">
+              <i class="fa fa-instagram"></i>
+            </a>
+            <a href="#" class="social-icon" aria-label="YouTube">
+              <i class="fa fa-youtube"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Registration Popup (removed - now handled by navigation bar) -->
+<!-- <app-registration-popup 
+  *ngIf="showRegistrationPopup" 
+  (close)="closeRegistrationPopup()">
+</app-registration-popup> -->
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-grid">
+      <!-- Company Info -->
+      <div class="footer-section">
+        <h3>TechWindows</h3>
+        <p>Your gateway to professional excellence in software development and technology education.</p>
+        <p>Empowering individuals with the skills they need to succeed in the digital age.</p>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <ul class="footer-links">
+          <li><a href="/Courses">Courses</a></li>
+          <li><a href="/Institutes">Institutes</a></li>
+          <li><a href="/Trainers">Trainers</a></li>
+          <li><a href="/Mentors">Mentors</a></li>
+        </ul>
+      </div>
+
+      <!-- Support -->
+      <div class="footer-section">
+        <h3>Support</h3>
+        <ul class="footer-links">
+          <li><a href="#">Help Center</a></li>
+          <li><a href="#">Contact Us</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Live Chat</a></li>
+        </ul>
+      </div>
+
+      <!-- Legal -->
+      <div class="footer-section">
+        <h3>Legal</h3>
+        <ul class="footer-links">
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Cookie Policy</a></li>
+          <li><a href="#">Data Protection</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Social Media -->
+    <!-- <div class="text-center" style="margin-bottom: 30px;">
+      <h3 style="color: #ffc451; margin-bottom: 20px;">Follow Us</h3>
+      <ul class="footer-social">
+        <li><a href="#" aria-label="Facebook"><i class="fa fa-facebook"></i></a></li>
+        <li><a href="#" aria-label="Twitter"><i class="fa fa-twitter"></i></a></li>
+        <li><a href="#" aria-label="LinkedIn"><i class="fa fa-linkedin"></i></a></li>
+        <li><a href="#" aria-label="Instagram"><i class="fa fa-instagram"></i></a></li>
+        <li><a href="#" aria-label="YouTube"><i class="fa fa-youtube"></i></a></li>
+      </ul>
+    </div> -->
+
+    <!-- Footer Bottom -->
+    <div class="footer-bottom">
+      <p>&copy; 2024 TechWindows. All rights reserved. | Designed with ❤️ for the tech community</p>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,354 @@
+<div class="student-enrollment-wrapper">
+  <!-- Header -->
+  <section class="enrollment-hero">
+    <div class="container">
+      <h1>Complete Your Student Profile</h1>
+      <p>
+        Share your background and aspirations so we can personalise your TechWindows learning experience.
+      </p>
+
+      <div class="progress-container">
+        <div class="progress-track">
+          <div class="progress-fill" [style.width.%]="getProgressPercentage()"></div>
+        </div>
+        <div class="progress-steps">
+          <button
+            type="button"
+            class="step"
+            *ngFor="let step of [1,2,3,4]"
+            [class.active]="currentStep === step"
+            [class.completed]="isStepCompleted(step)"
+            (click)="goToStep(step)">
+            <span class="step-index">{{ step }}</span>
+            <span class="step-label">{{ getStepTitle(step) }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Form -->
+  <section class="enrollment-form">
+    <div class="container">
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="loading-container" style="text-align: center; padding: 40px;">
+        <i class="fas fa-spinner fa-spin" style="font-size: 24px; color: #2563EB;"></i>
+        <p style="margin-top: 10px; color: #64748b;">Loading your profile...</p>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="loadError" class="alert alert-warning" style="margin: 15px 0; padding: 12px; background: #FEF3C7; color: #92400E; border-radius: 6px; border: 1px solid #FCD34D;">
+        <i class="fas fa-exclamation-triangle"></i> {{ loadError }}
+      </div>
+
+      <!-- Success Message -->
+      <div *ngIf="submitSuccess" class="alert alert-success" style="margin: 15px 0; padding: 12px; background: #D1FAE5; color: #065F46; border-radius: 6px; border: 1px solid #6EE7B7;">
+        <i class="fas fa-check-circle"></i> {{ submitSuccess }}
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="submitError" class="alert alert-error" style="margin: 15px 0; padding: 12px; background: #FEE2E2; color: #991B1B; border-radius: 6px; border: 1px solid #FCA5A5;">
+        <i class="fas fa-exclamation-circle"></i> {{ submitError }}
+      </div>
+
+      <form [formGroup]="studentForm" (ngSubmit)="submitEnrollment()" novalidate *ngIf="!isLoading">
+
+        <!-- Step 1 -->
+        <div class="form-step" *ngIf="currentStep === 1">
+          <header class="step-header">
+            <h2>Personal Information</h2>
+            <p>Introduce yourself so mentors and program advisors can get to know you.</p>
+          </header>
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="firstName">First Name *</label>
+              <input id="firstName" type="text" formControlName="firstName" placeholder="Enter your first name">
+              <span class="error" *ngIf="studentForm.get('firstName')?.invalid && studentForm.get('firstName')?.touched">
+                Please enter at least 2 characters
+              </span>
+            </div>
+            <div class="form-field">
+              <label for="lastName">Last Name *</label>
+              <input id="lastName" type="text" formControlName="lastName" placeholder="Enter your last name">
+              <span class="error" *ngIf="studentForm.get('lastName')?.invalid && studentForm.get('lastName')?.touched">
+                Please enter at least 2 characters
+              </span>
+            </div>
+            <div class="form-field">
+              <label for="email">Email Address *</label>
+              <input id="email" type="email" formControlName="email" placeholder="Enter your email address">
+              <span class="error" *ngIf="studentForm.get('email')?.invalid && studentForm.get('email')?.touched">
+                Enter a valid email address
+              </span>
+            </div>
+            <div class="form-field">
+              <label for="phone">Phone Number *</label>
+              <input id="phone" type="tel" maxlength="10" formControlName="phone" placeholder="Enter your 10-digit number">
+              <span class="error" *ngIf="studentForm.get('phone')?.invalid && studentForm.get('phone')?.touched">
+                Enter a valid 10-digit phone number
+              </span>
+            </div>
+            <div class="form-field">
+              <label for="dateOfBirth">Date of Birth</label>
+              <input id="dateOfBirth" type="date" formControlName="dateOfBirth">
+            </div>
+            <div class="form-field">
+              <label for="gender">Gender</label>
+              <select id="gender" formControlName="gender">
+                <option value="">Select gender</option>
+                <option value="female">Female</option>
+                <option value="male">Male</option>
+                <option value="non-binary">Non-binary</option>
+                <option value="prefer-not-to-say">Prefer not to say</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="city">City</label>
+              <input id="city" type="text" formControlName="city" placeholder="Where are you based?">
+            </div>
+            <div class="form-field">
+              <label for="country">Country</label>
+              <input id="country" type="text" formControlName="country" placeholder="Country of residence">
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="form-step" *ngIf="currentStep === 2">
+          <header class="step-header">
+            <h2>Academic Profile</h2>
+            <p>Help us understand your education and technical foundation.</p>
+          </header>
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="highestQualification">Highest Qualification *</label>
+              <select id="highestQualification" formControlName="highestQualification">
+                <option value="">Select qualification</option>
+                <option *ngFor="let qualification of qualifications" [value]="qualification">
+                  {{ qualification }}
+                </option>
+              </select>
+              <span class="error" *ngIf="studentForm.get('highestQualification')?.invalid && studentForm.get('highestQualification')?.touched">
+                Select your qualification
+              </span>
+            </div>
+            <div class="form-field">
+              <label for="fieldOfStudy">Field of Study</label>
+              <select id="fieldOfStudy" formControlName="fieldOfStudy">
+                <option value="">Select field of study</option>
+                <option *ngFor="let field of fieldsOfStudy" [value]="field">{{ field }}</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="institutionName">Institution</label>
+              <input id="institutionName" type="text" formControlName="institutionName" placeholder="College or university name">
+            </div>
+            <div class="form-field">
+              <label for="graduationYear">Graduation Year</label>
+              <input id="graduationYear" type="number" formControlName="graduationYear" placeholder="e.g. 2025">
+            </div>
+            <div class="form-field">
+              <label for="cgpa">CGPA / Percentage</label>
+              <input id="cgpa" type="number" formControlName="cgpa" step="0.01" placeholder="Optional">
+              <span class="helper-text">Provide your latest aggregate score (0 - 10).</span>
+            </div>
+            <div class="form-field">
+              <label>Technical Skills</label>
+              <div class="chip-grid">
+                <label class="chip" *ngFor="let skill of skillsLibrary">
+                  <input type="checkbox" (change)="onSkillChipToggle($event, skill)" [checked]="studentForm.get('skills')?.value?.includes(skill)">
+                  <span>{{ skill }}</span>
+                </label>
+              </div>
+              <div class="selected-chips" *ngIf="studentForm.get('skills')?.value?.length">
+                <span class="chip selected" *ngFor="let skill of studentForm.get('skills')?.value">
+                  {{ skill }}
+                  <button type="button" (click)="removeSkill(skill)" aria-label="Remove skill">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </span>
+              </div>
+            </div>
+            <div class="form-field">
+              <label for="portfolio">Portfolio / GitHub</label>
+              <input id="portfolio" type="url" formControlName="portfolio" placeholder="Share links to your work (optional)">
+            </div>
+            <div class="form-field">
+              <label for="resumeLink">Resume / LinkedIn</label>
+              <input id="resumeLink" type="url" formControlName="resumeLink" placeholder="Link to resume or LinkedIn profile">
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="form-step" *ngIf="currentStep === 3">
+          <header class="step-header">
+            <h2>Goals & Preferences</h2>
+            <p>Tell us where you want to go so we can guide you better.</p>
+          </header>
+          <div class="form-grid">
+            <div class="form-field full-width">
+              <label for="careerGoalStatement">Career Goals</label>
+              <textarea
+                id="careerGoalStatement"
+                rows="4"
+                formControlName="careerGoalStatement"
+                placeholder="Describe the kind of roles, industries, or impact you want to create."></textarea>
+            </div>
+
+            <div class="form-field full-width">
+              <label>Preferred Roles</label>
+              <div class="checkbox-grid">
+                <label class="checkbox-pill" *ngFor="let role of preferredRoles">
+                  <input type="checkbox"
+                         (change)="toggleRole(role, $event)"
+                         [checked]="studentForm.get('desiredRoles')?.value?.includes(role)">
+                  <span>{{ role }}</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label for="learningMode">Preferred Learning Mode</label>
+              <select id="learningMode" formControlName="learningMode">
+                <option value="">Select an option</option>
+                <option *ngFor="let mode of learningModes" [value]="mode">{{ mode }}</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label for="availability">Weekly Availability</label>
+              <select id="availability" formControlName="availability">
+                <option value="">Select availability</option>
+                <option value="Weekdays (Evenings)">Weekdays (Evenings)</option>
+                <option value="Weekends">Weekends</option>
+                <option value="Weekdays & Weekends">Weekdays & Weekends</option>
+                <option value="Flexible">Flexible</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label for="preferredStartDate">Preferred Start Date</label>
+              <input id="preferredStartDate" type="date" formControlName="preferredStartDate">
+            </div>
+
+            <div class="form-field toggle-field">
+              <label>Mentor Guidance</label>
+              <div class="toggle-row">
+                <span>Would you like personalised mentor support?</span>
+                <label class="switch">
+                  <input type="checkbox" formControlName="mentorSupport">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-field toggle-field">
+              <label>Placement Support</label>
+              <div class="toggle-row">
+                <span>Enable placement training & interview readiness?</span>
+                <label class="switch">
+                  <input type="checkbox" formControlName="needPlacementSupport">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="form-step" *ngIf="currentStep === 4">
+          <header class="step-header">
+            <h2>Review & Submit</h2>
+            <p>One last step before you unlock personalised dashboards.</p>
+          </header>
+          <div class="form-grid review-grid">
+            <div class="form-field full-width">
+              <label for="aboutYou">Share Your Story</label>
+              <textarea
+                id="aboutYou"
+                rows="4"
+                formControlName="aboutYou"
+                placeholder="Tell us about your journey, achievements, or anything you'd like mentors to know."></textarea>
+            </div>
+
+            <div class="form-field full-width">
+              <label for="accomplishments">Achievements (Optional)</label>
+              <textarea
+                id="accomplishments"
+                rows="3"
+                formControlName="accomplishments"
+                placeholder="Scholarships, hackathons, certifications, or extracurricular achievements."></textarea>
+            </div>
+
+            <div class="form-field full-width terms">
+              <label class="checkbox-pill">
+                <input type="checkbox" formControlName="agreeToTerms">
+                <span>I confirm that the information provided is accurate.</span>
+              </label>
+              <span class="error" *ngIf="studentForm.get('agreeToTerms')?.invalid && studentForm.get('agreeToTerms')?.touched">
+                Please accept this confirmation
+              </span>
+            </div>
+
+            <div class="form-field full-width terms">
+              <label class="checkbox-pill">
+                <input type="checkbox" formControlName="agreeToPrivacy">
+                <span>I agree to the privacy policy & consent to communication from TechWindows.</span>
+              </label>
+              <span class="error" *ngIf="studentForm.get('agreeToPrivacy')?.invalid && studentForm.get('agreeToPrivacy')?.touched">
+                Please agree to continue
+              </span>
+            </div>
+
+            <div class="summary-card full-width">
+              <h3>You're almost set!</h3>
+              <p>
+                Completing your profile helps us fast-track enrolment, personalise your curriculum, and match you with the right mentors and teams.
+              </p>
+              <ul>
+                <li><i class="fas fa-check-circle"></i> Tailored curriculum roadmap</li>
+                <li><i class="fas fa-check-circle"></i> Dedicated mentor & placement guidance</li>
+                <li><i class="fas fa-check-circle"></i> Career services & mock interviews</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigation -->
+        <footer class="form-actions">
+          <button type="button" class="btn secondary" (click)="previousStep()" [disabled]="currentStep === 1">
+            <i class="fas fa-arrow-left"></i>
+            Back
+          </button>
+
+          <button
+            type="button"
+            class="btn primary"
+            *ngIf="currentStep < totalSteps"
+            (click)="nextStep()">
+            Next
+            <i class="fas fa-arrow-right"></i>
+          </button>
+
+          <button
+            type="submit"
+            class="btn success"
+            *ngIf="currentStep === totalSteps"
+            [disabled]="isSubmitting || !studentForm.valid">
+            <span *ngIf="!isSubmitting">
+              {{ authService.isAuthenticated() && authService.isStudent() ? 'Update Profile' : 'Complete Enrollment' }}
+              <i class="fas fa-check"></i>
+            </span>
+            <span *ngIf="isSubmitting">
+              <i class="fas fa-spinner fa-spin"></i> Saving...
+            </span>
+          </button>
+        </footer>
+      </form>
+    </div>
+  </section>
+</div>
+
+
+

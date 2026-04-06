@@ -1,0 +1,2819 @@
+<div class="institution-dashboard">
+  <!-- Sidebar -->
+  <div class="sidebar" [class.collapsed]="sidebarCollapsed">
+    <div class="sidebar-header">
+      <div class="profile-info" *ngIf="!sidebarCollapsed">
+        <h3>TechWindows Institute</h3>
+        <!-- <p>Premier Tech Education</p> -->
+        <!-- <div class="rating">
+          <i class="fas fa-star"></i>
+          <span>{{ institutionStats.rating }}</span>
+        </div> -->
+      </div>
+      <!-- <div class="institution-profile">
+        <div class="profile-avatar">
+          <img src="https://via.placeholder.com/60x60/9C27B0/ffffff?text=I" alt="Institution Logo">
+        </div>
+        <div class="profile-info" *ngIf="!sidebarCollapsed">
+          <h3>TechWindows Institute</h3>
+          <p>Premier Tech Education</p>
+          <div class="rating">
+            <i class="fas fa-star"></i>
+            <span>{{ institutionStats.rating }}</span>
+          </div>
+        </div>
+      </div> -->
+      <button class="toggle-btn" (click)="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <ul>
+        <li [class.active]="activeSection === 'overview'" (click)="setActiveSection('overview')">
+          <i class="fas fa-chart-pie"></i>
+          <span *ngIf="!sidebarCollapsed">Overview</span>
+        </li>
+        <li [class.active]="activeSection === 'courses'" (click)="setActiveSection('courses')">
+          <i class="fas fa-book"></i>
+          <span *ngIf="!sidebarCollapsed">Courses</span>
+        </li>
+        <li [class.active]="activeSection === 'students'" (click)="setActiveSection('students')">
+          <i class="fas fa-users"></i>
+          <span *ngIf="!sidebarCollapsed">Students</span>
+        </li>
+        <li [class.active]="activeSection === 'trainers'" (click)="setActiveSection('trainers')">
+          <i class="fas fa-chalkboard-teacher"></i>
+          <span *ngIf="!sidebarCollapsed">Trainers</span>
+        </li>
+        <li [class.active]="activeSection === 'batches'" (click)="setActiveSection('batches')">
+          <i class="fas fa-calendar-alt"></i>
+          <span *ngIf="!sidebarCollapsed">Batches</span>
+        </li>
+        <li [class.active]="activeSection === 'analytics'" (click)="setActiveSection('analytics')">
+          <i class="fas fa-chart-line"></i>
+          <span *ngIf="!sidebarCollapsed">Analytics</span>
+        </li>
+        <li [class.active]="activeSection === 'revenue'" (click)="setActiveSection('revenue')">
+          <i class="fas fa-dollar-sign"></i>
+          <span *ngIf="!sidebarCollapsed">Revenue</span>
+        </li>
+        <li [class.active]="activeSection === 'settings'" (click)="setActiveSection('settings')">
+          <i class="fas fa-cog"></i>
+          <span *ngIf="!sidebarCollapsed">Settings</span>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Header -->
+    <!-- <header class="dashboard-header">
+      <div class="header-left">
+        <h1>{{ getSectionTitle() }}</h1>
+        <p>{{ getSectionSubtitle() }}</p>
+      </div>
+      <div class="header-right">
+        <div class="notification-bell">
+          <i class="fas fa-bell"></i>
+          <span class="notification-badge">7</span>
+        </div>
+        <div class="user-menu">
+          <img src="https://via.placeholder.com/40x40/9C27B0/ffffff?text=TI" alt="Institution">
+          <span>TechWindows Institute</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+      </div>
+    </header> -->
+    
+    <!-- Dashboard Content -->
+    <div class="dashboard-content">
+      
+      <!-- Overview Section -->
+      <div *ngIf="activeSection === 'overview'" class="overview-section">
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon students">
+              <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-content">
+              <h3>{{ institutionStats.totalStudents | number }}</h3>
+              <p>Total Students</p>
+              <span class="stat-change positive">+156 this month</span>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon courses">
+              <i class="fas fa-book"></i>
+            </div>
+            <div class="stat-content">
+              <h3>{{ institutionStats.activeCourses }}</h3>
+              <p>Active Courses</p>
+              <span class="stat-change positive">+3 new courses</span>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon trainers">
+              <i class="fas fa-chalkboard-teacher"></i>
+            </div>
+            <div class="stat-content">
+              <h3>{{ institutionStats.totalTrainers }}</h3>
+              <p>Expert Trainers</p>
+              <span class="stat-change positive">+2 new trainers</span>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon revenue">
+              <i class="fas fa-dollar-sign"></i>
+            </div>
+            <div class="stat-content">
+              <h3>${{ institutionStats.revenue | number }}</h3>
+              <p>Total Revenue</p>
+              <span class="stat-change positive">+$15,600 this month</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Charts and Activities Row -->
+        <div class="content-row">
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3>Student Analytics</h3>
+              <div class="chart-controls">
+                <button class="btn-secondary">Last 6 months</button>
+              </div>
+            </div>
+            <div class="analytics-grid">
+              <div class="analytics-card" *ngFor="let analytics of studentAnalytics">
+                <div class="analytics-header">
+                  <h4>{{ analytics.category }}</h4>
+                  <div class="trend-indicator" [class]="getTrendClass(analytics.trend)">
+                    <i [class]="getTrendIcon(analytics.trend)"></i>
+                  </div>
+                </div>
+                <div class="analytics-content">
+                  <div class="percentage">{{ analytics.percentage }}%</div>
+                  <div class="count">{{ analytics.count | number }} students</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="activities-container">
+            <div class="activities-header">
+              <h3>Recent Activities</h3>
+              <button class="btn-secondary">View All</button>
+            </div>
+            <div class="activities-list">
+              <div class="activity-item" *ngFor="let activity of recentActivities">
+                <div class="activity-icon">
+                  <i [class]="activity.icon"></i>
+                </div>
+                <div class="activity-content">
+                  <h4>{{ activity.title }}</h4>
+                  <p>{{ activity.time }}</p>
+                  <span *ngIf="activity.students > 0" class="students-count">
+                    {{ activity.students }} students
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Courses Section -->
+      <div *ngIf="activeSection === 'courses'" class="courses-section">
+        <div class="section-header">
+          <h2>Course Management</h2>
+          <button class="btn-primary" (click)="openCourseForm()" *ngIf="!showCourseForm">
+            <i class="fas fa-plus"></i>
+            Add New Course
+          </button>
+          <button class="btn-secondary" (click)="closeCourseForm()" *ngIf="showCourseForm">
+            <i class="fas fa-times"></i>
+            Cancel
+          </button>
+        </div>
+
+        <!-- New Course Form (inline, styled like other forms) -->
+        <div class="course-form-container" *ngIf="showCourseForm">
+          <div class="form-header">
+            <h3>{{ isEditingCourse ? 'Update Course' : 'Create New Course' }}</h3>
+            <span class="subtitle">
+              {{ isEditingCourse ? 'Modify the selected course details and keep your catalog up to date.' : 'Add a new course to your institution catalog.' }}
+            </span>
+          </div>
+          <form [formGroup]="courseForm" (ngSubmit)="submitCourseForm()">
+            <!-- Error Message -->
+            <div *ngIf="courseFormError" class="form-error-message">
+              <i class="fas fa-exclamation-circle"></i>
+              {{ courseFormError }}
+            </div>
+
+            <!-- Success Message -->
+            <div *ngIf="courseFormSuccess" class="form-success-message">
+              <i class="fas fa-check-circle"></i>
+              {{ courseFormSuccess }}
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="courseTitle">
+                  Course Title <span class="required">*</span>
+                </label>
+                <input
+                  id="courseTitle"
+                  type="text"
+                  class="form-input"
+                  formControlName="title"
+                  placeholder="Enter course title"
+                />
+              </div>
+              <div class="form-group">
+                <label for="courseCategory">
+                  Category <span class="required">*</span>
+                </label>
+                <input
+                  id="courseCategory"
+                  type="text"
+                  class="form-input"
+                  formControlName="category"
+                  placeholder="e.g., Data Science"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="courseLevel">
+                  Level <span class="required">*</span>
+                </label>
+                <select
+                  id="courseLevel"
+                  class="form-input"
+                  formControlName="level"
+                >
+                  <option value="Beginner">Beginner</option>
+                  <option value="Intermediate">Intermediate</option>
+                  <option value="Advanced">Advanced</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="coursePrice">
+                  Price <span class="required">*</span>
+                </label>
+                <input
+                  id="coursePrice"
+                  type="number"
+                  class="form-input"
+                  formControlName="price"
+                  min="0"
+                  placeholder="e.g., 10000"
+                />
+              </div>
+              <div class="form-group">
+                <label for="courseDuration">
+                  Duration (hours) <span class="required">*</span>
+                </label>
+                <input
+                  id="courseDuration"
+                  type="number"
+                  class="form-input"
+                  formControlName="duration"
+                  min="1"
+                  placeholder="e.g., 40"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="courseStatus">
+                  Status <span class="required">*</span>
+                </label>
+                <select
+                  id="courseStatus"
+                  class="form-input"
+                  formControlName="status"
+                >
+                  <option *ngFor="let status of courseStatusOptions" [value]="status.value">
+                    {{ status.label }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="courseDescription">
+                Description <span class="required">*</span>
+              </label>
+              <textarea
+                id="courseDescription"
+                class="form-input form-textarea"
+                rows="3"
+                formControlName="description"
+                placeholder="Describe the course content and outcomes"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="coursePrerequisites">
+                Prerequisites (comma separated)
+              </label>
+              <input
+                id="coursePrerequisites"
+                type="text"
+                class="form-input"
+                formControlName="prerequisites"
+                placeholder="e.g., Basic Python, Statistics"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="courseLearningOutcomes">
+                Learning Outcomes (one per line)
+              </label>
+              <textarea
+                id="courseLearningOutcomes"
+                class="form-input form-textarea"
+                rows="3"
+                formControlName="learningOutcomes"
+                placeholder="What will students learn from this course?"
+              ></textarea>
+            </div>
+
+            <div class="form-actions">
+              <button
+                type="submit"
+                class="btn-primary"
+                [disabled]="isSubmittingCourse || courseForm.invalid"
+              >
+                <i *ngIf="isSubmittingCourse" class="fas fa-spinner fa-spin"></i>
+                <i *ngIf="!isSubmittingCourse" class="fas fa-save"></i>
+                {{ isSubmittingCourse ? (isEditingCourse ? 'Updating...' : 'Saving...') : (isEditingCourse ? 'Update Course' : 'Save Course') }}
+              </button>
+            </div>
+          </form>
+        </div>
+        
+        <ng-container *ngIf="institutionCourses.length; else noCoursesState">
+          <div class="courses-grid">
+            <div class="course-card" *ngFor="let course of institutionCourses">
+            <div class="course-header">
+                <div>
+                  <h3>{{ course.title }}</h3>
+                  <p class="course-subtitle">{{ course.category }} • {{ course.level }}</p>
+                </div>
+                <div class="course-status" [class]="getStatusClass(course.status)">
+                  {{ course.status | titlecase }}
+                </div>
+            </div>
+            
+              <p class="course-description">
+                {{ course.description }}
+              </p>
+
+            <div class="course-details">
+              <div class="detail">
+                  <i class="fas fa-user-graduate"></i>
+                  <span>{{ course.students || 0 }} students</span>
+              </div>
+              <div class="detail">
+                  <i class="fas fa-clock"></i>
+                  <span>{{ course.duration }} hrs</span>
+                </div>
+                <div class="detail">
+                  <i class="fas fa-dollar-sign"></i>
+                  <span>{{ course.price | currency:'USD':'symbol':'1.0-0' }}</span>
+              </div>
+            </div>
+            
+            <div class="course-stats">
+              <div class="stat">
+                  <span class="stat-value">{{ course.students || 0 }}</span>
+                <span class="stat-label">Enrolled</span>
+              </div>
+              <div class="stat">
+                  <span class="stat-value">{{ course.completedStudents || 0 }}</span>
+                <span class="stat-label">Completed</span>
+              </div>
+              <div class="stat">
+                  <span class="stat-value">{{ course.rating || 0 | number:'1.1-1' }}</span>
+                  <span class="stat-label">Rating</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-value">{{ course.revenue | currency:'USD':'symbol':'1.0-0' }}</span>
+                  <span class="stat-label">Revenue</span>
+              </div>
+            </div>
+            
+            <div class="course-actions">
+                <button class="btn-secondary" (click)="startEditCourse(course)">
+                  <i class="fas fa-edit"></i>
+                  Edit
+                </button>
+                <button class="btn-primary" (click)="viewCourseDetails(course)">
+                  <i class="fas fa-eye"></i>
+                  View Details
+                </button>
+            </div>
+          </div>
+        </div>
+        </ng-container>
+
+        <ng-template #noCoursesState>
+          <div class="empty-state">
+            <i class="fas fa-layer-group"></i>
+            <h3>No courses found</h3>
+            <p>Create your first course to see it listed here.</p>
+            <button class="btn-primary" (click)="openCourseForm()">
+              <i class="fas fa-plus"></i>
+              Add Course
+            </button>
+          </div>
+        </ng-template>
+
+        <div class="modal-overlay" *ngIf="showCourseDetails">
+          <div class="course-details-modal">
+            <div class="modal-header">
+              <div class="modal-title">
+                <h3>{{ selectedCourse?.title || 'Course Details' }}</h3>
+                <span class="status-badge" [class]="getStatusClass(selectedCourse?.status || 'draft')">
+                  {{ selectedCourse?.status | titlecase }}
+                </span>
+              </div>
+              <button class="close-btn" type="button" (click)="closeCourseDetails()">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+
+            <div *ngIf="isLoadingCourseDetails" class="modal-loader">
+              <i class="fas fa-spinner fa-spin"></i>
+              Loading course details...
+            </div>
+
+            <div *ngIf="courseDetailsError && !isLoadingCourseDetails" class="form-error-message inline-message">
+              <i class="fas fa-exclamation-circle"></i>
+              {{ courseDetailsError }}
+            </div>
+
+            <div class="modal-body" *ngIf="selectedCourse && !isLoadingCourseDetails">
+              <div class="course-detail-grid">
+                <div class="detail-block">
+                  <h4>Overview</h4>
+                  <p>{{ selectedCourse.description }}</p>
+                  <div class="detail-row">
+                    <span>Category</span>
+                    <strong>{{ selectedCourse.category }}</strong>
+                  </div>
+                  <div class="detail-row">
+                    <span>Level</span>
+                    <strong>{{ selectedCourse.level }}</strong>
+                  </div>
+                  <div class="detail-row">
+                    <span>Duration</span>
+                    <strong>{{ selectedCourse.duration }} hours</strong>
+                  </div>
+                  <div class="detail-row">
+                    <span>Price</span>
+                    <strong>{{ selectedCourse.price | currency:'USD':'symbol':'1.0-0' }}</strong>
+                  </div>
+                </div>
+
+                <div class="detail-block">
+                  <h4>Performance</h4>
+                  <div class="detail-row">
+                    <span>Enrolled Students</span>
+                    <strong>{{ selectedCourse.students || 0 }}</strong>
+                  </div>
+                  <div class="detail-row">
+                    <span>Completed</span>
+                    <strong>{{ selectedCourse.completedStudents || 0 }}</strong>
+                  </div>
+                  <div class="detail-row">
+                    <span>Revenue</span>
+                    <strong>{{ selectedCourse.revenue | currency:'USD':'symbol':'1.0-0' }}</strong>
+                  </div>
+                  <div class="detail-row">
+                    <span>Rating</span>
+                    <strong>{{ selectedCourse.rating || 0 | number:'1.1-1' }}</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div class="detail-block" *ngIf="selectedCourse.prerequisites?.length">
+                <h4>Prerequisites</h4>
+                <div class="chip-list">
+                  <span class="chip" *ngFor="let prerequisite of selectedCourse.prerequisites">
+                    {{ prerequisite }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="detail-block" *ngIf="selectedCourse.learningOutcomes?.length">
+                <h4>Learning Outcomes</h4>
+                <ul class="detail-list">
+                  <li *ngFor="let outcome of selectedCourse.learningOutcomes">{{ outcome }}</li>
+                </ul>
+              </div>
+
+              <div class="detail-block" *ngIf="selectedCourse.curriculum?.length">
+                <h4>Curriculum</h4>
+                <div class="curriculum-list">
+                  <div class="curriculum-item" *ngFor="let module of selectedCourse.curriculum">
+                    <h5>{{ module.module }}</h5>
+                    <p *ngIf="module.duration">Duration: {{ module.duration }} hours</p>
+                    <ul>
+                      <li *ngFor="let topic of module.topics">{{ topic }}</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Trainers Section -->
+      <div *ngIf="activeSection === 'trainers'" class="trainers-section">
+        <div class="section-header">
+          <h2>Trainer Management</h2>
+          <button class="btn-primary" (click)="openTrainerForm()" *ngIf="!showTrainerForm">
+            <i class="fas fa-plus"></i>
+            Add New Trainer
+          </button>
+          <button class="btn-secondary" (click)="closeTrainerForm()" *ngIf="showTrainerForm">
+            <i class="fas fa-times"></i>
+            Cancel
+          </button>
+        </div>
+        
+        <!-- Trainer Creation Form (Inline) -->
+        <div *ngIf="showTrainerForm" class="trainer-form-container">
+          <div class="trainer-form-header">
+            <h3>
+              <i class="fas fa-chalkboard-teacher"></i>
+              {{ isEditingTrainer ? 'Edit Trainer' : 'Create New Trainer' }}
+            </h3>
+          </div>
+          
+          <div class="trainer-form-content">
+            <form [formGroup]="trainerForm" (ngSubmit)="submitTrainerForm()">
+              <!-- Error Message -->
+              <div *ngIf="formError" class="form-error-message">
+                <i class="fas fa-exclamation-circle"></i>
+                {{ formError }}
+              </div>
+              
+              <!-- Success Message -->
+              <div *ngIf="formSuccess" class="form-success-message">
+                <i class="fas fa-check-circle"></i>
+                {{ formSuccess }}
+              </div>
+              
+              <!-- Basic Information -->
+              <div class="form-section">
+                <h3 class="form-section-title">
+                  <i class="fas fa-info-circle"></i>
+                  Basic Information
+                </h3>
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="trainerName">
+                      Full Name <span class="required">*</span>
+                    </label>
+                    <input 
+                      type="text" 
+                      id="trainerName" 
+                      formControlName="name"
+                      class="form-input"
+                      placeholder="e.g., John Doe"
+                      [class.error]="trainerForm.get('name')?.invalid && trainerForm.get('name')?.touched">
+                    <span *ngIf="trainerForm.get('name')?.invalid && trainerForm.get('name')?.touched" class="error-text">
+                      Name is required (2-100 characters)
+                    </span>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="trainerPhone">
+                      Phone Number <span class="required">*</span>
+                    </label>
+                    <input 
+                      type="tel" 
+                      id="trainerPhone" 
+                      formControlName="phone"
+                      class="form-input"
+                      placeholder="e.g., +1234567890"
+                      [class.error]="trainerForm.get('phone')?.invalid && trainerForm.get('phone')?.touched">
+                    <span *ngIf="trainerForm.get('phone')?.invalid && trainerForm.get('phone')?.touched" class="error-text">
+                      Valid phone number is required
+                    </span>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="trainerEmail">
+                      Email Address
+                    </label>
+                    <input 
+                      type="email" 
+                      id="trainerEmail" 
+                      formControlName="email"
+                      class="form-input"
+                      placeholder="e.g., john@example.com"
+                      [class.error]="trainerForm.get('email')?.invalid && trainerForm.get('email')?.touched">
+                    <span *ngIf="trainerForm.get('email')?.invalid && trainerForm.get('email')?.touched" class="error-text">
+                      Valid email address is required
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Profile Picture Upload -->
+                <div class="form-group">
+                  <label for="trainerAvatar">
+                    Profile Picture
+                  </label>
+                  <div class="avatar-upload-section">
+                    <div class="avatar-preview-container">
+                      <img *ngIf="avatarPreview || trainerForm.get('avatar')?.value" 
+                           [src]="avatarPreview || getTrainerAvatarUrl(trainerForm.get('avatar')?.value)" 
+                           alt="Profile Picture Preview"
+                           class="avatar-preview-image"
+                           (error)="handleImageError($event, 'assets/photos/default-avatar.png')">
+                      <div *ngIf="!avatarPreview && !trainerForm.get('avatar')?.value" 
+                           class="avatar-placeholder">
+                        <i class="fas fa-user"></i>
+                      </div>
+                    </div>
+                    <div class="avatar-upload-controls">
+                      <input 
+                        type="file" 
+                        id="trainerAvatar"
+                        accept="image/*" 
+                        (change)="onAvatarSelected($event)"
+                        class="form-input"
+                        style="display: none;">
+                      <label for="trainerAvatar" class="btn-upload-avatar">
+                        <i class="fas fa-camera"></i>
+                        {{ avatarPreview || trainerForm.get('avatar')?.value ? 'Change Picture' : 'Upload Picture' }}
+                      </label>
+                      <p class="form-hint">JPG, PNG or GIF. Max size 2MB.</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="specialization">
+                      Specialization <span class="required">*</span>
+                    </label>
+                    <select 
+                      id="specialization" 
+                      formControlName="specialization"
+                      class="form-input"
+                      [class.error]="trainerForm.get('specialization')?.invalid && trainerForm.get('specialization')?.touched">
+                      <option value="">Select Specialization</option>
+                      <option *ngFor="let spec of getSpecializations()" [value]="spec">{{ spec }}</option>
+                    </select>
+                    <span *ngIf="trainerForm.get('specialization')?.invalid && trainerForm.get('specialization')?.touched" class="error-text">
+                      Specialization is required
+                    </span>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="experienceYears">
+                      Years of Experience <span class="required">*</span>
+                    </label>
+                    <input 
+                      type="number" 
+                      id="experienceYears" 
+                      formControlName="experienceYears"
+                      class="form-input"
+                      placeholder="e.g., 5"
+                      min="0"
+                      [class.error]="trainerForm.get('experienceYears')?.invalid && trainerForm.get('experienceYears')?.touched">
+                    <span *ngIf="trainerForm.get('experienceYears')?.invalid && trainerForm.get('experienceYears')?.touched" class="error-text">
+                      Years of experience is required
+                    </span>
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label for="experienceDescription">
+                    Experience Description
+                  </label>
+                  <textarea 
+                    id="experienceDescription" 
+                    formControlName="experienceDescription"
+                    class="form-input form-textarea"
+                    placeholder="Brief description of your experience..."
+                    rows="3"
+                    maxlength="1000"></textarea>
+                </div>
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="currentPositionTitle">
+                      Current Position Title <span class="required">*</span>
+                    </label>
+                    <input 
+                      type="text" 
+                      id="currentPositionTitle" 
+                      formControlName="currentPositionTitle"
+                      class="form-input"
+                      placeholder="e.g., Senior Developer"
+                      [class.error]="trainerForm.get('currentPositionTitle')?.invalid && trainerForm.get('currentPositionTitle')?.touched">
+                    <span *ngIf="trainerForm.get('currentPositionTitle')?.invalid && trainerForm.get('currentPositionTitle')?.touched" class="error-text">
+                      Position title is required
+                    </span>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="currentPositionCompany">
+                      Company <span class="required">*</span>
+                    </label>
+                    <input 
+                      type="text" 
+                      id="currentPositionCompany" 
+                      formControlName="currentPositionCompany"
+                      class="form-input"
+                      placeholder="e.g., Tech Corp"
+                      [class.error]="trainerForm.get('currentPositionCompany')?.invalid && trainerForm.get('currentPositionCompany')?.touched">
+                    <span *ngIf="trainerForm.get('currentPositionCompany')?.invalid && trainerForm.get('currentPositionCompany')?.touched" class="error-text">
+                      Company name is required
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Pricing -->
+              <div class="form-section">
+                <h3 class="form-section-title">
+                  <i class="fas fa-dollar-sign"></i>
+                  Pricing
+                </h3>
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="hourlyRate">
+                      Hourly Rate <span class="required">*</span>
+                    </label>
+                    <input 
+                      type="number" 
+                      id="hourlyRate" 
+                      formControlName="hourlyRate"
+                      class="form-input"
+                      placeholder="e.g., 50"
+                      min="0"
+                      step="0.01"
+                      [class.error]="trainerForm.get('hourlyRate')?.invalid && trainerForm.get('hourlyRate')?.touched">
+                    <span *ngIf="trainerForm.get('hourlyRate')?.invalid && trainerForm.get('hourlyRate')?.touched" class="error-text">
+                      Hourly rate is required
+                    </span>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="currency">
+                      Currency <span class="required">*</span>
+                    </label>
+                    <select 
+                      id="currency" 
+                      formControlName="currency"
+                      class="form-input">
+                      <option value="USD">USD</option>
+                      <option value="EUR">EUR</option>
+                      <option value="INR">INR</option>
+                      <option value="GBP">GBP</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Education -->
+              <div class="form-section">
+                <div class="form-section-header">
+                  <h3 class="form-section-title">
+                    <i class="fas fa-graduation-cap"></i>
+                    Education
+                  </h3>
+                  <button type="button" class="btn-add-item" (click)="addEducation()">
+                    <i class="fas fa-plus"></i>
+                    Add Education
+                  </button>
+                </div>
+                
+                <div *ngFor="let edu of educationFormArray.controls; let i = index" class="dynamic-form-item">
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label>Degree</label>
+                      <input 
+                        type="text" 
+                        [formControl]="$any(edu).get('degree')"
+                        class="form-input"
+                        placeholder="e.g., Bachelor's">
+                    </div>
+                    <div class="form-group">
+                      <label>Institution</label>
+                      <input 
+                        type="text" 
+                        [formControl]="$any(edu).get('institution')"
+                        class="form-input"
+                        placeholder="e.g., University Name">
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label>Year</label>
+                      <input 
+                        type="number" 
+                        [formControl]="$any(edu).get('year')"
+                        class="form-input"
+                        placeholder="e.g., 2020"
+                        min="1900"
+                        [max]="getCurrentYear()">
+                    </div>
+                    <div class="form-group">
+                      <label>Field</label>
+                      <input 
+                        type="text" 
+                        [formControl]="$any(edu).get('field')"
+                        class="form-input"
+                        placeholder="e.g., Computer Science">
+                    </div>
+                    <div class="form-group-actions">
+                      <button type="button" class="btn-remove-item" (click)="removeEducation(i)">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Certifications -->
+              <div class="form-section">
+                <div class="form-section-header">
+                  <h3 class="form-section-title">
+                    <i class="fas fa-certificate"></i>
+                    Certifications
+                  </h3>
+                  <button type="button" class="btn-add-item" (click)="addCertification()">
+                    <i class="fas fa-plus"></i>
+                    Add Certification
+                  </button>
+                </div>
+                
+                <div *ngFor="let cert of certificationsFormArray.controls; let i = index" class="dynamic-form-item">
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label>Certification Name</label>
+                      <input 
+                        type="text" 
+                        [formControl]="$any(cert).get('name')"
+                        class="form-input"
+                        placeholder="e.g., AWS Certified">
+                    </div>
+                    <div class="form-group">
+                      <label>Issuer</label>
+                      <input 
+                        type="text" 
+                        [formControl]="$any(cert).get('issuer')"
+                        class="form-input"
+                        placeholder="e.g., Amazon Web Services">
+                    </div>
+                    <div class="form-group">
+                      <label>Year</label>
+                      <input 
+                        type="number" 
+                        [formControl]="$any(cert).get('year')"
+                        class="form-input"
+                        placeholder="e.g., 2023"
+                        min="1900"
+                        [max]="getCurrentYear()">
+                    </div>
+                    <div class="form-group-actions">
+                      <button type="button" class="btn-remove-item" (click)="removeCertification(i)">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Skills -->
+              <div class="form-section">
+                <div class="form-section-header">
+                  <h3 class="form-section-title">
+                    <i class="fas fa-code"></i>
+                    Skills
+                  </h3>
+                  <button type="button" class="btn-add-item" (click)="addSkill()">
+                    <i class="fas fa-plus"></i>
+                    Add Skill
+                  </button>
+                </div>
+                
+                <div *ngFor="let skill of skillsFormArray.controls; let i = index" class="dynamic-form-item">
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label>Skill Name</label>
+                      <input 
+                        type="text" 
+                        [formControl]="$any(skill).get('name')"
+                        class="form-input"
+                        placeholder="e.g., JavaScript">
+                    </div>
+                    <div class="form-group">
+                      <label>Level</label>
+                      <select 
+                        [formControl]="$any(skill).get('level')"
+                        class="form-input">
+                        <option *ngFor="let level of getSkillLevels()" [value]="level">{{ level }}</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label>Years of Experience</label>
+                      <input 
+                        type="number" 
+                        [formControl]="$any(skill).get('yearsOfExperience')"
+                        class="form-input"
+                        placeholder="e.g., 3"
+                        min="0">
+                    </div>
+                    <div class="form-group-actions">
+                      <button type="button" class="btn-remove-item" (click)="removeSkill(i)">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Demo Video -->
+              <div class="form-section">
+                <h3 class="form-section-title">
+                  <i class="fas fa-video"></i>
+                  Demo Video
+                </h3>
+                <div class="form-group">
+                  <label for="demoVideo">
+                    Demo Video (max 50MB)
+                  </label>
+                  <div class="file-input">
+                    <input 
+                      type="file" 
+                      id="demoVideo"
+                      accept="video/*" 
+                      (change)="onDemoVideoSelected($event)"
+                      class="form-input">
+                  </div>
+                  <input 
+                    type="text" 
+                    formControlName="demoVideo"
+                    class="form-input"
+                    placeholder="Or enter video URL"
+                    style="margin-top: 10px;">
+                  <p class="form-hint">Upload a demo video file or provide a video URL</p>
+                </div>
+              </div>
+
+              <!-- Learning Objectives -->
+              <div class="form-section">
+                <h3 class="form-section-title">
+                  <i class="fas fa-bullseye"></i>
+                  Learning Objectives
+                </h3>
+                <div class="objectives-container">
+                  <div class="objective-item" *ngFor="let objective of trainerForm.get('objectives')?.value || []; let i = index; trackBy: trackByIndex">
+                    <input 
+                      type="text" 
+                      [value]="trainerForm.get('objectives')?.value[i]"
+                      (input)="updateObjective(i, $event)"
+                      placeholder="Enter learning objective (e.g., Master React fundamentals)"
+                      class="objective-input">
+                    <button 
+                      type="button" 
+                      class="btn-remove-objective" 
+                      (click)="removeObjective(i)"
+                      title="Remove objective">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+                  <button 
+                    type="button" 
+                    class="btn-add-objective" 
+                    (click)="addObjective()"
+                    *ngIf="(!trainerForm.get('objectives')?.value || trainerForm.get('objectives')?.value.length < 50)">
+                    <i class="fas fa-plus"></i>
+                    Add Learning Objective
+                  </button>
+                  <p class="objectives-hint" *ngIf="!trainerForm.get('objectives')?.value || trainerForm.get('objectives')?.value.length === 0">
+                    Click "Add Learning Objective" to add objectives for this trainer
+                  </p>
+                </div>
+              </div>
+
+              <!-- Syllabus / Curriculum Outline -->
+              <div class="form-section">
+                <h3 class="form-section-title">
+                  <i class="fas fa-book"></i>
+                  Syllabus / Curriculum Outline
+                </h3>
+                <div class="syllabus-container">
+                  <div class="module-card" *ngFor="let module of trainerForm.get('syllabus')?.value || []; let moduleIndex = index; trackBy: trackByIndex">
+                    <div class="module-header" (click)="toggleModule(moduleIndex)">
+                      <div class="module-header-content">
+                        <div class="module-title-section">
+                          <input 
+                            type="text" 
+                            [value]="module.moduleTitle"
+                            (input)="updateModuleTitle(moduleIndex, $event)"
+                            placeholder="Module Title (e.g., HTML5 & CSS3 Fundamentals)"
+                            class="module-title-input"
+                            (click)="$event.stopPropagation()"
+                            (keydown.enter)="$event.preventDefault()">
+                          <span class="module-meta" *ngIf="module.moduleTitle">
+                            {{ getModuleLessonsCount(module) }} Lessons • 
+                            {{ getModuleTotalHours(module) }} hours
+                          </span>
+                        </div>
+                        <div class="module-actions">
+                          <input 
+                            type="number" 
+                            [value]="module.hours"
+                            (input)="updateModuleHours(moduleIndex, $event)"
+                            placeholder="Hours"
+                            class="module-hours-input"
+                            min="0"
+                            step="0.5"
+                            (click)="$event.stopPropagation()">
+                          <button 
+                            type="button" 
+                            class="btn-remove-module" 
+                            (click)="removeModule(moduleIndex); $event.stopPropagation()"
+                            title="Remove module">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                          <button 
+                            type="button" 
+                            class="btn-toggle-module" 
+                            (click)="toggleModule(moduleIndex); $event.stopPropagation()"
+                            title="{{ isModuleExpanded(moduleIndex) ? 'Collapse' : 'Expand' }}">
+                            <i class="fas" [ngClass]="{'fa-chevron-up': isModuleExpanded(moduleIndex), 'fa-chevron-down': !isModuleExpanded(moduleIndex)}"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="module-content" *ngIf="isModuleExpanded(moduleIndex)">
+                      <div class="lessons-list">
+                        <div class="lesson-item" *ngFor="let lesson of module.lessons || []; let lessonIndex = index; trackBy: trackByIndex">
+                          <i class="fas fa-play-circle lesson-icon"></i>
+                          <input 
+                            type="text" 
+                            [value]="lesson.title"
+                            (input)="updateLessonTitle(moduleIndex, lessonIndex, $event)"
+                            placeholder="Lesson title (e.g., Introduction to HTML5)"
+                            class="lesson-input">
+                          <button 
+                            type="button" 
+                            class="btn-remove-lesson" 
+                            (click)="removeLesson(moduleIndex, lessonIndex)"
+                            title="Remove lesson">
+                            <i class="fas fa-times"></i>
+                          </button>
+                        </div>
+                        <button 
+                          type="button" 
+                          class="btn-add-lesson" 
+                          (click)="addLesson(moduleIndex)"
+                          *ngIf="getModuleLessonsCount(module) < 100">
+                          <i class="fas fa-plus"></i>
+                          Add Lesson
+                        </button>
+                        <p class="lessons-hint" *ngIf="getModuleLessonsCount(module) === 0">
+                          Click "Add Lesson" to add lessons to this module
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <button 
+                    type="button" 
+                    class="btn-add-module" 
+                    (click)="addModule()"
+                    *ngIf="!trainerForm.get('syllabus')?.value || trainerForm.get('syllabus')?.value.length < 50">
+                    <i class="fas fa-plus"></i>
+                    Add Module
+                  </button>
+                  <p class="syllabus-hint" *ngIf="!trainerForm.get('syllabus')?.value || trainerForm.get('syllabus')?.value.length === 0">
+                    Click "Add Module" to create the curriculum outline
+                  </p>
+                </div>
+              </div>
+              
+              <!-- Form Actions -->
+              <div class="form-actions">
+                <button type="button" class="btn-secondary" (click)="closeTrainerForm()" [disabled]="isSubmitting">
+                  Cancel
+                </button>
+                <button type="submit" class="btn-primary" [disabled]="isSubmitting || trainerForm.invalid">
+                  <i *ngIf="isSubmitting" class="fas fa-spinner fa-spin"></i>
+                  <i *ngIf="!isSubmitting" class="fas fa-check"></i>
+                  {{ isSubmitting ? (isEditingTrainer ? 'Updating...' : 'Creating...') : (isEditingTrainer ? 'Update Trainer' : 'Create Trainer') }}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+        
+        <div class="trainers-grid" *ngIf="!showTrainerForm">
+          <!-- Loading State -->
+          <div *ngIf="isLoadingTrainers" class="loading-container">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading trainers...</p>
+          </div>
+          
+          <!-- Empty State -->
+          <div *ngIf="!isLoadingTrainers && trainerManagement.length === 0" class="empty-state">
+            <i class="fas fa-chalkboard-teacher"></i>
+            <h3>No Trainers Found</h3>
+            <p>Start by adding your first trainer using the "Add New Trainer" button above.</p>
+          </div>
+          
+          <!-- Trainers List -->
+          <div *ngIf="!isLoadingTrainers && trainerManagement.length > 0" class="trainers-list">
+            <div class="trainer-card" *ngFor="let trainer of trainerManagement">
+              <div class="trainer-header">
+                <div class="trainer-avatar">
+                  <img [src]="getTrainerAvatarUrl(trainer.avatar) || getPlaceholderAvatar(trainer.name, 50)" 
+                       [alt]="trainer.name"
+                       (error)="handleImageError($event, getPlaceholderAvatar(trainer.name, 50))">
+                </div>
+                <div class="trainer-info">
+                  <h3>{{ trainer.name }}</h3>
+                  <p>{{ trainer.specialization }}</p>
+                </div>
+                <div class="trainer-status" [class]="getStatusClass(trainer.status)">
+                  {{ trainer.status }}
+                </div>
+              </div>
+              
+              <div class="trainer-stats">
+                <div class="stat">
+                  <span class="stat-value">{{ trainer.students }}</span>
+                  <span class="stat-label">Students</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-value">{{ trainer.courses }}</span>
+                  <span class="stat-label">Courses</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-value">{{ trainer.rating }}</span>
+                  <span class="stat-label">Rating</span>
+                </div>
+              </div>
+              
+              <div class="trainer-actions">
+                <button class="btn-secondary" (click)="viewTrainerProfile(trainer)">
+                  <i class="fas fa-eye"></i> View Profile
+                </button>
+                <button class="btn-primary" (click)="startEditTrainer(trainer)">
+                  <i class="fas fa-edit"></i> Edit
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Trainer Profile Modal -->
+        <div class="modal-overlay" *ngIf="showTrainerProfile">
+          <div class="trainer-profile-modal">
+            <div class="modal-header">
+              <div class="modal-title">
+                <h3>{{ selectedTrainer?.name || selectedTrainer?.user?.firstName + ' ' + selectedTrainer?.user?.lastName || 'Trainer Profile' }}</h3>
+                <span class="status-badge" [class]="getStatusClass(selectedTrainer?.status || 'active')">
+                  {{ selectedTrainer?.status || 'active' | titlecase }}
+                </span>
+              </div>
+              <button class="close-btn" type="button" (click)="closeTrainerProfile()">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+
+            <div *ngIf="isLoadingTrainerDetails" class="modal-loader">
+              <i class="fas fa-spinner fa-spin"></i>
+              Loading trainer profile...
+            </div>
+
+            <div *ngIf="trainerDetailsError && !isLoadingTrainerDetails" class="form-error-message inline-message">
+              <i class="fas fa-exclamation-circle"></i>
+              {{ trainerDetailsError }}
+            </div>
+
+            <div class="modal-body" *ngIf="selectedTrainer && !isLoadingTrainerDetails">
+              <div class="trainer-profile-header">
+                <div class="trainer-avatar-large">
+                  <img [src]="getTrainerAvatarUrl(selectedTrainer?.avatar || selectedTrainer?.user?.avatar) || getPlaceholderAvatar(selectedTrainer?.name, 120)" 
+                       [alt]="selectedTrainer?.name"
+                       (error)="handleImageError($event, getPlaceholderAvatar(selectedTrainer?.name, 120))">
+                </div>
+                <div class="trainer-header-info">
+                  <h2>{{ selectedTrainer?.name || selectedTrainer?.user?.firstName + ' ' + selectedTrainer?.user?.lastName }}</h2>
+                  <p class="trainer-title">{{ selectedTrainer?.title || selectedTrainer?.user?.title || 'Trainer' }}</p>
+                  <p class="trainer-specialization">{{ selectedTrainer?.specialization || 'Not specified' }}</p>
+                </div>
+              </div>
+
+              <div class="trainer-profile-grid">
+                <div class="profile-section">
+                  <h4>Contact Information</h4>
+                  <div class="detail-row">
+                    <span><i class="fas fa-envelope"></i> Email</span>
+                    <strong>{{ selectedTrainer?.email || selectedTrainer?.user?.email || 'N/A' }}</strong>
+                  </div>
+                  <div class="detail-row">
+                    <span><i class="fas fa-phone"></i> Phone</span>
+                    <strong>{{ selectedTrainer?.phone || 'N/A' }}</strong>
+                  </div>
+                  <div class="detail-row" *ngIf="selectedTrainer?.location">
+                    <span><i class="fas fa-map-marker-alt"></i> Location</span>
+                    <strong>{{ selectedTrainer.location }}</strong>
+                  </div>
+                </div>
+
+                <div class="profile-section">
+                  <h4>Statistics</h4>
+                  <div class="detail-row">
+                    <span><i class="fas fa-user-graduate"></i> Total Students</span>
+                    <strong>{{ selectedTrainer?.students || 0 }}</strong>
+                  </div>
+                  <div class="detail-row">
+                    <span><i class="fas fa-book"></i> Total Courses</span>
+                    <strong>{{ selectedTrainer?.courses || 0 }}</strong>
+                  </div>
+                  <div class="detail-row">
+                    <span><i class="fas fa-star"></i> Rating</span>
+                    <strong>{{ selectedTrainer?.rating || 0 | number:'1.1-1' }}</strong>
+                  </div>
+                  <div class="detail-row">
+                    <span><i class="fas fa-calendar-alt"></i> Experience</span>
+                    <strong>{{ selectedTrainer?.experienceYears || 0 }} years</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div class="profile-section" *ngIf="selectedTrainer?.bio || selectedTrainer?.user?.bio">
+                <h4>Bio</h4>
+                <p>{{ selectedTrainer?.bio || selectedTrainer?.user?.bio }}</p>
+              </div>
+
+              <div class="profile-section" *ngIf="selectedTrainer?.skills && selectedTrainer.skills.length > 0">
+                <h4>Skills</h4>
+                <div class="chip-list">
+                  <span class="chip" *ngFor="let skill of selectedTrainer.skills">
+                    {{ skill.name }} ({{ skill.level | titlecase }})
+                    <span *ngIf="skill.years || skill.yearsOfExperience"> - {{ skill.years || skill.yearsOfExperience }} years</span>
+                  </span>
+                </div>
+              </div>
+
+              <div class="profile-section" *ngIf="selectedTrainer?.education && selectedTrainer.education.length > 0">
+                <h4>Education</h4>
+                <div class="education-list">
+                  <div class="education-item" *ngFor="let edu of selectedTrainer.education">
+                    <h5>{{ edu.degree }}</h5>
+                    <p>{{ edu.institution }} <span *ngIf="edu.year">({{ edu.year }})</span></p>
+                    <p *ngIf="edu.field" class="field">{{ edu.field }}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="profile-section" *ngIf="selectedTrainer?.certifications && selectedTrainer.certifications.length > 0">
+                <h4>Certifications</h4>
+                <div class="certifications-list">
+                  <div class="certification-item" *ngFor="let cert of selectedTrainer.certifications">
+                    <h5>{{ cert.name }}</h5>
+                    <p>{{ cert.issuer }} <span *ngIf="cert.year">({{ cert.year }})</span></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Batches Section -->
+      <div *ngIf="activeSection === 'batches'" class="batches-section">
+        <div class="section-header">
+          <h2>Batch Management</h2>
+          <button class="btn-primary" (click)="openBatchForm()" *ngIf="!showBatchForm">
+            <i class="fas fa-plus"></i>
+            Schedule New Batch
+          </button>
+          <button class="btn-secondary" (click)="closeBatchForm()" *ngIf="showBatchForm">
+            <i class="fas fa-times"></i>
+            Cancel
+          </button>
+        </div>
+        
+        <!-- Batch Creation Form -->
+        <div *ngIf="showBatchForm" class="batch-form-container">
+          <form [formGroup]="batchForm" (ngSubmit)="submitBatchForm()">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Course <span class="required">*</span></label>
+                <select formControlName="courseId" (change)="onCourseSelect()" class="form-input"
+                  [class.error]="batchForm.get('courseId')?.invalid && batchForm.get('courseId')?.touched">
+                  <option value="">Select Course</option>
+                  <option *ngFor="let course of institutionCourses" [value]="getCourseId(course)">
+                    {{ course.title }}
+                  </option>
+                </select>
+                <span *ngIf="batchForm.get('courseId')?.invalid && batchForm.get('courseId')?.touched" class="error-text">
+                  Course is required
+                </span>
+              </div>
+              
+              <div class="form-group">
+                <label>Trainer <span class="required">*</span></label>
+                <select formControlName="trainerId" (change)="onTrainerSelect()" class="form-input"
+                  [class.error]="batchForm.get('trainerId')?.invalid && batchForm.get('trainerId')?.touched">
+                  <option value="">Select Trainer</option>
+                  <option *ngFor="let trainer of trainerManagement" [value]="trainer.id">
+                    {{ trainer.name }} - {{ trainer.specialization }}
+                  </option>
+                </select>
+                <span *ngIf="batchForm.get('trainerId')?.invalid && batchForm.get('trainerId')?.touched" class="error-text">
+                  Trainer is required
+                </span>
+              </div>
+              
+              <div class="form-group">
+                <label>Start Date <span class="required">*</span></label>
+                <input type="date" formControlName="startDate" class="form-input"
+                  [class.error]="batchForm.get('startDate')?.invalid && batchForm.get('startDate')?.touched">
+                <span *ngIf="batchForm.get('startDate')?.invalid && batchForm.get('startDate')?.touched" class="error-text">
+                  Start date is required
+                </span>
+              </div>
+              
+              <div class="form-group">
+                <label>End Date <span class="required">*</span></label>
+                <input type="date" formControlName="endDate" class="form-input"
+                  [class.error]="batchForm.get('endDate')?.invalid && batchForm.get('endDate')?.touched">
+                <span *ngIf="batchForm.get('endDate')?.invalid && batchForm.get('endDate')?.touched" class="error-text">
+                  End date is required
+                </span>
+              </div>
+              
+              <div class="form-group">
+                <label>Duration <span class="required">*</span></label>
+                <input type="text" formControlName="duration" class="form-input" placeholder="e.g., 3 months"
+                  [class.error]="batchForm.get('duration')?.invalid && batchForm.get('duration')?.touched">
+                <span *ngIf="batchForm.get('duration')?.invalid && batchForm.get('duration')?.touched" class="error-text">
+                  Duration is required
+                </span>
+              </div>
+              
+              <div class="form-group">
+                <label>Max Students <span class="required">*</span></label>
+                <input type="number" formControlName="maxStudents" min="1" max="100" class="form-input"
+                  [class.error]="batchForm.get('maxStudents')?.invalid && batchForm.get('maxStudents')?.touched">
+                <span *ngIf="batchForm.get('maxStudents')?.invalid && batchForm.get('maxStudents')?.touched" class="error-text">
+                  Max students must be between 1 and 100
+                </span>
+              </div>
+              
+              <div class="form-group full">
+                <label>Schedule</label>
+                <textarea formControlName="schedule" rows="3" class="form-input" 
+                  placeholder="e.g., Monday, Wednesday, Friday - 6:00 PM to 8:00 PM"></textarea>
+              </div>
+              
+              <div class="form-group full">
+                <label>Description</label>
+                <textarea formControlName="description" rows="3" class="form-input" 
+                  placeholder="Batch description and additional details"></textarea>
+              </div>
+              
+              <div class="form-group full">
+                <label>Meeting Link</label>
+                <input type="url" formControlName="meetingLink" class="form-input" 
+                  placeholder="https://meet.google.com/...">
+              </div>
+            </div>
+            
+            <div *ngIf="batchFormError" class="form-error-message">
+              <i class="fas fa-exclamation-circle"></i>
+              {{ batchFormError }}
+            </div>
+            <div *ngIf="batchFormSuccess" class="form-success-message">
+              <i class="fas fa-check-circle"></i>
+              {{ batchFormSuccess }}
+            </div>
+            
+            <div class="form-actions">
+              <button type="button" class="btn-secondary" (click)="closeBatchForm()" [disabled]="isSubmittingBatch">
+                Cancel
+              </button>
+              <button type="submit" class="btn-primary" [disabled]="isSubmittingBatch || batchForm.invalid">
+                <i *ngIf="!isSubmittingBatch" class="fas fa-save"></i>
+                <i *ngIf="isSubmittingBatch" class="fas fa-spinner fa-spin"></i>
+                {{ isSubmittingBatch ? (isEditingBatch ? 'Updating...' : 'Creating...') : (isEditingBatch ? 'Update Batch' : 'Create Batch') }}
+              </button>
+            </div>
+          </form>
+        </div>
+        
+        <!-- Batches List -->
+        <div class="batches-list" *ngIf="!showBatchForm">
+          <!-- Loading State -->
+          <div *ngIf="isLoadingBatches" class="loading-container">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading batches...</p>
+          </div>
+          
+          <!-- Empty State -->
+          <div *ngIf="!isLoadingBatches && upcomingBatches.length === 0" class="empty-state">
+            <i class="fas fa-calendar-alt"></i>
+            <h3>No Batches Found</h3>
+            <p>Start by scheduling your first batch using the "Schedule New Batch" button above.</p>
+          </div>
+          
+          <!-- Batches List -->
+          <div *ngIf="!isLoadingBatches && upcomingBatches.length > 0">
+            <div class="batch-card" *ngFor="let batch of upcomingBatches">
+              <div class="batch-info">
+                <h3>{{ batch.course }}</h3>
+                <div class="batch-details">
+                  <span class="batch-date">
+                    <i class="fas fa-calendar"></i>
+                    {{ batch.startDate }} - {{ batch.endDate }}
+                  </span>
+                  <span class="batch-trainer">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    {{ batch.trainer }}
+                  </span>
+                  <span class="batch-duration">
+                    <i class="fas fa-hourglass-half"></i>
+                    {{ batch.duration }}
+                  </span>
+                </div>
+              </div>
+              <div class="batch-meta">
+                <div class="students-count">
+                  <i class="fas fa-users"></i>
+                  {{ batch.students }} / {{ batch.maxStudents }} students
+                </div>
+                <div class="batch-status" [class]="getStatusClass(batch.status)">
+                  {{ batch.status }}
+                </div>
+              </div>
+              <div class="batch-actions">
+                <button class="btn-secondary" type="button" (click)="startEditBatch(batch)">Edit</button>
+                <button class="btn-primary">Manage Batch</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Students Section -->
+      <div *ngIf="activeSection === 'students'" class="students-section">
+        <div class="section-header">
+          <h2>Student Management</h2>
+          <div class="header-actions">
+            <button class="btn-secondary" (click)="exportStudentData()">
+              <i class="fas fa-download"></i>
+              Export Data
+            </button>
+          </div>
+        </div>
+        
+        <!-- Search and Filter Controls -->
+        <div class="students-controls">
+          <div class="search-box-container">
+            <div class="search-box">
+              <i class="fas fa-search"></i>
+              <input 
+                type="text" 
+                [(ngModel)]="studentSearchTerm" 
+                (ngModelChange)="onStudentSearch()"
+                placeholder="Search students by name, email, or course..."
+                class="search-input">
+            </div>
+          </div>
+          
+          <div class="filters-container">
+            <div class="filter-group">
+              <label for="statusFilter">Status:</label>
+              <select 
+                id="statusFilter" 
+                [(ngModel)]="studentStatusFilter" 
+                (ngModelChange)="onStatusFilterChange()"
+                class="filter-select">
+                <option value="all">All Status</option>
+                <option value="active">Active</option>
+                <option value="graduated">Graduated</option>
+                <option value="suspended">Suspended</option>
+                <option value="dropped">Dropped</option>
+              </select>
+            </div>
+            
+            <div class="filter-group">
+              <label for="sortBy">Sort By:</label>
+              <select 
+                id="sortBy" 
+                [(ngModel)]="studentSortBy" 
+                (ngModelChange)="onSortChange()"
+                class="filter-select">
+                <option value="name">Name</option>
+                <option value="email">Email</option>
+                <option value="course">Course</option>
+                <option value="enrollmentDate">Enrollment Date</option>
+                <option value="progress">Progress</option>
+              </select>
+            </div>
+            
+            <button class="btn-sort-toggle" (click)="toggleSortOrder()" title="Toggle Sort Order">
+              <i class="fas" [class.fa-sort-up]="studentSortOrder === 'asc'" [class.fa-sort-down]="studentSortOrder === 'desc'"></i>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Students Stats Summary -->
+        <div class="students-stats-summary">
+          <div class="stat-item">
+            <span class="stat-label">Total Students</span>
+            <span class="stat-value">{{ totalStudentsCount }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Active</span>
+            <span class="stat-value active">{{ activeStudentsCount }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Graduated</span>
+            <span class="stat-value completed">{{ graduatedStudentsCount }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Filtered Results</span>
+            <span class="stat-value">{{ filteredStudentsCount }}</span>
+          </div>
+        </div>
+        
+        <!-- Students Table -->
+        <div class="students-table-container">
+          <div *ngIf="isLoadingStudents" class="loading-state">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading students...</p>
+          </div>
+          
+          <div *ngIf="!isLoadingStudents && filteredStudents.length === 0" class="empty-state">
+            <i class="fas fa-users"></i>
+            <p>No students found matching your criteria.</p>
+          </div>
+          
+          <table *ngIf="!isLoadingStudents && filteredStudents.length > 0" class="students-table">
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Email</th>
+                <th>Course</th>
+                <th>Enrollment Date</th>
+                <th>Progress</th>
+                <th>Status</th>
+                <th>Grade</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let student of filteredStudents" class="student-row">
+                <td>
+                  <div class="student-info">
+                    <div class="student-avatar">
+                      <img [src]="'https://via.placeholder.com/40x40/9C27B0/ffffff?text=' + getStudentInitial(student.name)" [alt]="student.name">
+                    </div>
+                    <div class="student-name">
+                      <strong>{{ student.name }}</strong>
+                    </div>
+                  </div>
+                </td>
+                <td>{{ student.email }}</td>
+                <td>
+                  <span class="course-badge">{{ student.course }}</span>
+                </td>
+                <td>{{ formatDate(student.enrollmentDate) }}</td>
+                <td>
+                  <div class="progress-container">
+                    <div class="progress-bar">
+                      <div 
+                        class="progress-fill" 
+                        [style.width.%]="student.progress"
+                        [style.background-color]="getProgressColor(student.progress)">
+                      </div>
+                    </div>
+                    <span class="progress-text">{{ student.progress }}%</span>
+                  </div>
+                </td>
+                <td>
+                  <span class="status-badge" [class]="getStudentStatusClass(student.status)">
+                    {{ student.status | titlecase }}
+                  </span>
+                </td>
+                <td>
+                  <span class="grade-badge" *ngIf="student.grade">{{ student.grade }}</span>
+                  <span class="no-grade" *ngIf="!student.grade">-</span>
+                </td>
+                <td>
+                  <div class="action-buttons">
+                    <button class="btn-action" (click)="viewStudentDetails(student)" title="View Details">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn-action" title="Send Message">
+                      <i class="fas fa-envelope"></i>
+                    </button>
+                    <button class="btn-action" title="More Options">
+                      <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- Revenue & Finance Section -->
+      <div *ngIf="activeSection === 'revenue'" class="revenue-section">
+        <div class="section-header">
+          <h2>Revenue & Finance</h2>
+          <div class="header-actions">
+            <select [(ngModel)]="selectedRevenuePeriod" (ngModelChange)="loadRevenue()" class="period-select">
+              <option value="monthly">Monthly</option>
+              <option value="quarterly">Quarterly</option>
+              <option value="yearly">Yearly</option>
+            </select>
+            <button class="btn-secondary">
+              <i class="fas fa-download"></i>
+              Export Report
+            </button>
+          </div>
+        </div>
+        
+        <div *ngIf="isLoadingRevenue" class="loading-state">
+          <i class="fas fa-spinner fa-spin"></i>
+          <p>Loading revenue data...</p>
+        </div>
+        
+        <div *ngIf="!isLoadingRevenue && revenue" class="revenue-content">
+          <!-- Revenue Overview Cards -->
+          <div class="revenue-overview-grid">
+            <div class="revenue-card total">
+              <div class="card-icon">
+                <i class="fas fa-dollar-sign"></i>
+              </div>
+              <div class="card-content">
+                <h3>Total Revenue</h3>
+                <p class="amount">{{ formatCurrency(revenue.total) }}</p>
+                <span class="card-label">All Time</span>
+              </div>
+            </div>
+            
+            <div class="revenue-card current">
+              <div class="card-icon">
+                <i class="fas fa-calendar-alt"></i>
+              </div>
+              <div class="card-content">
+                <h3>Current Month</h3>
+                <p class="amount">{{ formatCurrency(revenue.currentMonth) }}</p>
+                <div class="trend-indicator" [class.positive]="getPercentageChange(revenue.currentMonth, revenue.lastMonth) >= 0" [class.negative]="getPercentageChange(revenue.currentMonth, revenue.lastMonth) < 0">
+                  <i [class]="getPercentageChange(revenue.currentMonth, revenue.lastMonth) >= 0 ? 'fas fa-arrow-up' : 'fas fa-arrow-down'"></i>
+                  <span>{{ getPercentageChange(revenue.currentMonth, revenue.lastMonth) | number:'1.1-1' }}%</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="revenue-card growth">
+              <div class="card-icon">
+                <i class="fas fa-chart-line"></i>
+              </div>
+              <div class="card-content">
+                <h3>Growth Rate</h3>
+                <p class="amount">{{ revenue.growthRate }}%</p>
+                <span class="card-label">Month over Month</span>
+              </div>
+            </div>
+            
+            <div class="revenue-card average">
+              <div class="card-icon">
+                <i class="fas fa-users"></i>
+              </div>
+              <div class="card-content">
+                <h3>Avg per Student</h3>
+                <p class="amount">{{ formatCurrency(getAverageRevenuePerStudent()) }}</p>
+                <span class="card-label">Current Month</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Revenue Charts Row -->
+          <div class="revenue-charts-row">
+            <!-- Monthly Revenue Chart -->
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>
+                  <i class="fas fa-chart-bar"></i>
+                  Monthly Revenue Trend
+                </h3>
+                <div class="chart-legend">
+                  <span class="legend-item">
+                    <span class="legend-color" style="background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);"></span>
+                    Revenue
+                  </span>
+                </div>
+              </div>
+              <div class="chart-body">
+                <div class="bar-chart-container">
+                  <div class="bar-chart">
+                    <div *ngFor="let data of monthlyRevenueData" class="bar-item">
+                      <div class="bar-wrapper">
+                        <div 
+                          class="bar" 
+                          [style.height.%]="getChartBarWidth(data.revenue, getMaxChartValue(monthlyRevenueData, 'revenue'))"
+                          title="{{ formatCurrency(data.revenue) }}">
+                        </div>
+                      </div>
+                      <div class="bar-label">{{ data.month }}</div>
+                      <div class="bar-value">{{ formatCurrency(data.revenue) }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Revenue Projections -->
+            <div class="projections-card">
+              <div class="projections-header">
+                <h3>
+                  <i class="fas fa-crystal-ball"></i>
+                  Revenue Projections
+                </h3>
+              </div>
+              <div class="projections-content">
+                <div class="projection-item">
+                  <div class="projection-icon next-month">
+                    <i class="fas fa-calendar"></i>
+                  </div>
+                  <div class="projection-details">
+                    <h4>Next Month</h4>
+                    <p class="projection-amount">{{ formatCurrency(revenue.projections.nextMonth) }}</p>
+                    <div class="projection-change">
+                      <i class="fas fa-arrow-up"></i>
+                      <span>{{ getPercentageChange(revenue.projections.nextMonth, revenue.currentMonth) | number:'1.1-1' }}% increase</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="projection-item">
+                  <div class="projection-icon next-quarter">
+                    <i class="fas fa-calendar-alt"></i>
+                  </div>
+                  <div class="projection-details">
+                    <h4>Next Quarter</h4>
+                    <p class="projection-amount">{{ formatCurrency(revenue.projections.nextQuarter) }}</p>
+                    <div class="projection-change">
+                      <i class="fas fa-arrow-up"></i>
+                      <span>{{ getPercentageChange(revenue.projections.nextQuarter, revenue.currentMonth * 3) | number:'1.1-1' }}% increase</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Revenue Breakdown -->
+          <div class="revenue-breakdown-card">
+            <div class="breakdown-header">
+              <h3>
+                <i class="fas fa-pie-chart"></i>
+                Revenue by Course
+              </h3>
+              <span class="total-breakdown">{{ formatCurrency(getTotalBreakdown()) }}</span>
+            </div>
+            <div class="breakdown-content">
+              <div class="breakdown-list">
+                <div *ngFor="let item of revenue.breakdown; let i = index" class="breakdown-item">
+                  <div class="breakdown-info">
+                    <div class="breakdown-course">
+                      <div class="course-color" [style.background]="getCourseColor(i)"></div>
+                      <span class="course-name">{{ item.course }}</span>
+                    </div>
+                    <div class="breakdown-stats">
+                      <span class="breakdown-amount">{{ formatCurrency(item.amount) }}</span>
+                      <span class="breakdown-percentage">{{ getBreakdownPercentage(item.amount) | number:'1.1-1' }}%</span>
+                    </div>
+                  </div>
+                  <div class="breakdown-bar">
+                    <div 
+                      class="breakdown-fill" 
+                      [style.width.%]="getBreakdownPercentage(item.amount)"
+                      [style.background]="getCourseColor(i)">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Financial Summary -->
+          <div class="financial-summary-grid">
+            <div class="summary-card">
+              <div class="summary-header">
+                <h4>
+                  <i class="fas fa-coins"></i>
+                  Last Month
+                </h4>
+              </div>
+              <div class="summary-value">{{ formatCurrency(revenue.lastMonth) }}</div>
+              <div class="summary-comparison">
+                <i class="fas fa-arrow-down"></i>
+                <span>{{ formatCurrency(revenue.currentMonth - revenue.lastMonth) }} difference</span>
+              </div>
+            </div>
+            
+            <div class="summary-card">
+              <div class="summary-header">
+                <h4>
+                  <i class="fas fa-percentage"></i>
+                  Average Monthly
+                </h4>
+              </div>
+              <div class="summary-value">{{ formatCurrency(revenue.total / 12) }}</div>
+              <div class="summary-comparison">
+                <i class="fas fa-info-circle"></i>
+                <span>Based on yearly average</span>
+              </div>
+            </div>
+            
+            <div class="summary-card">
+              <div class="summary-header">
+                <h4>
+                  <i class="fas fa-trophy"></i>
+                  Best Month
+                </h4>
+              </div>
+              <div class="summary-value">{{ formatCurrency(revenue.currentMonth) }}</div>
+              <div class="summary-comparison">
+                <i class="fas fa-check-circle"></i>
+                <span>Current month is best</span>
+              </div>
+            </div>
+            
+            <div class="summary-card">
+              <div class="summary-header">
+                <h4>
+                  <i class="fas fa-bullseye"></i>
+                  Target Achievement
+                </h4>
+              </div>
+              <div class="summary-value">{{ ((revenue.currentMonth / 20000) * 100) | number:'1.0-0' }}%</div>
+              <div class="summary-comparison">
+                <i class="fas fa-target"></i>
+                <span>Target: {{ formatCurrency(20000) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Analytics Section -->
+      <div *ngIf="activeSection === 'analytics'" class="analytics-section">
+        <div class="section-header">
+          <h2>Institution Analytics</h2>
+          <div class="header-actions">
+            <div class="time-range-selector">
+              <button 
+                *ngFor="let range of ['3months', '6months', '1year', 'all']"
+                class="range-btn" 
+                [class.active]="selectedTimeRange === range"
+                (click)="changeTimeRange(range)">
+                {{ range === '3months' ? '3M' : range === '6months' ? '6M' : range === '1year' ? '1Y' : 'All' }}
+              </button>
+            </div>
+            <button class="btn-secondary">
+              <i class="fas fa-download"></i>
+              Export Analytics
+            </button>
+          </div>
+        </div>
+        
+        <div *ngIf="isLoadingAnalytics" class="loading-state">
+          <i class="fas fa-spinner fa-spin"></i>
+          <p>Loading analytics data...</p>
+        </div>
+        
+        <div *ngIf="!isLoadingAnalytics && analytics" class="analytics-content">
+          <!-- Key Metrics Overview -->
+          <div class="analytics-overview-grid">
+            <div class="analytics-metric-card engagement">
+              <div class="metric-icon">
+                <i class="fas fa-users"></i>
+              </div>
+              <div class="metric-content">
+                <h3>Student Engagement</h3>
+                <div class="metric-value">{{ analytics.studentEngagement.totalStudents }}</div>
+                <div class="metric-subtitle">Total Students</div>
+                <div class="metric-details">
+                  <span class="detail-item">
+                    <i class="fas fa-circle" style="color: #22c55e;"></i>
+                    {{ analytics.studentEngagement.activeStudents }} Active
+                  </span>
+                  <span class="detail-item">
+                    <i class="fas fa-check-circle"></i>
+                    {{ analytics.studentEngagement.completionRate }}% Completion
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="analytics-metric-card courses">
+              <div class="metric-icon">
+                <i class="fas fa-book"></i>
+              </div>
+              <div class="metric-content">
+                <h3>Course Performance</h3>
+                <div class="metric-value">{{ analytics.coursePerformance.totalCourses }}</div>
+                <div class="metric-subtitle">Total Courses</div>
+                <div class="metric-details">
+                  <span class="detail-item">
+                    <i class="fas fa-play-circle" style="color: #3b82f6;"></i>
+                    {{ analytics.coursePerformance.activeCourses }} Active
+                  </span>
+                  <span class="detail-item">
+                    <i class="fas fa-star" style="color: #f59e0b;"></i>
+                    {{ analytics.coursePerformance.averageRating | number:'1.1-1' }} Avg Rating
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="analytics-metric-card progress">
+              <div class="metric-icon">
+                <i class="fas fa-chart-line"></i>
+              </div>
+              <div class="metric-content">
+                <h3>Average Progress</h3>
+                <div class="metric-value">{{ analytics.studentEngagement.averageProgress }}%</div>
+                <div class="metric-subtitle">Student Progress</div>
+                <div class="progress-circle-container">
+                  <div class="progress-circle" [style.background]="'conic-gradient(from 0deg, #9C27B0 0% ' + analytics.studentEngagement.averageProgress + '%, #e5e7eb ' + analytics.studentEngagement.averageProgress + '% 100%)'">
+                    <div class="progress-inner">{{ analytics.studentEngagement.averageProgress }}%</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="analytics-metric-card enrollments">
+              <div class="metric-icon">
+                <i class="fas fa-user-graduate"></i>
+              </div>
+              <div class="metric-content">
+                <h3>Total Enrollments</h3>
+                <div class="metric-value">{{ analytics.coursePerformance.totalEnrollments | number }}</div>
+                <div class="metric-subtitle">Across All Courses</div>
+                <div class="metric-details">
+                  <span class="detail-item">
+                    <i class="fas fa-arrow-up" style="color: #22c55e;"></i>
+                    {{ analytics.coursePerformance.totalEnrollments / analytics.coursePerformance.totalCourses | number:'1.0-0' }} Avg/Course
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Charts Row -->
+          <div class="analytics-charts-row">
+            <!-- Student Engagement Chart -->
+            <div class="analytics-chart-card">
+              <div class="chart-card-header">
+                <h3>
+                  <i class="fas fa-chart-area"></i>
+                  Student Engagement Trend
+                </h3>
+                <div class="chart-legend">
+                  <span class="legend-item">
+                    <span class="legend-dot students"></span>
+                    Students
+                  </span>
+                  <span class="legend-item">
+                    <span class="legend-dot completions"></span>
+                    Completions
+                  </span>
+                </div>
+              </div>
+              <div class="chart-card-body">
+                <div class="engagement-chart">
+                  <div class="chart-bars-container">
+                    <div *ngFor="let data of analytics.studentEngagement.engagementChart" class="chart-bar-group">
+                      <div class="dual-bars">
+                        <div 
+                          class="bar students-bar" 
+                          [style.height.%]="getChartBarWidth(data.students, getMaxChartValue(analytics.studentEngagement.engagementChart, 'students'))"
+                          [title]="data.students + ' students'">
+                        </div>
+                        <div 
+                          class="bar completions-bar" 
+                          [style.height.%]="getChartBarWidth(data.completions, getMaxChartValue(analytics.studentEngagement.engagementChart, 'students'))"
+                          [title]="data.completions + ' completions'">
+                        </div>
+                      </div>
+                      <div class="bar-month">{{ data.month }}</div>
+                      <div class="bar-values">
+                        <span class="value-students">{{ data.students }}</span>
+                        <span class="value-completions">{{ data.completions }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Course Performance Chart -->
+            <div class="analytics-chart-card">
+              <div class="chart-card-header">
+                <h3>
+                  <i class="fas fa-chart-bar"></i>
+                  Course Performance
+                </h3>
+                <div class="chart-legend">
+                  <span class="legend-item">
+                    <span class="legend-dot enrollments"></span>
+                    Enrollments
+                  </span>
+                </div>
+              </div>
+              <div class="chart-card-body">
+                <div class="course-performance-chart">
+                  <div class="performance-bars">
+                    <div *ngFor="let course of analytics.coursePerformance.performanceChart; let i = index" class="performance-item">
+                      <div class="performance-course-name">{{ course.course }}</div>
+                      <div class="performance-bar-wrapper">
+                        <div 
+                          class="performance-bar" 
+                          [style.width.%]="getChartBarWidth(course.enrollments, getMaxChartValue(analytics.coursePerformance.performanceChart, 'enrollments'))"
+                          [style.background]="getCourseColor(i)">
+                          <span class="performance-enrollments">{{ course.enrollments }}</span>
+                        </div>
+                      </div>
+                      <div class="performance-rating">
+                        <i class="fas fa-star"></i>
+                        {{ course.rating | number:'1.1-1' }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Demographics Section -->
+          <div class="demographics-section">
+            <h3 class="section-title">
+              <i class="fas fa-users-cog"></i>
+              Student Demographics
+            </h3>
+            
+            <div class="demographics-grid">
+              <!-- Age Groups -->
+              <div class="demographic-card">
+                <div class="demographic-header">
+                  <h4>
+                    <i class="fas fa-birthday-cake"></i>
+                    Age Distribution
+                  </h4>
+                </div>
+                <div class="demographic-content">
+                  <div *ngFor="let age of analytics.demographics.ageGroups" class="demographic-item">
+                    <div class="demographic-label-row">
+                      <span class="demographic-label">{{ age.age }}</span>
+                      <span class="demographic-count">{{ age.count }} ({{ age.percentage }}%)</span>
+                    </div>
+                    <div class="demographic-bar">
+                      <div 
+                        class="demographic-fill" 
+                        [style.width.%]="age.percentage"
+                        [style.background]="getDemographicColor(age.percentage)">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Locations -->
+              <div class="demographic-card">
+                <div class="demographic-header">
+                  <h4>
+                    <i class="fas fa-map-marker-alt"></i>
+                    Geographic Distribution
+                  </h4>
+                </div>
+                <div class="demographic-content">
+                  <div *ngFor="let location of analytics.demographics.locations" class="demographic-item">
+                    <div class="demographic-label-row">
+                      <span class="demographic-label">{{ location.location }}</span>
+                      <span class="demographic-count">{{ location.count }} ({{ location.percentage }}%)</span>
+                    </div>
+                    <div class="demographic-bar">
+                      <div 
+                        class="demographic-fill" 
+                        [style.width.%]="location.percentage"
+                        [style.background]="getDemographicColor(location.percentage)">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Education Levels -->
+              <div class="demographic-card">
+                <div class="demographic-header">
+                  <h4>
+                    <i class="fas fa-graduation-cap"></i>
+                    Education Levels
+                  </h4>
+                </div>
+                <div class="demographic-content">
+                  <div *ngFor="let edu of analytics.demographics.educationLevels" class="demographic-item">
+                    <div class="demographic-label-row">
+                      <span class="demographic-label">{{ edu.level }}</span>
+                      <span class="demographic-count">{{ edu.count }} ({{ edu.percentage }}%)</span>
+                    </div>
+                    <div class="demographic-bar">
+                      <div 
+                        class="demographic-fill" 
+                        [style.width.%]="edu.percentage"
+                        [style.background]="getDemographicColor(edu.percentage)">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Summary Insights -->
+          <div class="insights-section">
+            <h3 class="section-title">
+              <i class="fas fa-lightbulb"></i>
+              Key Insights
+            </h3>
+            <div class="insights-grid">
+              <div class="insight-card">
+                <div class="insight-icon positive">
+                  <i class="fas fa-arrow-trend-up"></i>
+                </div>
+                <div class="insight-content">
+                  <h4>Strong Growth</h4>
+                  <p>Student enrollment has increased by {{ getTrend(analytics.studentEngagement.engagementChart[analytics.studentEngagement.engagementChart.length - 1].students, analytics.studentEngagement.engagementChart[0].students).value | number:'1.1-1' }}% over the selected period.</p>
+                </div>
+              </div>
+              
+              <div class="insight-card">
+                <div class="insight-icon positive">
+                  <i class="fas fa-star"></i>
+                </div>
+                <div class="insight-content">
+                  <h4>High Satisfaction</h4>
+                  <p>Average course rating of {{ analytics.coursePerformance.averageRating | number:'1.1-1' }} indicates excellent student satisfaction across all courses.</p>
+                </div>
+              </div>
+              
+              <div class="insight-card">
+                <div class="insight-icon info">
+                  <i class="fas fa-chart-pie"></i>
+                </div>
+                <div class="insight-content">
+                  <h4>Diverse Demographics</h4>
+                  <p>Students from {{ analytics.demographics.locations.length }} locations with {{ analytics.demographics.ageGroups.length }} different age groups represented.</p>
+                </div>
+              </div>
+              
+              <div class="insight-card">
+                <div class="insight-icon positive">
+                  <i class="fas fa-trophy"></i>
+                </div>
+                <div class="insight-content">
+                  <h4>Completion Rate</h4>
+                  <p>{{ analytics.studentEngagement.completionRate }}% completion rate shows strong student engagement and course effectiveness.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Settings Section -->
+      <div *ngIf="activeSection === 'settings'" class="settings-section">
+        <div class="section-header">
+          <h2>Institution Settings</h2>
+          <button class="btn-primary" (click)="saveSettings()" [disabled]="isSavingSettings">
+            <i *ngIf="isSavingSettings" class="fas fa-spinner fa-spin"></i>
+            <i *ngIf="!isSavingSettings" class="fas fa-save"></i>
+            {{ isSavingSettings ? 'Saving...' : 'Save Changes' }}
+          </button>
+        </div>
+        
+        <!-- Settings Messages -->
+        <div *ngIf="settingsSuccessMessage" class="settings-success-message">
+          <i class="fas fa-check-circle"></i>
+          {{ settingsSuccessMessage }}
+        </div>
+        
+        <div *ngIf="settingsErrorMessage" class="settings-error-message">
+          <i class="fas fa-exclamation-circle"></i>
+          {{ settingsErrorMessage }}
+        </div>
+        
+        <!-- Settings Tabs -->
+        <div class="settings-tabs">
+          <button 
+            *ngFor="let tab of ['profile', 'contact', 'notifications', 'security', 'preferences']"
+            class="settings-tab"
+            [class.active]="activeSettingsTab === tab"
+            (click)="setActiveSettingsTab(tab)">
+            <i [class]="getTabIcon(tab)"></i>
+            {{ getTabLabel(tab) }}
+          </button>
+        </div>
+        
+        <!-- Settings Content -->
+        <div class="settings-content">
+          <!-- Profile Settings -->
+          <div *ngIf="activeSettingsTab === 'profile'" class="settings-tab-content">
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <h3>
+                  <i class="fas fa-building"></i>
+                  Institution Profile
+                </h3>
+                <p class="settings-description">Manage your institution's basic information and branding.</p>
+              </div>
+              
+              <div class="settings-card-body">
+                <div class="logo-upload-section">
+                  <div class="logo-preview">
+                    <img [src]="settings.profile.logo || 'https://via.placeholder.com/120x120/9C27B0/ffffff?text=TW'" alt="Institution Logo">
+                  </div>
+                  <div class="logo-upload-controls">
+                    <label for="logoUpload" class="btn-secondary">
+                      <i class="fas fa-upload"></i>
+                      Upload Logo
+                    </label>
+                    <input type="file" id="logoUpload" accept="image/*" (change)="onLogoUpload($event)" style="display: none;">
+                    <p class="upload-hint">Recommended: 400x400px, PNG or JPG format</p>
+                  </div>
+                </div>
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="institutionName">
+                      Institution Name <span class="required">*</span>
+                    </label>
+                    <input 
+                      type="text" 
+                      id="institutionName" 
+                      [(ngModel)]="settings.profile.name"
+                      class="form-input"
+                      placeholder="Enter institution name">
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="shortName">
+                      Short Name <span class="required">*</span>
+                    </label>
+                    <input 
+                      type="text" 
+                      id="shortName" 
+                      [(ngModel)]="settings.profile.shortName"
+                      class="form-input"
+                      placeholder="Enter short name">
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label for="description">
+                    Description <span class="required">*</span>
+                  </label>
+                  <textarea 
+                    id="description" 
+                    [(ngModel)]="settings.profile.description"
+                    class="form-input form-textarea"
+                    rows="4"
+                    placeholder="Enter institution description..."></textarea>
+                </div>
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="institutionType">
+                      Institution Type <span class="required">*</span>
+                    </label>
+                    <select 
+                      id="institutionType" 
+                      [(ngModel)]="settings.profile.type"
+                      class="form-input">
+                      <option *ngFor="let type of getInstitutionTypes()" [value]="type">{{ type }}</option>
+                    </select>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="category">
+                      Category <span class="required">*</span>
+                    </label>
+                    <select 
+                      id="category" 
+                      [(ngModel)]="settings.profile.category"
+                      class="form-input">
+                      <option *ngFor="let cat of getCategories()" [value]="cat">{{ cat }}</option>
+                    </select>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="founded">
+                      Year Founded
+                    </label>
+                    <input 
+                      type="number" 
+                      id="founded" 
+                      [(ngModel)]="settings.profile.founded"
+                      class="form-input"
+                      placeholder="e.g., 2020"
+                      [min]="1800"
+                      [max]="getCurrentYear()">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Contact Settings -->
+          <div *ngIf="activeSettingsTab === 'contact'" class="settings-tab-content">
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <h3>
+                  <i class="fas fa-address-book"></i>
+                  Contact Information
+                </h3>
+                <p class="settings-description">Update your contact details and address information.</p>
+              </div>
+              
+              <div class="settings-card-body">
+                <div class="form-section-title">
+                  <i class="fas fa-envelope"></i>
+                  Contact Details
+                </div>
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="email">
+                      Email Address <span class="required">*</span>
+                    </label>
+                    <input 
+                      type="email" 
+                      id="email" 
+                      [(ngModel)]="settings.contact.email"
+                      class="form-input"
+                      placeholder="contact@example.com">
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="phone">
+                      Phone Number <span class="required">*</span>
+                    </label>
+                    <input 
+                      type="tel" 
+                      id="phone" 
+                      [(ngModel)]="settings.contact.phone"
+                      class="form-input"
+                      placeholder="+1 234 567 8900">
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label for="website">
+                    Website URL
+                  </label>
+                  <input 
+                    type="url" 
+                    id="website" 
+                    [(ngModel)]="settings.contact.website"
+                    class="form-input"
+                    placeholder="https://www.example.com">
+                </div>
+                
+                <div class="form-section-title" style="margin-top: 30px;">
+                  <i class="fas fa-map-marker-alt"></i>
+                  Address Information
+                </div>
+                
+                <div class="form-group">
+                  <label for="street">
+                    Street Address <span class="required">*</span>
+                  </label>
+                  <input 
+                    type="text" 
+                    id="street" 
+                    [(ngModel)]="settings.address.street"
+                    class="form-input"
+                    placeholder="123 Main Street">
+                </div>
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="city">
+                      City <span class="required">*</span>
+                    </label>
+                    <input 
+                      type="text" 
+                      id="city" 
+                      [(ngModel)]="settings.address.city"
+                      class="form-input"
+                      placeholder="City">
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="state">
+                      State/Province <span class="required">*</span>
+                    </label>
+                    <input 
+                      type="text" 
+                      id="state" 
+                      [(ngModel)]="settings.address.state"
+                      class="form-input"
+                      placeholder="State">
+                  </div>
+                </div>
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="country">
+                      Country <span class="required">*</span>
+                    </label>
+                    <input 
+                      type="text" 
+                      id="country" 
+                      [(ngModel)]="settings.address.country"
+                      class="form-input"
+                      placeholder="Country">
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="zipCode">
+                      ZIP/Postal Code <span class="required">*</span>
+                    </label>
+                    <input 
+                      type="text" 
+                      id="zipCode" 
+                      [(ngModel)]="settings.address.zipCode"
+                      class="form-input"
+                      placeholder="12345">
+                  </div>
+                </div>
+                
+                <div class="form-section-title" style="margin-top: 30px;">
+                  <i class="fas fa-share-alt"></i>
+                  Social Media Links
+                </div>
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="facebook">
+                      <i class="fab fa-facebook"></i>
+                      Facebook
+                    </label>
+                    <input 
+                      type="url" 
+                      id="facebook" 
+                      [(ngModel)]="settings.socialMedia.facebook"
+                      class="form-input"
+                      placeholder="https://facebook.com/...">
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="twitter">
+                      <i class="fab fa-twitter"></i>
+                      Twitter
+                    </label>
+                    <input 
+                      type="url" 
+                      id="twitter" 
+                      [(ngModel)]="settings.socialMedia.twitter"
+                      class="form-input"
+                      placeholder="https://twitter.com/...">
+                  </div>
+                </div>
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="linkedin">
+                      <i class="fab fa-linkedin"></i>
+                      LinkedIn
+                    </label>
+                    <input 
+                      type="url" 
+                      id="linkedin" 
+                      [(ngModel)]="settings.socialMedia.linkedin"
+                      class="form-input"
+                      placeholder="https://linkedin.com/...">
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="instagram">
+                      <i class="fab fa-instagram"></i>
+                      Instagram
+                    </label>
+                    <input 
+                      type="url" 
+                      id="instagram" 
+                      [(ngModel)]="settings.socialMedia.instagram"
+                      class="form-input"
+                      placeholder="https://instagram.com/...">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Notifications Settings -->
+          <div *ngIf="activeSettingsTab === 'notifications'" class="settings-tab-content">
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <h3>
+                  <i class="fas fa-bell"></i>
+                  Notification Preferences
+                </h3>
+                <p class="settings-description">Configure how you receive notifications and updates.</p>
+              </div>
+              
+              <div class="settings-card-body">
+                <div class="notification-group">
+                  <h4 class="notification-group-title">
+                    <i class="fas fa-envelope"></i>
+                    Email Notifications
+                  </h4>
+                  <div class="notification-options">
+                    <label class="toggle-switch">
+                      <input type="checkbox" [(ngModel)]="settings.notifications.email">
+                      <span class="toggle-slider"></span>
+                      <span class="toggle-label">
+                        <strong>Email Notifications</strong>
+                        <small>Receive notifications via email</small>
+                      </span>
+                    </label>
+                    
+                    <label class="toggle-switch">
+                      <input type="checkbox" [(ngModel)]="settings.notifications.marketing" [disabled]="!settings.notifications.email">
+                      <span class="toggle-slider"></span>
+                      <span class="toggle-label">
+                        <strong>Marketing Emails</strong>
+                        <small>Receive promotional and marketing emails</small>
+                      </span>
+                    </label>
+                    
+                    <label class="toggle-switch">
+                      <input type="checkbox" [(ngModel)]="settings.notifications.courseUpdates" [disabled]="!settings.notifications.email">
+                      <span class="toggle-slider"></span>
+                      <span class="toggle-label">
+                        <strong>Course Updates</strong>
+                        <small>Get notified about course changes and updates</small>
+                      </span>
+                    </label>
+                    
+                    <label class="toggle-switch">
+                      <input type="checkbox" [(ngModel)]="settings.notifications.studentEnrollments" [disabled]="!settings.notifications.email">
+                      <span class="toggle-slider"></span>
+                      <span class="toggle-label">
+                        <strong>Student Enrollments</strong>
+                        <small>Notifications when students enroll in courses</small>
+                      </span>
+                    </label>
+                    
+                    <label class="toggle-switch">
+                      <input type="checkbox" [(ngModel)]="settings.notifications.paymentNotifications" [disabled]="!settings.notifications.email">
+                      <span class="toggle-slider"></span>
+                      <span class="toggle-label">
+                        <strong>Payment Notifications</strong>
+                        <small>Receive payment and billing notifications</small>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+                
+                <div class="notification-group">
+                  <h4 class="notification-group-title">
+                    <i class="fas fa-mobile-alt"></i>
+                    Mobile Notifications
+                  </h4>
+                  <div class="notification-options">
+                    <label class="toggle-switch">
+                      <input type="checkbox" [(ngModel)]="settings.notifications.push">
+                      <span class="toggle-slider"></span>
+                      <span class="toggle-label">
+                        <strong>Push Notifications</strong>
+                        <small>Receive push notifications on your device</small>
+                      </span>
+                    </label>
+                    
+                    <label class="toggle-switch">
+                      <input type="checkbox" [(ngModel)]="settings.notifications.sms">
+                      <span class="toggle-slider"></span>
+                      <span class="toggle-label">
+                        <strong>SMS Notifications</strong>
+                        <small>Receive text message notifications</small>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Security Settings -->
+          <div *ngIf="activeSettingsTab === 'security'" class="settings-tab-content">
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <h3>
+                  <i class="fas fa-shield-alt"></i>
+                  Security Settings
+                </h3>
+                <p class="settings-description">Manage your account security and authentication preferences.</p>
+              </div>
+              
+              <div class="settings-card-body">
+                <div class="security-item">
+                  <div class="security-info">
+                    <h4>
+                      <i class="fas fa-lock"></i>
+                      Two-Factor Authentication
+                    </h4>
+                    <p>Add an extra layer of security to your account</p>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" [(ngModel)]="settings.security.twoFactorEnabled">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                
+                <div class="security-item">
+                  <div class="security-info">
+                    <h4>
+                      <i class="fas fa-key"></i>
+                      Password Policy
+                    </h4>
+                    <p>Require password change on next login</p>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" [(ngModel)]="settings.security.passwordChangeRequired">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                
+                <div class="security-divider"></div>
+                
+                <div class="password-change-section">
+                  <h4>
+                    <i class="fas fa-key"></i>
+                    Change Password
+                  </h4>
+                  <div class="form-group">
+                    <label for="currentPassword">Current Password</label>
+                    <input 
+                      type="password" 
+                      id="currentPassword" 
+                      class="form-input"
+                      placeholder="Enter current password">
+                  </div>
+                  
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="newPassword">New Password</label>
+                      <input 
+                        type="password" 
+                        id="newPassword" 
+                        class="form-input"
+                        placeholder="Enter new password">
+                    </div>
+                    
+                    <div class="form-group">
+                      <label for="confirmPassword">Confirm Password</label>
+                      <input 
+                        type="password" 
+                        id="confirmPassword" 
+                        class="form-input"
+                        placeholder="Confirm new password">
+                    </div>
+                  </div>
+                  
+                  <button class="btn-primary" style="margin-top: 15px;">
+                    <i class="fas fa-key"></i>
+                    Update Password
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Preferences Settings -->
+          <div *ngIf="activeSettingsTab === 'preferences'" class="settings-tab-content">
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <h3>
+                  <i class="fas fa-cog"></i>
+                  Application Preferences
+                </h3>
+                <p class="settings-description">Customize your dashboard and application preferences.</p>
+              </div>
+              
+              <div class="settings-card-body">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="timezone">
+                      <i class="fas fa-clock"></i>
+                      Timezone
+                    </label>
+                    <select 
+                      id="timezone" 
+                      [(ngModel)]="settings.preferences.timezone"
+                      class="form-input">
+                      <option *ngFor="let tz of getTimezones()" [value]="tz">{{ tz }}</option>
+                    </select>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="language">
+                      <i class="fas fa-language"></i>
+                      Language
+                    </label>
+                    <select 
+                      id="language" 
+                      [(ngModel)]="settings.preferences.language"
+                      class="form-input">
+                      <option *ngFor="let lang of getLanguages()" [value]="lang.code">{{ lang.name }}</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="dateFormat">
+                      <i class="fas fa-calendar"></i>
+                      Date Format
+                    </label>
+                    <select 
+                      id="dateFormat" 
+                      [(ngModel)]="settings.preferences.dateFormat"
+                      class="form-input">
+                      <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                      <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                      <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                      <option value="DD MMM YYYY">DD MMM YYYY</option>
+                    </select>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="currency">
+                      <i class="fas fa-dollar-sign"></i>
+                      Currency
+                    </label>
+                    <select 
+                      id="currency" 
+                      [(ngModel)]="settings.preferences.currency"
+                      class="form-input">
+                      <option value="USD">USD - US Dollar</option>
+                      <option value="EUR">EUR - Euro</option>
+                      <option value="GBP">GBP - British Pound</option>
+                      <option value="INR">INR - Indian Rupee</option>
+                      <option value="CAD">CAD - Canadian Dollar</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Other sections placeholder -->
+      <div *ngIf="activeSection !== 'overview' && activeSection !== 'courses' && activeSection !== 'trainers' && activeSection !== 'batches' && activeSection !== 'students' && activeSection !== 'revenue' && activeSection !== 'analytics' && activeSection !== 'settings'" class="placeholder-section">
+        <div class="placeholder-content">
+          <i class="fas fa-cog"></i>
+          <h2>{{ getSectionTitle() }}</h2>
+          <p>This section is under development</p>
+        </div>
+      </div>
+</div>
+
+

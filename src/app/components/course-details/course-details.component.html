@@ -1,0 +1,371 @@
+<!-- Course Details Page Header -->
+<app-page-header
+  [title]="getPageTitle()"
+  [subtitle]="getPageSubtitle()"
+  [breadcrumbItems]="breadcrumbs"
+  [showBack]="true"
+>
+  <div class="course-meta">
+    <div class="meta-item">
+      <i class="fa fa-clock-o"></i>
+      <span>{{courseDetailsData.courseDuration || '60 Days'}}</span>
+    </div>
+    <div class="meta-item">
+      <i class="fa fa-users"></i>
+      <span>{{courseDetailsData.courseStudents || courseDetailsData.totalStudents || '2,305'}} Students</span>
+    </div>
+    <div class="meta-item">
+      <i class="fa fa-star"></i>
+      <span>{{courseDetailsData.courseRating || '4.8'}} Rating</span>
+    </div>
+    <div class="meta-item">
+      <i class="fa fa-language"></i>
+      <span>{{courseDetailsData.languages || 'English'}}</span>
+    </div>
+  </div>
+</app-page-header>
+
+<div class="container" *ngIf="courseDetailsError">
+  <div class="alert alert-danger mt-3">
+    <i class="fa fa-exclamation-circle me-2"></i>{{ courseDetailsError }}
+  </div>
+</div>
+
+<div class="container" *ngIf="isLoadingCourseDetails && !courseDetailsError">
+  <div class="loading-state text-center py-4">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading course details...</span>
+    </div>
+    <p class="text-muted mt-3">Loading course details...</p>
+  </div>
+</div>
+
+<div class="container course-details-main">
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Course Video Section -->
+            <div class="course-video-section">
+                <div class="video-container">
+                    <iframe width="100%" height="400" [attr.src]="courseDetailsData.videoUrl || 'https://www.youtube.com/embed/tgbNymZ7vqY'" 
+                            frameborder="0" allowfullscreen>
+                    </iframe>
+                </div>
+                <div class="video-info">
+                    <h3 class="video-title">Course Introduction & Overview</h3>
+                    <p class="video-description">Get started with this comprehensive introduction to web development fundamentals.</p>
+                </div>
+            </div>
+            
+              <!-- <p class="course-description">
+                Qui et explicabo voluptatem et ab qui vero et voluptas. Sint voluptates temporibus quam autem. Atque nostrum voluptatum laudantium a doloremque enim et ut dicta. Nostrum ducimus est iure minima totam doloribus nisi ullam deserunt. Corporis aut officiis sit nihil est. Labore aut sapiente aperiam.
+                Qui voluptas qui vero ipsum ea voluptatem. Omnis et est. Voluptatem officia voluptatem adipisci et iusto provident doloremque consequatur. Quia et porro est. Et qui corrupti laudantium ipsa.
+                Eum quasi saepe aperiam qui delectus quaerat in. Vitae mollitia ipsa quam. Ipsa aut qui numquam eum iste est dolorum. Rem voluptas ut sit ut.
+              </p> -->
+        </div>
+        
+        <div class="col-md-4">
+            <!-- Course Enrollment Card -->
+            <div class="enrollment-card">
+                <div class="card-header">
+                    <h3 class="institute-name">{{courseDetailsData.institutesName}} Institute</h3>
+                    <div class="institute-rating">
+                        <div class="stars">
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                        </div>
+                        <span class="rating-text">{{courseDetailsData.courseRating}} 
+                            ({{courseDetailsData.courseReviews}} reviews)</span>
+                    </div>
+                </div>
+
+                <div class="course-info-section">
+                    <div class="info-row">
+                        <div class="info-label">
+                            <i class="fa fa-user"></i>
+                            <span>Trainer</span>
+                        </div>
+                        <div class="info-value">{{courseDetailsData.trainerName}}</div>
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">
+                            <i class="fa fa-calendar"></i>
+                            <span>Start Date</span>
+                        </div>
+                        <div class="info-value">{{courseDetailsData.startDate}}</div>
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">
+                            <i class="fa fa-clock-o"></i>
+                            <span>Schedule</span>
+                        </div>
+                        <div class="info-value">{{courseDetailsData.scheduleTime}}</div>
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">
+                            <i class="fa fa-users"></i>
+                            <span>Available Seats</span>
+                        </div>
+                        <div class="info-value seats-available">{{courseDetailsData.availableSeats}} Seats Left</div>
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-label">
+                            <i class="fa fa-clock-o"></i>
+                            <span>Duration</span>
+                        </div>
+                        <div class="info-value">{{courseDetailsData.courseDuration}}</div>
+                    </div>
+                </div>
+
+                <div class="pricing-section">
+                    <div class="price-display">
+                        <span class="current-price">₹{{courseDetailsData.price}}</span>
+                        <span class="original-price">₹{{courseDetailsData.discountPrice}}</span>
+                        <span class="discount-badge">{{courseDetailsData.discount}} OFF</span>
+                    </div>
+                    <p class="price-note">One-time payment • Lifetime access</p>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn-enroll" (click)="navigateToPaymentGateway()">
+                        <i class="fa fa-graduation-cap"></i>
+                        Enroll Now
+                    </button>
+                    <button class="btn-wishlist" [class.active]="isCourseInCart" (click)="handleWishlistClick()">
+                        <i class="fa" [ngClass]="isCourseInCart ? 'fa-check' : 'fa-heart-o'"></i>
+                        {{ isCourseInCart ? 'Added to Cart' : 'Add to Wishlist' }}
+                    </button>
+                </div>
+
+                <div class="guarantee-section">
+                    <div class="guarantee-item">
+                        <i class="fa fa-shield"></i>
+                        <span>30-Day Money Back Guarantee</span>
+                    </div>
+                    <div class="guarantee-item">
+                        <i class="fa fa-certificate"></i>
+                        <span>Industry-Recognized Certificate</span>
+                    </div>
+                    <div class="guarantee-item">
+                        <i class="fa fa-support"></i>
+                        <span>24/7 Learning Support</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Course Content Section -->
+            <div class="course-content-section">
+                <h3 class="section-title">Course Overview</h3>
+                <p class="course-description">
+                    Master the art of web development with our comprehensive full-stack course. Learn modern technologies including HTML5, CSS3, JavaScript, React, Node.js, and MongoDB. Build real-world projects and get hands-on experience with industry best practices.
+                </p>
+
+                <!-- Course Features -->
+                <div class="course-features">
+                    <h4 class="features-title">What You'll Learn</h4>
+                    <div class="features-grid">
+                        <div class="feature-item">
+                            <i class="fa fa-check-circle"></i>
+                            <span>Build responsive websites with HTML5 & CSS3</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fa fa-check-circle"></i>
+                            <span>Master JavaScript ES6+ and modern frameworks</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fa fa-check-circle"></i>
+                            <span>Develop dynamic web applications with React</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fa fa-check-circle"></i>
+                            <span>Create RESTful APIs with Node.js & Express</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fa fa-check-circle"></i>
+                            <span>Work with databases using MongoDB</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fa fa-check-circle"></i>
+                            <span>Deploy applications to cloud platforms</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Course Curriculum -->
+                <div class="curriculum-section">
+                    <h4 class="curriculum-title">Course Curriculum</h4>
+                    <div class="curriculum-accordion">
+                        <div class="curriculum-item">
+                            <div class="curriculum-header" data-bs-toggle="collapse" data-bs-target="#module1">
+                                <div class="module-info">
+                                    <h5>Module 1: HTML5 & CSS3 Fundamentals</h5>
+                                    <span class="module-duration">8 Lessons • 2.5 hours</span>
+                                </div>
+                                <i class="fa fa-chevron-down"></i>
+                            </div>
+                            <div id="module1" class="collapse">
+                                <div class="curriculum-content">
+                                    <ul class="lesson-list">
+                                        <li><i class="fa fa-play-circle"></i> Introduction to HTML5</li>
+                                        <li><i class="fa fa-play-circle"></i> CSS3 Styling & Layout</li>
+                                        <li><i class="fa fa-play-circle"></i> Responsive Design Principles</li>
+                                        <li><i class="fa fa-play-circle"></i> Flexbox & Grid Systems</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="curriculum-item">
+                            <div class="curriculum-header" data-bs-toggle="collapse" data-bs-target="#module2">
+                                <div class="module-info">
+                                    <h5>Module 2: JavaScript Mastery</h5>
+                                    <span class="module-duration">12 Lessons • 4 hours</span>
+                                </div>
+                                <i class="fa fa-chevron-down"></i>
+                            </div>
+                            <div id="module2" class="collapse">
+                                <div class="curriculum-content">
+                                    <ul class="lesson-list">
+                                        <li><i class="fa fa-play-circle"></i> JavaScript Fundamentals</li>
+                                        <li><i class="fa fa-play-circle"></i> ES6+ Features</li>
+                                        <li><i class="fa fa-play-circle"></i> DOM Manipulation</li>
+                                        <li><i class="fa fa-play-circle"></i> Async Programming</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="curriculum-item">
+                            <div class="curriculum-header" data-bs-toggle="collapse" data-bs-target="#module3">
+                                <div class="module-info">
+                                    <h5>Module 3: React Development</h5>
+                                    <span class="module-duration">15 Lessons • 6 hours</span>
+                                </div>
+                                <i class="fa fa-chevron-down"></i>
+                            </div>
+                            <div id="module3" class="collapse">
+                                <div class="curriculum-content">
+                                    <ul class="lesson-list">
+                                        <li><i class="fa fa-play-circle"></i> React Components</li>
+                                        <li><i class="fa fa-play-circle"></i> State Management</li>
+                                        <li><i class="fa fa-play-circle"></i> Hooks & Context</li>
+                                        <li><i class="fa fa-play-circle"></i> Routing & Navigation</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                
+        </div>
+        <div class="col-md-4">
+            <!-- Trainer Details Card -->
+            <div class="trainer-card">
+                <div class="trainer-header">
+                    <h3 class="trainer-title">Meet Your Instructor</h3>
+                </div>
+                
+                <div class="trainer-profile">
+                    <div class="trainer-avatar">
+                        <img src="/assets/photos/trainers/trainer-1.jpg" alt="Srujan Bharath" class="trainer-img">
+                        <div class="trainer-badge">
+                            <i class="fa fa-star"></i>
+                            <span>Expert</span>
+                        </div>
+                    </div>
+                    
+                    <div class="trainer-info">
+                        <h4 class="trainer-name">{{courseDetailsData.name}}</h4>
+                        <p class="trainer-title">{{courseDetailsData.designation}}</p>
+                        
+                        <div class="trainer-stats">
+                            <div class="stat-item">
+                                <i class="fa fa-clock-o"></i>
+                                <span>{{courseDetailsData.experience}} + Years Experience</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fa fa-users"></i>
+                                <span>{{courseDetailsData.totalStudents || 0}} + Students Taught</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fa fa-star"></i>
+                                <span>{{courseDetailsData.courseRating}}/5 Rating ({{courseTrainersData.totalReviews}} reviews)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="trainer-bio">
+                    <h5 class="bio-title">About the Instructor</h5>
+                    <p class="bio-text">
+                        {{courseDetailsData.bio}}
+                    </p>
+                </div>
+
+                <div class="trainer-details">
+                    <div class="detail-item">
+                        <i class="fa fa-graduation-cap"></i>
+                        <span class="detail-label">Education:</span>
+                        <span class="detail-value">{{courseDetailsData.education}}</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fa fa-code"></i>
+                        <span class="detail-label">Expertise:</span>
+                        <span class="detail-value">{{courseDetailsData.expertiseSkills.join(', ')}}</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fa fa-language"></i>
+                        <span class="detail-label">Languages:</span>
+                        <span class="detail-value">{{courseDetailsData.languagesKnown.join(', ')}}</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fa fa-map-marker"></i>
+                        <span class="detail-label">Location:</span>
+                        <span class="detail-value">{{courseDetailsData.location}}</span>
+                    </div>
+                </div>
+
+                <div class="trainer-achievements">
+                    <h5 class="achievements-title">Achievements</h5>
+                    <div class="achievement-list">
+                        <div class="achievement-item">
+                            <i class="fa fa-trophy"></i>    
+                            <span>{{courseDetailsData.achievements[0]}}</span>
+                        </div>
+                        <div class="achievement-item">
+                            <i class="fa fa-certificate"></i>
+                            <span>{{courseDetailsData.achievements[1]}}</span>
+                        </div>
+                        <div class="achievement-item">
+                            <i class="fa fa-medal"></i>
+                            <span>{{courseDetailsData.achievements[2]}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+  
+  
+  
+  <!-- Auth Popup -->
+  <app-auth-popup 
+    [isOpen]="showAuthPopup" 
+    [mode]="authMode"
+    (closePopup)="closeAuthPopup()"
+    (authSuccess)="onAuthSuccess($event)">
+  </app-auth-popup>
+  

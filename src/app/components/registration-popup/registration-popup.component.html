@@ -1,0 +1,711 @@
+<!-- Registration Popup Overlay -->
+<div class="registration-popup-overlay" (click)="closePopup()">
+  <div class="registration-popup-container" (click)="$event.stopPropagation()">
+    
+    <!-- Cards View -->
+    <div *ngIf="currentView === 'cards'">
+      <!-- Header -->
+      <div class="registration-popup-header">
+        <h2 class="popup-title">Choose Your Registration Type</h2>
+        <button class="close-btn" (click)="closePopup()">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+
+      <!-- Cards Container -->
+      <div class="registration-cards-container">
+        <div class="cards-grid">
+          <!-- Student Registration Card -->
+          <div class="registration-card card-primary" (click)="showStudentForm()">
+            <div class="card-icon">
+              <i class="fa fa-graduation-cap"></i>
+            </div>
+            <h3 class="card-title">Student Registration</h3>
+            <button class="btn btn-registration btn-primary">Sig nup</button>
+          </div>
+
+          <!-- Institute Registration Card -->
+          <div class="registration-card card-success" (click)="showInstituteForm()">
+            <div class="card-icon">
+              <i class="fa fa-university"></i>
+            </div>
+            <h3 class="card-title">Institute Registration</h3>
+            <button class="btn btn-registration btn-success">Sign up</button>
+          </div>
+
+          <!-- Mentor Registration Card -->
+          <div class="registration-card card-info" (click)="showMentorForm()">
+            <div class="card-icon">
+              <i class="fa fa-user-tie"></i>
+            </div>
+            <h3 class="card-title">Mentor Registration</h3>
+            <button class="btn btn-registration btn-info">Sign up</button>
+          </div>
+
+          <!-- Trainer Registration Card -->
+          <div class="registration-card card-warning" (click)="showTrainerForm()">
+            <div class="card-icon">
+              <i class="fa fa-chalkboard-teacher"></i>
+            </div>
+            <h3 class="card-title">Trainer Registration</h3>
+            <button class="btn btn-registration btn-warning">Sign up</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Student Registration Form -->
+    <div *ngIf="currentView === 'student'">
+      <div class="form-header">
+        <button class="back-btn" (click)="showCards()">
+          <i class="fa fa-arrow-left"></i>
+        </button>
+        <h2 class="form-title">Student Registration</h2>
+        <button class="close-btn" (click)="closePopup()">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+
+      <div class="form-container">
+        <form (ngSubmit)="onStudentSignup()">
+          <!-- Personal Information -->
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="studentFirstName">First Name *</label>
+                <input type="text" id="studentFirstName" class="form-control" 
+                       [(ngModel)]="studentForm.firstName" name="studentFirstName" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="studentLastName">Last Name *</label>
+                <input type="text" id="studentLastName" class="form-control" 
+                       [(ngModel)]="studentForm.lastName" name="studentLastName" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="studentEmail">Email Address *</label>
+                <input type="email" id="studentEmail" class="form-control" 
+                       [(ngModel)]="studentForm.email" name="studentEmail" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="studentPhone">Phone Number *</label>
+                <input type="tel" id="studentPhone" class="form-control" 
+                       [(ngModel)]="studentForm.phone" name="studentPhone" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="studentPassword">Password *</label>
+                <div class="password-input">
+                  <input [type]="showPassword ? 'text' : 'password'" id="studentPassword" class="form-control" 
+                         [(ngModel)]="studentForm.password" name="studentPassword" required>
+                  <button type="button" class="password-toggle" (click)="togglePassword()">
+                    <i class="fa" [class.fa-eye]="!showPassword" [class.fa-eye-slash]="showPassword"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="studentConfirmPassword">Confirm Password *</label>
+                <div class="password-input">
+                  <input [type]="showConfirmPassword ? 'text' : 'password'" id="studentConfirmPassword" class="form-control" 
+                         [(ngModel)]="studentForm.confirmPassword" name="studentConfirmPassword" required>
+                  <button type="button" class="password-toggle" (click)="toggleConfirmPassword()">
+                    <i class="fa" [class.fa-eye]="!showConfirmPassword" [class.fa-eye-slash]="showConfirmPassword"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="studentDateOfBirth">Date of Birth</label>
+                <input type="date" id="studentDateOfBirth" class="form-control" 
+                       [(ngModel)]="studentForm.dateOfBirth" name="studentDateOfBirth">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="studentGender">Gender</label>
+                <select id="studentGender" class="form-control" [(ngModel)]="studentForm.gender" name="studentGender">
+                  <option value="">Select Gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="studentNationality">Nationality</label>
+                <input type="text" id="studentNationality" class="form-control" 
+                       [(ngModel)]="studentForm.nationality" name="studentNationality">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="studentEducation">Education Level</label>
+                <select id="studentEducation" class="form-control" [(ngModel)]="studentForm.education" name="studentEducation">
+                  <option value="">Select Education Level</option>
+                  <option value="high-school">High School</option>
+                  <option value="diploma">Diploma</option>
+                  <option value="bachelor">Bachelor's Degree</option>
+                  <option value="master">Master's Degree</option>
+                  <option value="phd">PhD</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="studentAddress">Address</label>
+            <textarea id="studentAddress" class="form-control" rows="3" 
+                      [(ngModel)]="studentForm.address" name="studentAddress"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="studentCareerGoals">Career Goals</label>
+            <textarea id="studentCareerGoals" class="form-control" rows="3" 
+                      [(ngModel)]="studentForm.careerGoals" name="studentCareerGoals" 
+                      placeholder="Tell us about your career aspirations..."></textarea>
+          </div>
+
+          <div class="form-check">
+            <input type="checkbox" id="studentAgreeTerms" class="form-check-input" 
+                   [(ngModel)]="studentForm.agreeToTerms" name="studentAgreeTerms" required>
+            <label for="studentAgreeTerms" class="form-check-label">
+              I agree to the <a href="#" class="terms-link">Terms & Conditions</a> and <a href="#" class="terms-link">Privacy Policy</a>
+            </label>
+          </div>
+
+          <!-- Error/Success Messages -->
+          <div *ngIf="errorMessage" class="alert alert-danger">
+            <i class="fa fa-exclamation-circle"></i> {{ errorMessage }}
+          </div>
+          <div *ngIf="successMessage" class="alert alert-success">
+            <i class="fa fa-check-circle"></i> {{ successMessage }}
+          </div>
+
+          <div class="form-actions">
+            <!-- <button type="button" class="btn btn-secondary" (click)="showCards()">Back</button> -->
+            <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+              <i class="fa fa-spinner fa-spin" *ngIf="isLoading"></i>
+              {{ isLoading ? 'Creating Account...' : 'Create Student Account' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Institute Registration Form -->
+    <div *ngIf="currentView === 'institute'">
+      <div class="form-header">
+        <button class="back-btn" (click)="showCards()">
+          <i class="fa fa-arrow-left"></i>
+        </button>
+        <h2 class="form-title">Institute Registration</h2>
+        <button class="close-btn" (click)="closePopup()">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+
+      <div class="form-container">
+        <form (ngSubmit)="onInstituteSignup()">
+          <!-- Institute Information -->
+          <div class="form-group">
+            <label for="instituteName">Institute Name *</label>
+            <input type="text" id="instituteName" class="form-control" 
+                   [(ngModel)]="instituteForm.instituteName" name="instituteName" required>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="contactPerson">Contact Person *</label>
+                <input type="text" id="contactPerson" class="form-control" 
+                       [(ngModel)]="instituteForm.contactPerson" name="contactPerson" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="instituteEmail">Email Address *</label>
+                <input type="email" id="instituteEmail" class="form-control" 
+                       [(ngModel)]="instituteForm.email" name="instituteEmail" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="institutePhone">Phone Number *</label>
+                <input type="tel" id="institutePhone" class="form-control" 
+                       [(ngModel)]="instituteForm.phone" name="institutePhone" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="instituteWebsite">Website</label>
+                <input type="url" id="instituteWebsite" class="form-control" 
+                       [(ngModel)]="instituteForm.website" name="instituteWebsite">
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="institutePassword">Password *</label>
+                <div class="password-input">
+                  <input [type]="showPassword ? 'text' : 'password'" id="institutePassword" class="form-control" 
+                         [(ngModel)]="instituteForm.password" name="institutePassword" required>
+                  <button type="button" class="password-toggle" (click)="togglePassword()">
+                    <i class="fa" [class.fa-eye]="!showPassword" [class.fa-eye-slash]="showPassword"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="instituteConfirmPassword">Confirm Password *</label>
+                <div class="password-input">
+                  <input [type]="showConfirmPassword ? 'text' : 'password'" id="instituteConfirmPassword" class="form-control" 
+                         [(ngModel)]="instituteForm.confirmPassword" name="instituteConfirmPassword" required>
+                  <button type="button" class="password-toggle" (click)="toggleConfirmPassword()">
+                    <i class="fa" [class.fa-eye]="!showConfirmPassword" [class.fa-eye-slash]="showConfirmPassword"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="instituteSpecialization">Specialization</label>
+                <select id="instituteSpecialization" class="form-control" [(ngModel)]="instituteForm.specialization" name="instituteSpecialization">
+                  <option value="">Select Specialization</option>
+                  <option value="software-testing">Software Testing</option>
+                  <option value="cloud-computing">Cloud Computing</option>
+                  <option value="programming">Programming</option>
+                  <option value="devops">DevOps</option>
+                  <option value="data-science">Data Science</option>
+                  <option value="cybersecurity">Cybersecurity</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="establishedYear">Established Year</label>
+                <input type="number" id="establishedYear" class="form-control" 
+                       [(ngModel)]="instituteForm.establishedYear" name="establishedYear" min="1900" max="2024">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="instituteAddress">Address</label>
+            <textarea id="instituteAddress" class="form-control" rows="3" 
+                      [(ngModel)]="instituteForm.address" name="instituteAddress"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="instituteDescription">Institute Description</label>
+            <textarea id="instituteDescription" class="form-control" rows="4" 
+                      [(ngModel)]="instituteForm.description" name="instituteDescription" 
+                      placeholder="Tell us about your institute..."></textarea>
+          </div>
+
+          <div class="form-check">
+            <input type="checkbox" id="instituteAgreeTerms" class="form-check-input" 
+                   [(ngModel)]="instituteForm.agreeToTerms" name="instituteAgreeTerms" required>
+            <label for="instituteAgreeTerms" class="form-check-label">
+              I agree to the <a href="#" class="terms-link">Terms & Conditions</a> and <a href="#" class="terms-link">Privacy Policy</a>
+            </label>
+          </div>
+
+          <!-- Error/Success Messages -->
+          <div *ngIf="errorMessage" class="alert alert-danger">
+            <i class="fa fa-exclamation-circle"></i> {{ errorMessage }}
+          </div>
+          <div *ngIf="successMessage" class="alert alert-success">
+            <i class="fa fa-check-circle"></i> {{ successMessage }}
+          </div>
+
+          <div class="form-actions">
+            <!-- <button type="button" class="btn btn-secondary" (click)="showCards()">Back</button> -->
+            <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+              <i class="fa fa-spinner fa-spin" *ngIf="isLoading"></i>
+              {{ isLoading ? 'Creating Account...' : 'Create Institute Account' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Mentor Registration Form -->
+    <div *ngIf="currentView === 'mentor'">
+      <div class="form-header">
+        <button class="back-btn" (click)="showCards()">
+          <i class="fa fa-arrow-left"></i>
+        </button>
+        <h2 class="form-title">Mentor Registration</h2>
+        <button class="close-btn" (click)="closePopup()">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+
+      <div class="form-container">
+        <form (ngSubmit)="onMentorSignup()">
+          <!-- Personal Information -->
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="mentorFirstName">First Name *</label>
+                <input type="text" id="mentorFirstName" class="form-control" 
+                       [(ngModel)]="mentorForm.firstName" name="mentorFirstName" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="mentorLastName">Last Name *</label>
+                <input type="text" id="mentorLastName" class="form-control" 
+                       [(ngModel)]="mentorForm.lastName" name="mentorLastName" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="mentorEmail">Email Address *</label>
+                <input type="email" id="mentorEmail" class="form-control" 
+                       [(ngModel)]="mentorForm.email" name="mentorEmail" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="mentorPhone">Phone Number *</label>
+                <input type="tel" id="mentorPhone" class="form-control" 
+                       [(ngModel)]="mentorForm.phone" name="mentorPhone" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="mentorPassword">Password *</label>
+                <div class="password-input">
+                  <input [type]="showPassword ? 'text' : 'password'" id="mentorPassword" class="form-control" 
+                         [(ngModel)]="mentorForm.password" name="mentorPassword" required>
+                  <button type="button" class="password-toggle" (click)="togglePassword()">
+                    <i class="fa" [class.fa-eye]="!showPassword" [class.fa-eye-slash]="showPassword"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="mentorConfirmPassword">Confirm Password *</label>
+                <div class="password-input">
+                  <input [type]="showConfirmPassword ? 'text' : 'password'" id="mentorConfirmPassword" class="form-control" 
+                         [(ngModel)]="mentorForm.confirmPassword" name="mentorConfirmPassword" required>
+                  <button type="button" class="password-toggle" (click)="toggleConfirmPassword()">
+                    <i class="fa" [class.fa-eye]="!showConfirmPassword" [class.fa-eye-slash]="showConfirmPassword"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="mentorDomain">Domain/Expertise *</label>
+                <select id="mentorDomain" class="form-control" [(ngModel)]="mentorForm.domain" name="mentorDomain" required>
+                  <option value="">Select Domain</option>
+                  <option value="software-development">Software Development</option>
+                  <option value="data-science">Data Science</option>
+                  <option value="cloud-computing">Cloud Computing</option>
+                  <option value="cybersecurity">Cybersecurity</option>
+                  <option value="devops">DevOps</option>
+                  <option value="product-management">Product Management</option>
+                  <option value="ui-ux">UI/UX Design</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="mentorExperience">Years of Experience *</label>
+                <select id="mentorExperience" class="form-control" [(ngModel)]="mentorForm.experience" name="mentorExperience" required>
+                  <option value="">Select Experience</option>
+                  <option value="1-3">1-3 years</option>
+                  <option value="3-5">3-5 years</option>
+                  <option value="5-10">5-10 years</option>
+                  <option value="10+">10+ years</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="mentorHourlyRate">Hourly Rate ($)</label>
+                <input type="number" id="mentorHourlyRate" class="form-control" 
+                       [(ngModel)]="mentorForm.hourlyRate" name="mentorHourlyRate" min="0" step="0.01">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="mentorNationality">Nationality</label>
+                <input type="text" id="mentorNationality" class="form-control" 
+                       [(ngModel)]="mentorForm.nationality" name="mentorNationality">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="mentorQualifications">Qualifications</label>
+            <textarea id="mentorQualifications" class="form-control" rows="3" 
+                      [(ngModel)]="mentorForm.qualifications" name="mentorQualifications" 
+                      placeholder="List your qualifications, certifications, etc."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="mentorBio">Bio</label>
+            <textarea id="mentorBio" class="form-control" rows="4" 
+                      [(ngModel)]="mentorForm.bio" name="mentorBio" 
+                      placeholder="Tell us about yourself and your mentoring approach..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="mentorAddress">Address</label>
+            <textarea id="mentorAddress" class="form-control" rows="2" 
+                      [(ngModel)]="mentorForm.address" name="mentorAddress"></textarea>
+          </div>
+
+          <div class="form-check">
+            <input type="checkbox" id="mentorAgreeTerms" class="form-check-input" 
+                   [(ngModel)]="mentorForm.agreeToTerms" name="mentorAgreeTerms" required>
+            <label for="mentorAgreeTerms" class="form-check-label">
+              I agree to the <a href="#" class="terms-link">Terms & Conditions</a> and <a href="#" class="terms-link">Privacy Policy</a>
+            </label>
+          </div>
+
+          <!-- Error/Success Messages -->
+          <div *ngIf="errorMessage" class="alert alert-danger">
+            <i class="fa fa-exclamation-circle"></i> {{ errorMessage }}
+          </div>
+          <div *ngIf="successMessage" class="alert alert-success">
+            <i class="fa fa-check-circle"></i> {{ successMessage }}
+          </div>
+
+          <div class="form-actions">
+            <!-- <button type="button" class="btn btn-secondary" (click)="showCards()">Back</button> -->
+            <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+              <i class="fa fa-spinner fa-spin" *ngIf="isLoading"></i>
+              {{ isLoading ? 'Creating Account...' : 'Create Mentor Account' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Trainer Registration Form -->
+    <div *ngIf="currentView === 'trainer'">
+      <div class="form-header">
+        <button class="back-btn" (click)="showCards()">
+          <i class="fa fa-arrow-left"></i>
+        </button>
+        <h2 class="form-title">Trainer Registration</h2>
+        <button class="close-btn" (click)="closePopup()">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+
+      <div class="form-container">
+        <form (ngSubmit)="onTrainerSignup()">
+          <!-- Personal Information -->
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="trainerFirstName">First Name *</label>
+                <input type="text" id="trainerFirstName" class="form-control" 
+                       [(ngModel)]="trainerForm.firstName" name="trainerFirstName" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="trainerLastName">Last Name *</label>
+                <input type="text" id="trainerLastName" class="form-control" 
+                       [(ngModel)]="trainerForm.lastName" name="trainerLastName" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="trainerEmail">Email Address *</label>
+                <input type="email" id="trainerEmail" class="form-control" 
+                       [(ngModel)]="trainerForm.email" name="trainerEmail" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="trainerPhone">Phone Number *</label>
+                <input type="tel" id="trainerPhone" class="form-control" 
+                       [(ngModel)]="trainerForm.phone" name="trainerPhone" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="trainerPassword">Password *</label>
+                <div class="password-input">
+                  <input [type]="showPassword ? 'text' : 'password'" id="trainerPassword" class="form-control" 
+                         [(ngModel)]="trainerForm.password" name="trainerPassword" required>
+                  <button type="button" class="password-toggle" (click)="togglePassword()">
+                    <i class="fa" [class.fa-eye]="!showPassword" [class.fa-eye-slash]="showPassword"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="trainerConfirmPassword">Confirm Password *</label>
+                <div class="password-input">
+                  <input [type]="showConfirmPassword ? 'text' : 'password'" id="trainerConfirmPassword" class="form-control" 
+                         [(ngModel)]="trainerForm.confirmPassword" name="trainerConfirmPassword" required>
+                  <button type="button" class="password-toggle" (click)="toggleConfirmPassword()">
+                    <i class="fa" [class.fa-eye]="!showConfirmPassword" [class.fa-eye-slash]="showConfirmPassword"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="trainerSpecialization">Specialization *</label>
+                <select id="trainerSpecialization" class="form-control" [(ngModel)]="trainerForm.specialization" name="trainerSpecialization" required>
+                  <option value="">Select Specialization</option>
+                  <option value="selenium-testing">Selenium Testing</option>
+                  <option value="manual-testing">Manual Testing</option>
+                  <option value="automation-testing">Automation Testing</option>
+                  <option value="performance-testing">Performance Testing</option>
+                  <option value="api-testing">API Testing</option>
+                  <option value="java">Java Programming</option>
+                  <option value="python">Python Programming</option>
+                  <option value="aws">AWS Cloud</option>
+                  <option value="azure">Azure Cloud</option>
+                  <option value="devops">DevOps</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="trainerExperience">Years of Experience *</label>
+                <select id="trainerExperience" class="form-control" [(ngModel)]="trainerForm.experience" name="trainerExperience" required>
+                  <option value="">Select Experience</option>
+                  <option value="1-3">1-3 years</option>
+                  <option value="3-5">3-5 years</option>
+                  <option value="5-10">5-10 years</option>
+                  <option value="10+">10+ years</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="trainerHourlyRate">Hourly Rate ($)</label>
+                <input type="number" id="trainerHourlyRate" class="form-control" 
+                       [(ngModel)]="trainerForm.hourlyRate" name="trainerHourlyRate" min="0" step="0.01">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="trainerNationality">Nationality</label>
+                <input type="text" id="trainerNationality" class="form-control" 
+                       [(ngModel)]="trainerForm.nationality" name="trainerNationality">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="trainerQualifications">Qualifications</label>
+            <textarea id="trainerQualifications" class="form-control" rows="3" 
+                      [(ngModel)]="trainerForm.qualifications" name="trainerQualifications" 
+                      placeholder="List your qualifications, certifications, etc."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="trainerBio">Bio</label>
+            <textarea id="trainerBio" class="form-control" rows="4" 
+                      [(ngModel)]="trainerForm.bio" name="trainerBio" 
+                      placeholder="Tell us about yourself and your training approach..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="trainerAddress">Address</label>
+            <textarea id="trainerAddress" class="form-control" rows="2" 
+                      [(ngModel)]="trainerForm.address" name="trainerAddress"></textarea>
+          </div>
+
+          <div class="form-check">
+            <input type="checkbox" id="trainerAgreeTerms" class="form-check-input" 
+                   [(ngModel)]="trainerForm.agreeToTerms" name="trainerAgreeTerms" required>
+            <label for="trainerAgreeTerms" class="form-check-label">
+              I agree to the <a href="#" class="terms-link">Terms & Conditions</a> and <a href="#" class="terms-link">Privacy Policy</a>
+            </label>
+          </div>
+
+          <!-- Error/Success Messages -->
+          <div *ngIf="errorMessage" class="alert alert-danger">
+            <i class="fa fa-exclamation-circle"></i> {{ errorMessage }}
+          </div>
+          <div *ngIf="successMessage" class="alert alert-success">
+            <i class="fa fa-check-circle"></i> {{ successMessage }}
+          </div>
+
+          <div class="form-actions">
+            <!-- <button type="button" class="btn btn-secondary" (click)="showCards()">Back</button> -->
+            <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+              <i class="fa fa-spinner fa-spin" *ngIf="isLoading"></i>
+              {{ isLoading ? 'Creating Account...' : 'Create Trainer Account' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>

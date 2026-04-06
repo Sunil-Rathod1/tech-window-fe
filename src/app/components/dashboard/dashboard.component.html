@@ -1,0 +1,295 @@
+<div class="dashboard-container">
+  <!-- Header Section -->
+  <div class="dashboard-header">
+    <div class="container-fluid">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <h1 class="dashboard-title">
+            <i class="fas fa-tachometer-alt me-3"></i>
+            Welcome back, {{ userProfile.name }}!
+          </h1>
+          <p class="dashboard-subtitle">Track your progress and continue learning</p>
+        </div>
+        <div class="col-md-6 text-end">
+          <div class="user-profile-info">
+            <img [src]="userProfile.avatar" [alt]="userProfile.name" class="user-avatar">
+            <div class="user-details">
+              <h6 class="mb-0">{{ userProfile.name }}</h6>
+              <small class="text-muted">{{ userProfile.subscription }} • Last login {{ userProfile.lastLogin }}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Dashboard Content -->
+  <div class="container-fluid dashboard-content">
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+      <div class="col-xl-3 col-md-6 mb-3">
+        <div class="stat-card bg-primary text-white" [class]="getLoadingClass('stats')">
+          <div class="stat-icon" *ngIf="!loading.stats">
+            <i class="fas fa-graduation-cap"></i>
+          </div>
+          <div class="stat-content" *ngIf="!loading.stats && dashboardStats">
+            <h3 class="stat-number">{{ dashboardStats.totalCourses }}</h3>
+            <p class="stat-label">Total Courses</p>
+          </div>
+          <div class="stat-content" *ngIf="loading.stats">
+            <div class="loading-skeleton" style="height: 60px; border-radius: 8px;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-3 col-md-6 mb-3">
+        <div class="stat-card bg-success text-white" [class]="getLoadingClass('stats')">
+          <div class="stat-icon" *ngIf="!loading.stats">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <div class="stat-content" *ngIf="!loading.stats && dashboardStats">
+            <h3 class="stat-number">{{ dashboardStats.completedCourses }}</h3>
+            <p class="stat-label">Completed</p>
+          </div>
+          <div class="stat-content" *ngIf="loading.stats">
+            <div class="loading-skeleton" style="height: 60px; border-radius: 8px;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-3 col-md-6 mb-3">
+        <div class="stat-card bg-warning text-white" [class]="getLoadingClass('stats')">
+          <div class="stat-icon" *ngIf="!loading.stats">
+            <i class="fas fa-certificate"></i>
+          </div>
+          <div class="stat-content" *ngIf="!loading.stats && dashboardStats">
+            <h3 class="stat-number">{{ dashboardStats.certificatesEarned }}</h3>
+            <p class="stat-label">Certificates</p>
+          </div>
+          <div class="stat-content" *ngIf="loading.stats">
+            <div class="loading-skeleton" style="height: 60px; border-radius: 8px;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-3 col-md-6 mb-3">
+        <div class="stat-card bg-info text-white" [class]="getLoadingClass('stats')">
+          <div class="stat-icon" *ngIf="!loading.stats">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="stat-content" *ngIf="!loading.stats && dashboardStats">
+            <h3 class="stat-number">{{ dashboardStats.totalHours }}h</h3>
+            <p class="stat-label">Learning Hours</p>
+          </div>
+          <div class="stat-content" *ngIf="loading.stats">
+            <div class="loading-skeleton" style="height: 60px; border-radius: 8px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Dashboard Grid -->
+    <div class="row">
+      <!-- Left Column - Main Content -->
+      <div class="col-lg-8">
+        <!-- Current Enrollments -->
+        <div class="dashboard-card mb-4">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5><i class="fas fa-book-open me-2"></i>Current Enrollments</h5>
+            <div>
+              <button class="btn btn-sm btn-outline-secondary me-2" (click)="refreshDashboard()">
+                <i class="fas fa-sync-alt"></i>
+              </button>
+              <a href="/courses" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="enrollment-list" *ngIf="!loading.enrollments && currentEnrollments.length > 0">
+              <div class="enrollment-item" *ngFor="let enrollment of currentEnrollments">
+                <div class="enrollment-image">
+                  <img [src]="enrollment.image" [alt]="enrollment.courseName">
+                  <div class="category-badge">{{ enrollment.category }}</div>
+                </div>
+                <div class="enrollment-details">
+                  <h6>{{ enrollment.courseName }}</h6>
+                  <p class="instructor"><i class="fas fa-user me-1"></i>{{ enrollment.instructor }}</p>
+                  <div class="progress mb-2">
+                    <div class="progress-bar bg-success" [style.width.%]="enrollment.progress"></div>
+                  </div>
+                  <small class="text-muted">{{ enrollment.progress }}% Complete ({{ enrollment.completedModules }}/{{ enrollment.totalModules }} modules)</small>
+                  <p class="next-session mt-2">
+                    <i class="fas fa-calendar me-1"></i>Next: {{ enrollment.nextSession }}
+                  </p>
+                </div>
+                <div class="enrollment-actions">
+                  <button class="btn btn-primary btn-sm">Continue</button>
+                  <button class="btn btn-outline-secondary btn-sm">Schedule</button>
+                </div>
+              </div>
+            </div>
+            <div class="text-center" *ngIf="loading.enrollments">
+              <div class="loading-skeleton" style="height: 200px; border-radius: 8px;"></div>
+            </div>
+            <div class="text-center text-muted" *ngIf="!loading.enrollments && currentEnrollments.length === 0">
+              <i class="fas fa-book-open fa-3x mb-3"></i>
+              <p>No enrollments found. Start your learning journey today!</p>
+              <a href="/courses" class="btn btn-primary">Browse Courses</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Learning Paths -->
+        <div class="dashboard-card mb-4">
+          <div class="card-header">
+            <h5><i class="fas fa-route me-2"></i>Learning Paths</h5>
+          </div>
+          <div class="card-body">
+            <div class="learning-paths" *ngIf="!loading.paths && learningPaths.length > 0">
+              <div class="path-item" *ngFor="let path of learningPaths">
+                <div class="path-header">
+                  <h6>{{ path.name }}</h6>
+                  <span class="badge bg-{{ path.color }}">{{ path.difficulty }}</span>
+                </div>
+                <p class="text-muted mb-2">{{ path.description }}</p>
+                <div class="path-progress">
+                  <div class="progress mb-2">
+                    <div class="progress-bar bg-{{ path.color }}" [style.width.%]="path.progress"></div>
+                  </div>
+                  <div class="path-meta">
+                    <span><i class="fas fa-book me-1"></i>{{ path.courses }} courses</span>
+                    <span><i class="fas fa-clock me-1"></i>{{ path.estimatedTime }}</span>
+                    <span class="progress-text">{{ path.progress }}% complete</span>
+                  </div>
+                  <div class="skills-tags mt-2">
+                    <span class="badge bg-light text-dark me-1" *ngFor="let skill of path.skills">{{ skill }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="text-center" *ngIf="loading.paths">
+              <div class="loading-skeleton" style="height: 150px; border-radius: 8px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activities -->
+        <div class="dashboard-card">
+          <div class="card-header">
+            <h5><i class="fas fa-history me-2"></i>Recent Activities</h5>
+          </div>
+          <div class="card-body">
+            <div class="activity-timeline" *ngIf="!loading.activities && recentActivities.length > 0">
+              <div class="activity-item" *ngFor="let activity of recentActivities">
+                <div class="activity-icon">
+                  <i [class]="activity.icon + ' ' + activity.color"></i>
+                </div>
+                <div class="activity-content">
+                  <h6>{{ activity.title }}</h6>
+                  <p>{{ activity.description }}</p>
+                  <small class="text-muted">{{ activity.time }}</small>
+                </div>
+              </div>
+            </div>
+            <div class="text-center" *ngIf="loading.activities">
+              <div class="loading-skeleton" style="height: 200px; border-radius: 8px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column - Sidebar -->
+      <div class="col-lg-4">
+        <!-- Quick Actions -->
+        <div class="dashboard-card mb-4">
+          <div class="card-header">
+            <h5><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+          </div>
+          <div class="card-body">
+            <div class="quick-actions" *ngIf="!loading.actions && quickActions.length > 0">
+              <button 
+                *ngFor="let action of quickActions" 
+                class="btn {{ action.color }} w-100 mb-2"
+                (click)="onQuickAction(action.action)">
+                <i [class]="action.icon + ' me-2'"></i>
+                <div class="action-text">
+                  <strong>{{ action.title }}</strong>
+                  <small>{{ action.description }}</small>
+                </div>
+              </button>
+            </div>
+            <div class="text-center" *ngIf="loading.actions">
+              <div class="loading-skeleton" style="height: 200px; border-radius: 8px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notifications -->
+        <div class="dashboard-card mb-4">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5><i class="fas fa-bell me-2"></i>Notifications</h5>
+            <span class="badge bg-danger" *ngIf="getUnreadNotificationsCount() > 0">
+              {{ getUnreadNotificationsCount() }}
+            </span>
+          </div>
+          <div class="card-body">
+            <div class="notifications-list" *ngIf="!loading.notifications && notifications.length > 0">
+              <div 
+                class="notification-item" 
+                *ngFor="let notification of notifications"
+                [class.unread]="!notification.read"
+                (click)="markNotificationAsRead(notification)">
+                <div class="notification-icon">
+                  <i [class]="'fas fa-' + (notification.type === 'course' ? 'book' : 
+                      notification.type === 'assignment' ? 'tasks' : 
+                      notification.type === 'session' ? 'calendar' : 'trophy')"></i>
+                </div>
+                <div class="notification-content">
+                  <h6>{{ notification.title }}</h6>
+                  <p>{{ notification.message }}</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">{{ notification.time }}</small>
+                    <span class="badge bg-{{ getPriorityColor(notification.priority) }}">{{ notification.priority }}</span>
+                  </div>
+                </div>
+                <div class="notification-status" *ngIf="!notification.read">
+                  <span class="badge bg-primary">New</span>
+                </div>
+              </div>
+            </div>
+            <div class="text-center" *ngIf="loading.notifications">
+              <div class="loading-skeleton" style="height: 200px; border-radius: 8px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Upcoming Events -->
+        <div class="dashboard-card">
+          <div class="card-header">
+            <h5><i class="fas fa-calendar-alt me-2"></i>Upcoming Events</h5>
+          </div>
+          <div class="card-body">
+            <div class="events-list" *ngIf="!loading.events && upcomingEvents.length > 0">
+              <div class="event-item" *ngFor="let event of upcomingEvents">
+                <div class="event-date">
+                  <div class="date-badge">
+                    <span class="day">{{ event.day }}</span>
+                    <span class="month">{{ event.month }}</span>
+                  </div>
+                </div>
+                <div class="event-details">
+                  <h6>{{ event.title }}</h6>
+                  <p><i class="fas fa-clock me-1"></i>{{ event.time }}</p>
+                  <p><i class="fas fa-map-marker-alt me-1"></i>{{ event.location }}</p>
+                  <small class="text-muted">{{ event.attendees }} attending</small>
+                </div>
+                <div class="event-actions">
+                  <button class="btn btn-outline-primary btn-sm">Join</button>
+                </div>
+              </div>
+            </div>
+            <div class="text-center" *ngIf="loading.events">
+              <div class="loading-skeleton" style="height: 200px; border-radius: 8px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

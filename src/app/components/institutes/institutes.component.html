@@ -1,0 +1,287 @@
+<!-- Institutes Section -->
+<div class="institutes-container">
+  <!-- Hero Section -->
+  <div class="hero-section">
+    <div class="container">
+      <div class="hero-content">
+        <h1 class="hero-title">Top Training Institutes</h1>
+        <!-- <p class="hero-subtitle">Discover the best IT training centers with expert instructors, comprehensive courses, and proven success rates. Compare institutes based on placement statistics, facilities, accreditation, and student reviews.</p> -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Section -->
+  <div class="search-section">
+    <div class="container">
+      <div class="search-container">
+        <div class="search-box">
+          <i class="fa fa-search search-icon"></i>
+          <input type="text" class="search-input" placeholder="Search for institutes, courses, or locations..." autocomplete="off">
+          <button type="button" class="search-button">
+            <i class="fa fa-search"></i>
+            Search
+          </button>
+        </div>
+        <div class="search-filters">
+          <select class="filter-select">
+            <option value="">All Locations</option>
+            <option value="hyderabad">Hyderabad</option>
+            <option value="bangalore">Bangalore</option>
+            <option value="mumbai">Mumbai</option>
+            <option value="pune">Pune</option>
+            <option value="delhi">Delhi</option>
+          </select>
+          <select class="filter-select">
+            <option value="">All Types</option>
+            <option value="training-center">Training Center</option>
+            <option value="university">University</option>
+            <option value="college">College</option>
+          </select>
+          <select class="filter-select">
+            <option value="">All Ratings</option>
+            <option value="4.5">4.5+ Stars</option>
+            <option value="4.0">4.0+ Stars</option>
+            <option value="3.5">3.5+ Stars</option>
+          </select>
+          <select class="filter-select">
+            <option value="">All Features</option>
+            <option value="verified">Verified Only</option>
+            <option value="featured">Featured Only</option>
+            <option value="online">Online Available</option>
+            <option value="offline">Offline Available</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Institutes Grid -->
+  <div class="institutes-grid">
+    <div class="container">
+      <!-- Loading State -->
+      <div class="loading-container" *ngIf="loading">
+        <div class="loading-spinner">
+          <i class="fa fa-spinner fa-spin"></i>
+          <p>Loading institutes...</p>
+        </div>
+      </div>
+
+      <!-- Error State -->
+      <div class="error-container" *ngIf="error && !loading">
+        <div class="error-message">
+          <i class="fa fa-exclamation-triangle"></i>
+          <p>{{ error }}</p>
+          <button class="btn btn-primary" (click)="loadInstitutes()">
+            <i class="fa fa-refresh"></i>
+            Try Again
+          </button>
+        </div>
+      </div>
+
+      <!-- Institutes Grid -->
+      <div class="grid-container" *ngIf="!loading && !error">
+        <!-- Institute Card -->
+        <div class="institute-card" 
+             *ngFor="let data of institutionsList; let i = index"
+             [id]="'institute-' + data?.id"
+             [class.highlighted]="isInstituteHighlighted(data?.id)">
+          <div class="card-header">
+            <div class="institute-logo">
+              <img [src]="data?.logo || getInstituteImage(i)" [alt]="data?.name + ' logo'" class="logo-img">
+            </div>
+            <div class="institute-badges">
+              <span class="badge online" *ngIf="data?.modes?.online">Online</span>
+              <span class="badge offline" *ngIf="data?.modes?.offline">Offline</span>
+              <span class="badge verified" *ngIf="data?.isVerified">
+                <i class="fa fa-check-circle"></i>
+                Verified
+              </span>
+              <span class="badge featured" *ngIf="data?.isFeatured">
+                <i class="fa fa-star"></i>
+                Featured
+              </span>
+            </div>
+          </div>
+          
+          <div class="card-body">
+            <div class="institute-header">
+              <h3 class="institute-name" (click)="gotocourseDetail(data?.name)" routerLink="/Institute-courses/{{data?.name}}">
+                {{data?.name}}
+              </h3>
+              <div class="institute-type">
+                <span class="type-badge">{{data?.type}}</span>
+                <span class="founded-year">Est. {{data?.founded}}</span>
+              </div>
+            </div>
+            
+            <div class="institute-stats">
+              <div class="stat-item">
+                <i class="fa fa-users"></i>
+                <span>{{(data?.students?.total || 0) | number}} Students</span>
+              </div>
+              <div class="stat-item">
+                <i class="fa fa-graduation-cap"></i>
+                <span>{{(data?.courses?.total || 0)}}+ Courses</span>
+              </div>
+              <div class="stat-item">
+                <i class="fa fa-clock-o"></i>
+                <span>{{(data?.experience?.years || 0)}}+ Years</span>
+              </div>
+              <div class="stat-item">
+                <i class="fa fa-chalkboard-teacher"></i>
+                <span>{{data?.faculty?.total || 0}} Faculty</span>
+              </div>
+            </div>
+
+            <!-- <div class="institute-description">
+              <p>{{data?.description}}</p>
+            </div> -->
+
+            <div class="course-categories">
+              <h4>Course Categories</h4>
+              <div class="category-tags">
+                <span class="tag" *ngFor="let category of data?.courses?.categories">{{category}}</span>
+              </div>
+            </div>
+
+            <div class="placement-info">
+              <h4>Placement Statistics</h4>
+              <div class="placement-stats">
+                <div class="placement-item">
+                  <span class="placement-label">Placement Rate</span>
+                  <span class="placement-value">{{data?.placement?.placementRate || 0}}%</span>
+                </div>
+                <div class="placement-item">
+                  <span class="placement-label">Avg Package</span>
+                  <span class="placement-value">₹{{data?.placement?.averagePackage || 0}}L</span>
+                </div>
+                <div class="placement-item">
+                  <span class="placement-label">Highest Package</span>
+                  <span class="placement-value">₹{{data?.placement?.highestPackage || 0}}L</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="location-info">
+              <i class="fa fa-map-marker"></i>
+              <span class="location-text">
+                <strong>{{data?.address?.city}}, {{data?.address?.state}}</strong>
+                <span class="address-detail">{{data?.address?.street}}</span>
+              </span>
+            </div>
+
+            <div class="rating-section">
+              <div class="rating-display">
+                <div class="stars">
+                  <span class="fa fa-star" *ngFor="let star of [1,2,3,4,5]" 
+                        [class.checked]="star <= (data?.rating?.overall || 0)"></span>
+                </div>
+                <span class="rating-text">{{data?.rating?.overall || 0}} out of 5</span>
+                <span class="reviews">({{(data?.rating?.totalReviews || 0) | number}} reviews)</span>
+              </div>
+              <div class="rating-breakdown">
+                <div class="rating-item">
+                  <span>Teaching: {{data?.rating?.teaching || 0}}</span>
+                </div>
+                <div class="rating-item">
+                  <span>Facilities: {{data?.rating?.facilities || 0}}</span>
+                </div>
+                <div class="rating-item">
+                  <span>Placement: {{data?.rating?.placement || 0}}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="facilities-info">
+              <h4>Facilities</h4>
+              <div class="facilities-list">
+                <span class="facility-item" *ngIf="data?.facilities?.library">
+                  <i class="fa fa-book"></i> Library
+                </span>
+                <span class="facility-item" *ngIf="data?.facilities?.cafeteria">
+                  <i class="fa fa-coffee"></i> Cafeteria
+                </span>
+                <span class="facility-item" *ngIf="data?.facilities?.hostel">
+                  <i class="fa fa-bed"></i> Hostel
+                </span>
+                <span class="facility-item" *ngIf="data?.facilities?.parking">
+                  <i class="fa fa-car"></i> Parking
+                </span>
+                <span class="facility-item" *ngIf="data?.facilities?.wifi">
+                  <i class="fa fa-wifi"></i> WiFi
+                </span>
+                <span class="facility-item" *ngIf="data?.facilities?.airConditioning">
+                  <i class="fa fa-snowflake-o"></i> AC
+                </span>
+              </div>
+            </div>
+
+            <!-- <div class="accreditation-info">
+              <h4>Accreditation & Partnerships</h4>
+              <div class="accreditation-list">
+                <span class="accreditation-item" *ngFor="let body of data?.accreditation?.certifyingBodies">
+                  <i class="fa fa-certificate"></i> {{body}}
+                </span>
+              </div>
+            </div> -->
+
+            
+
+            <div class="action-buttons">
+              <button class="btn btn-primary" (click)="gotocourseDetail(data?.name)" routerLink="/Institute-courses/{{data?.name}}">
+                <i class="fa fa-eye"></i>
+                View Courses
+              </button>
+              <button class="btn btn-secondary" (click)="toggleContactInfo = !toggleContactInfo">
+                <i class="fa fa-phone"></i>
+                Contact
+              </button>
+              <div class="contact-info" *ngIf="toggleContactInfo">
+                <h4 class="contact-info-title">Contact Information</h4>
+                <div class="contact-item">
+                  <i class="fa fa-phone"></i>
+                  <span>{{data?.contact?.phone}}</span>
+                </div>
+                <div class="contact-item">
+                  <i class="fa fa-envelope"></i>
+                  <span>{{data?.contact?.email}}</span>
+                </div>
+                <div class="contact-item">
+                  <i class="fa fa-globe"></i>
+                  <a [href]="data?.contact?.website" target="_blank" class="website-link">
+                    {{data?.contact?.website}}
+                  </a>
+                </div>
+              </div>
+              <!-- <button class="btn btn-outline">
+                <i class="fa fa-info-circle"></i>
+                More Details
+              </button> -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Call to Action Section -->
+  <div class="cta-section">
+    <div class="container">
+      <div class="cta-content">
+        <h2>Ready to Start Your IT Career?</h2>
+        <p>Join thousands of successful professionals who have transformed their careers with our partner institutes. Compare institutes, read reviews, and make an informed decision for your future.</p>
+        <div class="cta-buttons">
+          <button class="btn btn-primary btn-large">
+            <i class="fa fa-search"></i>
+            Find Your Perfect Institute
+          </button>
+          <button class="btn btn-outline btn-large">
+            <i class="fa fa-info-circle"></i>
+            Compare Institutes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

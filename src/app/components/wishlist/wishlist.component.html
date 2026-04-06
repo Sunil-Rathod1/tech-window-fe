@@ -1,0 +1,199 @@
+<!-- Wishlist Hero Section -->
+<div class="wishlist-hero">
+  <div class="container">
+    <div class="hero-content">
+      <div class="breadcrumb-nav">
+        <a href="/Home" class="breadcrumb-link">Home</a>
+        <span class="breadcrumb-separator">></span>
+        <span class="breadcrumb-current">My Wishlist</span>
+      </div>
+      <h1 class="wishlist-title">My Wishlist</h1>
+      <p class="wishlist-subtitle">Your saved courses and learning materials</p>
+      <div class="wishlist-stats">
+        <div class="stat-item">
+          <i class="fa fa-heart"></i>
+          <span>{{ getWishlistCount() }} Courses Saved</span>
+        </div>
+        <div class="stat-item">
+          <i class="fa fa-calendar"></i>
+          <span>Updated Recently</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Main Wishlist Content -->
+<div class="container wishlist-main">
+  <div class="row">
+    <div class="col-12">
+      <!-- Wishlist Header -->
+      <div class="wishlist-header">
+        <div class="header-left">
+          <h2 class="section-title">Saved Courses</h2>
+          <p class="section-subtitle">Courses you've added to your wishlist</p>
+        </div>
+        <div class="header-right" *ngIf="wishlistItems.length > 0">
+          <button class="btn-clear-all" (click)="clearWishlist()">
+            <i class="fa fa-trash"></i>
+            Clear All
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div class="loading-state" *ngIf="isLoading">
+        <div class="loading-spinner">
+          <i class="fa fa-spinner fa-spin"></i>
+          <p>Loading your wishlist...</p>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" *ngIf="!isLoading && wishlistItems.length === 0">
+        <div class="empty-content">
+          <div class="empty-icon">
+            <i class="fa fa-heart-o"></i>
+          </div>
+          <h3 class="empty-title">Your Wishlist is Empty</h3>
+          <p class="empty-description">
+            Start exploring courses and add them to your wishlist to save them for later.
+          </p>
+          <div class="empty-actions">
+            <button class="btn-explore" (click)="goToCourseDetails('')">
+              <i class="fa fa-search"></i>
+              Explore Courses
+            </button>
+            <button class="btn-browse" (click)="goToCourseDetails('')">
+              <i class="fa fa-th-large"></i>
+              Browse Categories
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wishlist Items -->
+      <div class="wishlist-items" *ngIf="!isLoading && wishlistItems.length > 0">
+        <div class="row">
+          <div class="col-lg-6 col-xl-4" *ngFor="let item of wishlistItems">
+            <div class="wishlist-card">
+              <!-- Course Image -->
+              <div class="course-image">
+                <img [src]="getCourseImagePath(item.image)" [alt]="item.title" class="course-img">
+                <div class="course-overlay">
+                  <button class="btn-quick-view" (click)="goToCourseDetails(item.id)">
+                    <i class="fa fa-eye"></i>
+                    Quick View
+                  </button>
+                </div>
+                <div class="course-badge">
+                  <span class="badge-new" *ngIf="item.status.includes('NEW')">NEW</span>
+                  <span class="badge-popular" *ngIf="item.status.includes('POPULAR')">POPULAR</span>
+                </div>
+              </div>
+
+              <!-- Course Content -->
+              <div class="course-content">
+                <div class="course-header">
+                  <h3 class="course-title" (click)="goToCourseDetails(item.id)">
+                    {{ item.title }}
+                  </h3>
+                  <button class="btn-remove" (click)="removeFromWishlist(item)" title="Remove from wishlist">
+                    <i class="fa fa-times"></i>
+                  </button>
+                </div>
+
+                <div class="course-meta">
+                  <div class="meta-item">
+                    <i class="fa fa-clock-o"></i>
+                    <span>{{ item.duration }}</span>
+                  </div>
+                  <div class="meta-item">
+                    <i class="fa fa-users"></i>
+                    <span>{{ item.students }}</span>
+                  </div>
+                  <div class="meta-item">
+                    <i class="fa fa-star"></i>
+                    <span>{{ item.rating }}/5</span>
+                  </div>
+                </div>
+
+                <div class="course-info">
+                  <div class="instructor-info">
+                    <i class="fa fa-user"></i>
+                    <span>{{ item.instructor }}</span>
+                  </div>
+                  <div class="category-info">
+                    <i class="fa fa-tag"></i>
+                    <span>{{ item.category }}</span>
+                  </div>
+                </div>
+
+                <div class="course-description">
+                  <p>{{ item.description | slice:0:120 }}{{ item.description.length > 120 ? '...' : '' }}</p>
+                </div>
+
+                <div class="course-technologies">
+                  <div class="tech-tags">
+                    <span class="tech-tag" *ngFor="let tech of item.technologies.slice(0, 3)">
+                      {{ tech }}
+                    </span>
+                    <span class="tech-more" *ngIf="item.technologies.length > 3">
+                      +{{ item.technologies.length - 3 }} more
+                    </span>
+                  </div>
+                </div>
+
+                <div class="course-footer">
+                  <div class="price-section">
+                    <span class="current-price">{{ item.price }}</span>
+                  </div>
+                  <div class="action-buttons">
+                    <button class="btn-enroll" (click)="goToCourseDetails(item.id)">
+                      <i class="fa fa-graduation-cap"></i>
+                      Enroll Now
+                    </button>
+                  </div>
+                </div>
+
+                <div class="added-date">
+                  <i class="fa fa-calendar"></i>
+                  <span>Added on {{ formatDate(item.addedDate) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wishlist Summary -->
+      <div class="wishlist-summary" *ngIf="!isLoading && wishlistItems.length > 0">
+        <div class="summary-card">
+          <div class="summary-header">
+            <h3 class="summary-title">Wishlist Summary</h3>
+          </div>
+          <div class="summary-content">
+            <div class="summary-item">
+              <span class="summary-label">Total Courses:</span>
+              <span class="summary-value">{{ getWishlistCount() }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Categories:</span>
+              <span class="summary-value">{{ getUniqueCategories() }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Last Updated:</span>
+              <span class="summary-value">{{ getLastUpdatedDate() }}</span>
+            </div>
+          </div>
+          <div class="summary-actions">
+            <button class="btn-browse-all" (click)="goToCourseDetails('')">
+              <i class="fa fa-th-large"></i>
+              Browse All Courses
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

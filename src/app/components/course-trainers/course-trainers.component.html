@@ -1,0 +1,312 @@
+<!-- Course Trainers Section -->
+<div class="course-trainers-container">
+  <!-- Page Header with Back Button and Search/Filters -->
+  <app-page-header
+    [title]="getPageTitle()"
+    [breadcrumbItems]="breadcrumbs"
+    [showBack]="true"
+  >
+    <div class="trainer-stats" *ngIf="filteredTrainers.length > 0">
+      <div class="stat-item">
+        <i class="fa fa-users"></i>
+        <span>{{ trainers.length }} Trainers</span>
+      </div>
+      <div class="stat-item">
+        <i class="fa fa-graduation-cap"></i>
+        <span>{{ selectedCourseName || 'All Courses' }}</span>
+      </div>
+    </div>
+
+    <!-- Search and Filters Section - Inside Header -->
+    <div searchContent class="header-search-section">
+      <div class="container">
+        <div class="header-search-container">
+          <!-- Search Box -->
+          <div class="header-search-box">
+            <i class="fa fa-search header-search-icon"></i>
+            <input 
+              type="text" 
+              class="header-search-input" 
+              placeholder="Search trainers by name, skills, or specialization..." 
+              autocomplete="off"
+              [(ngModel)]="searchTerm"
+              (input)="onSearch()">
+            <button type="button" class="header-search-button" (click)="onSearch()">
+              <i class="fa fa-search"></i>
+              Search
+            </button>
+          </div>
+          <!-- Filters Row -->
+          <div class="header-search-filters">
+            <select class="header-filter-select" [(ngModel)]="selectedLocation" (change)="onLocationChange()">
+              <option value="">All Locations</option>
+              <option value="hyderabad">Hyderabad</option>
+              <option value="bangalore">Bangalore</option>
+              <option value="mumbai">Mumbai</option>
+              <option value="pune">Pune</option>
+              <option value="delhi">Delhi</option>
+            </select>
+            <select class="header-filter-select" [(ngModel)]="selectedRating" (change)="onRatingChange()">
+              <option value="">All Ratings</option>
+              <option value="4.5">4.5+ Stars</option>
+              <option value="4.0">4.0+ Stars</option>
+              <option value="3.5">3.5+ Stars</option>
+            </select>
+            <select class="header-filter-select" [(ngModel)]="selectedMode" (change)="onModeChange()">
+              <option value="">All Features</option>
+              <option value="verified">Verified Only</option>
+              <option value="featured">Featured Only</option>
+              <option value="online">Online Available</option>
+              <option value="offline">Offline Available</option>
+            </select>
+            <select class="header-filter-select" [(ngModel)]="selectedExperience" (change)="onExperienceChange()">
+              <option value="">All Experience</option>
+              <option value="5">5+ Years</option>
+              <option value="8">8+ Years</option>
+              <option value="10">10+ Years</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </app-page-header>
+
+  <!-- Course Filter Section -->
+  <div class="course-filter-section" *ngIf="selectedCourseName">
+    <div class="container">
+      <div class="course-filter-card">
+        <div class="course-filter-content">
+          <div class="course-info">
+            <h3 class="course-filter-title">
+              <i class="fa fa-graduation-cap"></i>
+              Showing trainers for: {{ selectedCourseName }}
+            </h3>
+            <p class="course-filter-subtitle">
+              Found {{ filteredTrainers.length }} trainers specialized in {{ selectedCourseName }}
+            </p>
+          </div>
+          <div class="course-filter-actions">
+            <button class="btn btn-outline-primary" (click)="clearCourseFilter()">
+              <i class="fa fa-times"></i>
+              Clear Course Filter
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trainers Grid -->
+  <div class="trainers-grid">
+    <div class="container">
+      <!-- Loading State -->
+      <div class="loading-state" *ngIf="isLoadingTrainers">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading trainers...</span>
+        </div>
+        <p>Loading expert trainers...</p>
+      </div>
+
+      <!-- Error State -->
+      <div class="alert alert-danger" *ngIf="trainersError && !isLoadingTrainers">
+        <i class="fa fa-exclamation-circle me-2"></i>{{ trainersError }}
+      </div>
+
+      <div class="grid-container" *ngIf="!isLoadingTrainers && filteredTrainers.length > 0; else noTrainers">
+        <!-- Trainer Card -->
+        <div class="trainer-card" *ngFor="let trainer of filteredTrainersData; trackBy: trackByTrainer">
+          <div class="card-header">
+            <div class="trainer-photo">
+              <img
+                [src]="getTrainerImage(trainer)"
+                [alt]="trainer.name + ' photo'"
+                class="photo-img"
+                onerror="this.src='assets/photos/trainers/trainer-1.jpg'">
+            </div>
+            <div class="trainer-badges">
+              <span class="badge online" *ngIf="trainer.modes?.online">Online</span>
+              <span class="badge offline" *ngIf="trainer.modes?.offline">Offline</span>
+              <span class="badge verified" *ngIf="trainer.isVerified">
+                <i class="fa fa-check-circle"></i>
+                Verified
+              </span>
+              <!-- <span class="badge featured" *ngIf="trainer.isFeatured">
+                <i class="fa fa-star"></i>
+                Featured
+              </span> -->
+              <span class="rate-value">₹{{trainer.coursePrice}}</span>
+
+            </div>
+          </div>
+          
+          <div class="card-body">
+            <div class="trainer-header">
+              <h3 class="trainer-name" (click)="redirectToSignIn()" style="cursor: pointer;">
+                {{trainer.name}}
+              </h3>
+              <!-- <div class="trainer-title">
+                <span class="title-badge">{{trainer.title}}</span>
+              </div> -->
+            </div>
+            
+            <div class="trainer-specialization">
+                <span class="specialization-name" (click)="redirectToSignIn()" style="cursor: pointer;">
+                  {{  trainer.specialization }}
+                </span>
+            </div>
+
+            <!-- <div class="trainer-bio">
+              <p>{{trainer.bio}}</p>
+            </div> -->
+
+            <div class="trainer-stats">
+              <div class="stat-item">
+                <i class="fa fa-users"></i>
+                <span>{{trainer.totalStudents}} Students</span>
+              </div>
+              <div class="stat-item">
+                <i class="fa fa-book"></i>
+                <span>{{trainer.totalCourses}} Courses</span>
+              </div>
+              <div class="stat-item">
+                <i class="fa fa-clock-o"></i>
+                <span>{{trainer.experience}} Experience</span>
+              </div>
+              <div class="stat-item">
+                <i class="fa fa-star"></i>
+                <span>{{trainer.rating}} Rating</span>
+              </div>
+            </div>
+
+            <div class="trainer-skills">
+              <h4>Expert Skills</h4>
+              <div class="skill-tags">
+                <span class="tag" *ngFor="let skill of trainer.skills">
+                  {{ skill.courseName || skill.name || skill }}
+                </span>
+              </div>
+            </div>
+
+            <!-- <div class="trainer-achievements">
+              <h4>Achievements</h4>
+              <div class="achievement-list">
+                <span class="achievement-item" *ngFor="let achievement of trainer.achievements">
+                  <i class="fa fa-trophy"></i> {{achievement}}
+                </span>
+              </div>
+            </div> -->
+
+            <!-- <div class="trainer-certifications">
+              <h4>Certifications</h4>
+              <div class="certification-list">
+                <span class="certification-item" *ngFor="let cert of trainer.certifications">
+                  <i class="fa fa-certificate"></i> {{cert}}
+                </span>
+              </div>
+            </div> -->
+
+            <div class="location-info">
+              <i class="fa fa-map-marker"></i>
+              <span class="location-text">
+                <strong>{{trainer.location?.city}}, {{trainer.location?.state}}</strong>
+              </span>
+            </div>
+
+            <div class="rating-section">
+              <div class="rating-display">
+                <div class="stars">
+                  <span class="fa fa-star" *ngFor="let star of [1,2,3,4,5]" 
+                        [class.checked]="star <= trainer.rating"></span>
+                </div>
+                <span class="rating-text">{{trainer.rating}} out of 5</span>
+              </div>
+            </div>
+
+            <div class="rate-info">
+              <!-- <h4>Start Dates : ₹{{trainer.coursePrice}}</h4> -->
+              <h4>Start Dates : {{trainer.batchDate}}</h4>
+              <div class="rate-display">
+                <span class="rate-label">Start Time:</span>
+                <span class="rate-value1">{{trainer?.batchTime}}</span>
+              </div>
+            </div>
+
+            <div class="action-buttons">
+              <button class="btn btn-primary" (click)="viewTrainerProfile(trainer)">
+                <i class="fa fa-calendar"></i>
+                View Details
+              </button>
+              <button 
+                class="btn btn-secondary" 
+                [class.added]="isTrainerInCart(trainer)" 
+                (click)="addTrainerCourseToCart(trainer)">
+                <i class="fa" [ngClass]="isTrainerInCart(trainer) ? 'fa-check' : 'fa-heart'"></i>
+                {{ isTrainerInCart(trainer) ? 'Added to Cart' : 'Wishlist' }}
+              </button>
+            </div>
+          </div>
+
+          <!-- <div class="card-footer">
+            <div class="contact-info">
+              <button class="btn btn-outline-primary btn-sm">
+                <i class="fa fa-envelope"></i>
+                Contact Trainer
+              </button>
+            </div>
+          </div> -->
+        </div>
+
+        <!-- No Results Message -->
+        <div class="no-results" *ngIf="filteredTrainers.length === 0">
+          <div class="no-results-content">
+            <i class="fa fa-search fa-3x"></i>
+            <h3>No trainers found</h3>
+            <p>Try adjusting your search criteria or filters</p>
+            <button class="btn btn-primary" (click)="clearFilters()">
+              <i class="fa fa-refresh"></i>
+              Clear All Filters
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noTrainers>
+        <div class="no-trainers" *ngIf="!isLoadingTrainers">
+          <i class="fa fa-search fa-3x"></i>
+          <h3>No trainers found</h3>
+          <p>Try adjusting your course selection or search filters.</p>
+          <button class="btn btn-primary" (click)="clearFilters()">
+            <i class="fa fa-refresh"></i> Reset Filters
+          </button>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+
+  <!-- Call to Action Section -->
+  <div class="cta-section">
+    <div class="container">
+      <div class="cta-content">
+        <h2>Ready to Learn {{course}} with Expert Trainers?</h2>
+        <p>Connect with professional trainers and start your {{course}} learning journey today</p>
+        <div class="cta-buttons">
+          <button class="btn btn-primary btn-large">
+            <i class="fa fa-chalkboard-teacher"></i>
+            Browse All Trainers
+          </button>
+          <button class="btn btn-outline btn-large">
+            <i class="fa fa-search"></i>
+            Find Your Match
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+

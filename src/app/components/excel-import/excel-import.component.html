@@ -1,0 +1,308 @@
+<div class="excel-import-container">
+  <div class="import-header">
+    <h2 class="import-title">
+      <i class="fas fa-file-excel"></i>
+      Excel Data Import
+    </h2>
+    <p class="import-description">
+      Import data from Excel files (.xlsx, .xls) or CSV files
+    </p>
+  </div>
+
+  <div class="import-content">
+    <!-- Entity Type Selection -->
+    <div class="form-group">
+      <label for="entityType" class="form-label">
+        <i class="fas fa-database"></i>
+        Select Entity Type
+      </label>
+      <select 
+        id="entityType" 
+        class="form-control" 
+        [(ngModel)]="selectedEntityType" 
+        (change)="onEntityTypeChange()">
+        <option 
+          *ngFor="let entity of entityTypes" 
+          [value]="entity.value">
+          <i [class]="entity.icon"></i>
+          {{ entity.label }}
+        </option>
+      </select>
+    </div>
+
+    <!-- File Upload Section -->
+    <div class="upload-section">
+      <div class="upload-area" 
+           [class.dragover]="isDragover"
+           (dragover)="onDragOver($event)"
+           (dragleave)="onDragLeave($event)"
+           (drop)="onDrop($event)">
+        <div class="upload-content">
+          <i class="fas fa-cloud-upload-alt upload-icon"></i>
+          <h3 class="upload-title">Drop your file here</h3>
+          <p class="upload-subtitle">or click to browse</p>
+          <input 
+            type="file" 
+            id="fileInput" 
+            class="file-input" 
+            accept=".xlsx,.xls,.csv"
+            (change)="onFileSelected($event)">
+          <label for="fileInput" class="upload-button">
+            <i class="fas fa-folder-open"></i>
+            Choose File
+          </label>
+        </div>
+      </div>
+
+      <!-- Selected File Info -->
+      <div class="selected-file" *ngIf="selectedFile">
+        <div class="file-info">
+          <i class="fas fa-file-excel file-icon"></i>
+          <div class="file-details">
+            <h4 class="file-name">{{ selectedFile.name }}</h4>
+            <p class="file-size">{{ formatFileSize(selectedFile.size) }}</p>
+          </div>
+          <button 
+            type="button" 
+            class="btn btn-sm btn-outline-danger"
+            (click)="removeFile()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Import Options -->
+    <div class="import-options">
+      <h4 class="options-title">
+        <i class="fas fa-cog"></i>
+        Import Options
+      </h4>
+      
+      <div class="options-grid">
+        <div class="option-item">
+          <div class="form-check">
+            <input 
+              class="form-check-input" 
+              type="checkbox" 
+              id="skipDuplicates"
+              [(ngModel)]="skipDuplicates">
+            <label class="form-check-label" for="skipDuplicates">
+              Skip Duplicate Records
+            </label>
+          </div>
+          <small class="option-description">
+            Skip records that already exist in the database
+          </small>
+        </div>
+
+        <div class="option-item">
+          <div class="form-check">
+            <input 
+              class="form-check-input" 
+              type="checkbox" 
+              id="overwrite"
+              [(ngModel)]="overwrite">
+            <label class="form-check-label" for="overwrite">
+              Overwrite Existing Records
+            </label>
+          </div>
+          <small class="option-description">
+            Replace existing records with new data
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Template and Instructions -->
+    <div class="template-section">
+      <div class="template-actions">
+        <button 
+          type="button" 
+          class="btn btn-outline-primary"
+          (click)="toggleTemplate()">
+          <i class="fas fa-table"></i>
+          View Template
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-outline-success"
+          (click)="downloadTemplate()">
+          <i class="fas fa-download"></i>
+          Download Template
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-outline-info"
+          (click)="toggleInstructions()">
+          <i class="fas fa-info-circle"></i>
+          Instructions
+        </button>
+      </div>
+
+      <!-- Template Preview -->
+      <div class="template-preview" *ngIf="showTemplate && templateData">
+        <h5 class="preview-title">Sample Template Structure</h5>
+        <div class="template-table">
+          <table class="table table-sm table-bordered">
+            <thead>
+              <tr>
+                <th *ngFor="let field of templateData.fields">
+                  {{ field.name }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td *ngFor="let field of templateData.fields">
+                  <em>{{ field.example || 'Sample data' }}</em>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Instructions -->
+      <div class="instructions" *ngIf="showInstructions">
+        <h5 class="instructions-title">Import Instructions</h5>
+        <div class="instructions-content">
+          <ol>
+            <li>Download the template file for the selected entity type</li>
+            <li>Fill in the data following the template structure</li>
+            <li>Ensure all required fields are filled</li>
+            <li>Save the file in Excel format (.xlsx or .xls)</li>
+            <li>Upload the file using the form above</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- Import Button -->
+    <div class="import-actions">
+      <button 
+        type="button" 
+        class="btn btn-primary btn-lg"
+        [disabled]="!selectedFile || isUploading"
+        (click)="importData()">
+        <i class="fas fa-upload" *ngIf="!isUploading"></i>
+        <i class="fas fa-spinner fa-spin" *ngIf="isUploading"></i>
+        {{ isUploading ? 'Importing...' : 'Import Data' }}
+      </button>
+    </div>
+
+    <!-- Error Messages -->
+    <div class="alert alert-danger" *ngIf="errorMessage">
+      <i class="fas fa-exclamation-triangle"></i>
+      {{ errorMessage }}
+    </div>
+
+    <!-- Success Messages -->
+    <div class="alert alert-success" *ngIf="successMessage">
+      <i class="fas fa-check-circle"></i>
+      {{ successMessage }}
+    </div>
+
+    <!-- Import Results -->
+    <div class="import-results" *ngIf="showResults && importResults">
+      <div class="results-header">
+        <h4 class="results-title">
+          <i class="fas fa-chart-bar"></i>
+          Import Results
+        </h4>
+        <button 
+          type="button" 
+          class="btn btn-sm btn-outline-secondary"
+          (click)="clearResults()">
+          <i class="fas fa-times"></i>
+          Clear
+        </button>
+      </div>
+
+      <div class="results-summary">
+        <div class="summary-card" [ngClass]="getStatusColor()">
+          <div class="summary-icon">
+            <i class="fas fa-check-circle" *ngIf="getSuccessRate() >= 90"></i>
+            <i class="fas fa-exclamation-triangle" *ngIf="getSuccessRate() >= 70 && getSuccessRate() < 90"></i>
+            <i class="fas fa-times-circle" *ngIf="getSuccessRate() < 70"></i>
+          </div>
+          <div class="summary-content">
+            <h5 class="summary-title">{{ getSuccessRate() }}% Success Rate</h5>
+            <p class="summary-description">
+              {{ importSummary?.imported || 0 }} of {{ importSummary?.total || 0 }} records imported successfully
+            </p>
+          </div>
+        </div>
+
+        <div class="results-stats">
+          <div class="stat-item">
+            <div class="stat-number">{{ importSummary?.total || 0 }}</div>
+            <div class="stat-label">Total Records</div>
+          </div>
+          <div class="stat-item success">
+            <div class="stat-number">{{ importSummary?.imported || 0 }}</div>
+            <div class="stat-label">Imported</div>
+          </div>
+          <div class="stat-item warning">
+            <div class="stat-number">{{ importSummary?.skipped || 0 }}</div>
+            <div class="stat-label">Skipped</div>
+          </div>
+          <div class="stat-item danger">
+            <div class="stat-number">{{ importSummary?.errors || 0 }}</div>
+            <div class="stat-label">Errors</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error Details -->
+      <div class="error-details" *ngIf="getErrorCount() > 0">
+        <h5 class="error-title">
+          <i class="fas fa-exclamation-triangle"></i>
+          Error Details
+        </h5>
+        <div class="error-list">
+          <div class="error-item" *ngFor="let error of importResults.errors">
+            <i class="fas fa-times-circle"></i>
+            {{ error }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Import History -->
+    <div class="import-history" *ngIf="importHistory.length > 0">
+      <h4 class="history-title">
+        <i class="fas fa-history"></i>
+        Recent Imports
+      </h4>
+      <div class="history-table">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>File Name</th>
+              <th>Entity Type</th>
+              <th>Imported</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let entry of importHistory">
+              <td>{{ entry.fileName }}</td>
+              <!-- <td>{{ getEntityTypeDisplayName(entry.entityType) }}</td> -->
+              <td>{{ entry.imported }}</td>
+              <td>{{ entry.total }}</td>
+              <td>
+                <span class="badge" [ngClass]="entry.status === 'success' ? 'badge-success' : 'badge-danger'">
+                  {{ entry.status }}
+                </span>
+              </td>
+              <td>{{ formatDate(entry.importedAt) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

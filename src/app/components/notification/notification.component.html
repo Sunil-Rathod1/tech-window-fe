@@ -1,0 +1,182 @@
+<div class="notification-container">
+  <!-- Notification Bell Icon -->
+  <div class="notification-bell" (click)="toggleDropdown()" [class.active]="isOpen">
+    <i class="fas fa-bell"></i>
+    <span *ngIf="showBadge && unreadCount > 0" class="notification-badge">{{ unreadCount > 99 ? '99+' : unreadCount }}</span>
+  </div>
+
+  <!-- Notification Dropdown -->
+  <div class="notification-dropdown" [class.open]="isOpen" *ngIf="showDropdown">
+    <!-- Header -->
+    <div class="notification-header">
+      <div class="header-left">
+        <h3>Notifications</h3>
+        <span *ngIf="unreadCount > 0" class="unread-count">{{ unreadCount }} unread</span>
+      </div>
+      <div class="header-right">
+        <button class="btn-icon" (click)="refreshNotifications()" [disabled]="isLoading" title="Refresh">
+          <i class="fas fa-sync-alt" [class.spinning]="isLoading"></i>
+        </button>
+        <button class="btn-icon" (click)="closeDropdown()" title="Close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="notification-search">
+      <div class="search-input">
+        <i class="fas fa-search"></i>
+        <input 
+          type="text" 
+          placeholder="Search notifications..." 
+          [(ngModel)]="searchQuery"
+          (input)="searchNotifications()"
+        >
+        <button *ngIf="searchQuery" class="clear-search" (click)="clearSearch()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="notification-filters">
+      <button 
+        *ngFor="let filter of ['all', 'unread', 'read', 'success', 'warning', 'error']"
+        class="filter-tab" 
+        [class.active]="currentFilter === filter"
+        (click)="setFilter(filter)"
+      >
+        {{ getFilterLabel(filter) }}
+        <span *ngIf="getFilterCount(filter) > 0" class="filter-count">{{ getFilterCount(filter) }}</span>
+      </button>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading notifications...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="errorMessage && !isLoading" class="error-state">
+      <div class="error-icon">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      <h4>Oops! Something went wrong</h4>
+      <p>{{ errorMessage }}</p>
+      <button class="retry-btn" (click)="refreshNotifications()">
+        <i class="fas fa-redo"></i>
+        Try Again
+      </button>
+    </div>
+
+    <!-- Notifications List -->
+    <div *ngIf="!isLoading && !errorMessage" class="notifications-list">
+      <!-- Empty State -->
+      <div *ngIf="notifications.length === 0" class="empty-state">
+        <div class="empty-icon">
+          <i class="fas fa-bell-slash"></i>
+        </div>
+        <h4>No notifications</h4>
+        <p *ngIf="currentFilter === 'all'">You're all caught up!</p>
+        <p *ngIf="currentFilter === 'unread'">No unread notifications</p>
+        <p *ngIf="currentFilter === 'read'">No read notifications</p>
+        <p *ngIf="currentFilter !== 'all' && currentFilter !== 'unread' && currentFilter !== 'read'">
+          No {{ getFilterLabel(currentFilter).toLowerCase() }} notifications
+        </p>
+      </div>
+
+      <!-- Notification Items -->
+      <div 
+        *ngFor="let notification of notifications; trackBy: trackByNotificationId" 
+        class="notification-item"
+        [class]="getStatusClass(notification.isRead) + ' ' + getTypeClass(notification.type) + ' ' + getPriorityClass(notification.priority)"
+        (click)="onNotificationClick(notification)"
+      >
+        <!-- Notification Icon -->
+        <div class="notification-icon" [style.color]="getNotificationColor(notification.type)">
+          <i [class]="getNotificationIcon(notification.type)"></i>
+          <div *ngIf="!notification.isRead" class="unread-indicator"></div>
+        </div>
+
+        <!-- Notification Content -->
+        <div class="notification-content">
+          <div class="notification-header">
+            <h4 class="notification-title">{{ notification.title }}</h4>
+            <div class="notification-meta">
+              <span class="notification-time">{{ formatTimeAgo(notification.createdAt) }}</span>
+              <span *ngIf="notification.priority === 'high' || notification.priority === 'urgent'" 
+                    class="priority-badge" 
+                    [style.background-color]="getPriorityColor(notification.priority)">
+                {{ notification.priority }}
+              </span>
+            </div>
+          </div>
+          
+          <p class="notification-message">{{ notification.message }}</p>
+          
+          <!-- Action Button -->
+          <button *ngIf="notification.actionText && notification.actionUrl" 
+                  class="action-btn"
+                  (click)="onNotificationClick(notification); $event.stopPropagation()">
+            {{ notification.actionText }}
+            <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+
+        <!-- Notification Actions -->
+        <div class="notification-actions">
+          <button 
+            class="action-icon" 
+            [title]="notification.isRead ? 'Mark as unread' : 'Mark as read'"
+            (click)="notification.isRead ? markNotificationAsUnread(notification) : markNotificationAsRead(notification); $event.stopPropagation()"
+          >
+            <i [class]="notification.isRead ? 'fas fa-envelope-open' : 'fas fa-envelope'"></i>
+          </button>
+          <button 
+            class="action-icon delete" 
+            title="Delete notification"
+            (click)="deleteNotificationAction(notification); $event.stopPropagation()"
+          >
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Load More Button -->
+      <div *ngIf="hasMorePages && notifications.length > 0" class="load-more">
+        <button class="btn-secondary" (click)="loadMore()" [disabled]="isLoading">
+          <i class="fas fa-chevron-down"></i>
+          Load More
+        </button>
+      </div>
+    </div>
+
+    <!-- Footer Actions -->
+    <div *ngIf="!isLoading && !errorMessage && notifications.length > 0" class="notification-footer">
+      <button *ngIf="unreadCount > 0" class="btn-primary" (click)="markAllAsRead()">
+        <i class="fas fa-check-double"></i>
+        Mark All as Read
+      </button>
+      <button class="btn-secondary" (click)="setFilter('all')">
+        <i class="fas fa-list"></i>
+        View All
+      </button>
+    </div>
+  </div>
+
+  <!-- Backdrop -->
+  <div *ngIf="isOpen" class="notification-backdrop" (click)="closeDropdown()"></div>
+</div>
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,841 @@
+<!-- Auth Popup Modal -->
+<div class="modal-overlay" *ngIf="isOpen" (click)="onBackdropClick($event)">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <div class="header-content">
+        <div class="logo-container">
+          <img src="assets/photos/inistitution/techwindows.jpg" alt="TechWindows Logo" class="logo-img">
+          <h2 class="logo-text">TechWindows</h2>
+        </div>
+      </div>
+      <!-- Close Button -->
+      <button class="close-btn" (click)="closeModal()" type="button" aria-label="Close">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body">
+      
+      <!-- Title and Subtitle -->
+      <div class="auth-title-section">
+        <h2 class="auth-title">{{getTitle()}}</h2>
+        <p class="auth-subtitle">{{getSubtitle()}}</p>
+      </div>
+      
+      <!-- Error Message -->
+      <div class="error-message" *ngIf="errorMessage">
+        <i class="fa fa-exclamation-triangle"></i>
+        {{errorMessage}}
+      </div>
+
+      <!-- Auth Form -->
+      <form [formGroup]="authForm" (ngSubmit)="onSubmit()" class="auth-form">
+        
+        <!-- Sign Up Fields -->
+        <div class="form-row" *ngIf="mode === 'signup'">
+          <div class="form-group">
+            <label for="firstName">First Name</label>
+            <input 
+              type="text" 
+              id="firstName" 
+              formControlName="firstName"
+              class="form-input"
+              [class.error]="getFieldError('firstName')"
+              placeholder="Enter your first name">
+            <span class="error-text" *ngIf="getFieldError('firstName')">
+              {{getFieldError('firstName')}}
+            </span>
+          </div>
+          <div class="form-group">
+            <label for="lastName">Last Name</label>
+            <input 
+              type="text" 
+              id="lastName" 
+              formControlName="lastName"
+              class="form-input"
+              [class.error]="getFieldError('lastName')"
+              placeholder="Enter your last name">
+            <span class="error-text" *ngIf="getFieldError('lastName')">
+              {{getFieldError('lastName')}}
+            </span>
+          </div>
+        </div>
+
+        <!-- Email Field -->
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input 
+            type="email" 
+            id="email" 
+            formControlName="email"
+            class="form-input"
+            [class.error]="getFieldError('email')"
+            placeholder="Enter your email address">
+          <span class="error-text" *ngIf="getFieldError('email')">
+            {{getFieldError('email')}}
+          </span>
+        </div>
+
+        <!-- Phone Field (Sign Up Only) -->
+        <div class="form-group" *ngIf="mode === 'signup'">
+          <label for="phone">Phone Number</label>
+          <input 
+            type="tel" 
+            id="phone" 
+            formControlName="phone"
+            class="form-input"
+            [class.error]="getFieldError('phone')"
+            placeholder="Enter your phone number">
+          <span class="error-text" *ngIf="getFieldError('phone')">
+            {{getFieldError('phone')}}
+          </span>
+        </div>
+
+        <!-- Password Field -->
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input 
+            type="password" 
+            id="password" 
+            formControlName="password"
+            class="form-input"
+            [class.error]="getFieldError('password')"
+            placeholder="Enter your password">
+          <span class="error-text" *ngIf="getFieldError('password')">
+            {{getFieldError('password')}}
+          </span>
+        </div>
+
+        <!-- Confirm Password Field (Sign Up Only) -->
+        <div class="form-group" *ngIf="mode === 'signup'">
+          <label for="confirmPassword">Confirm Password</label>
+          <input 
+            type="password" 
+            id="confirmPassword" 
+            formControlName="confirmPassword"
+            class="form-input"
+            [class.error]="getFieldError('confirmPassword')"
+            placeholder="Confirm your password">
+          <span class="error-text" *ngIf="getFieldError('confirmPassword')">
+            {{getFieldError('confirmPassword')}}
+          </span>
+        </div>
+
+        <!-- Student Signup Fields -->
+        <div *ngIf="mode === 'student-signup'">
+          
+          <!-- Student Basic Info -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="studentFirstName">First Name</label>
+              <input 
+                type="text" 
+                id="studentFirstName" 
+                formControlName="firstName"
+                class="form-input"
+                [class.error]="getFieldError('firstName')"
+                placeholder="Enter your first name">
+              <span class="error-text" *ngIf="getFieldError('firstName')">
+                {{getFieldError('firstName')}}
+              </span>
+            </div>
+            <div class="form-group">
+              <label for="studentLastName">Last Name</label>
+              <input 
+                type="text" 
+                id="studentLastName" 
+                formControlName="lastName"
+                class="form-input"
+                [class.error]="getFieldError('lastName')"
+                placeholder="Enter your last name">
+              <span class="error-text" *ngIf="getFieldError('lastName')">
+                {{getFieldError('lastName')}}
+              </span>
+            </div>
+          </div>
+
+          <!-- Student Phone -->
+          <div class="form-group">
+            <label for="studentPhone">Phone Number</label>
+            <input 
+              type="tel" 
+              id="studentPhone" 
+              formControlName="phone"
+              class="form-input"
+              [class.error]="getFieldError('phone')"
+              placeholder="Enter your phone number">
+            <span class="error-text" *ngIf="getFieldError('phone')">
+              {{getFieldError('phone')}}
+            </span>
+          </div>
+
+          <!-- Date of Birth -->
+          <div class="form-group">
+            <label for="dateOfBirth">Date of Birth</label>
+            <input 
+              type="date" 
+              id="dateOfBirth" 
+              formControlName="dateOfBirth"
+              class="form-input"
+              [class.error]="getFieldError('dateOfBirth')"
+              placeholder="Select your date of birth">
+            <span class="error-text" *ngIf="getFieldError('dateOfBirth')">
+              {{getFieldError('dateOfBirth')}}
+            </span>
+          </div>
+
+          <!-- Gender -->
+          <div class="form-group">
+            <label for="gender">Gender</label>
+            <select 
+              id="gender" 
+              formControlName="gender"
+              class="form-input"
+              [class.error]="getFieldError('gender')">
+              <option value="">Select Gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+            <span class="error-text" *ngIf="getFieldError('gender')">
+              {{getFieldError('gender')}}
+            </span>
+          </div>
+
+          <!-- Nationality -->
+          <div class="form-group">
+            <label for="nationality">Nationality</label>
+            <input 
+              type="text" 
+              id="nationality" 
+              formControlName="nationality"
+              class="form-input"
+              [class.error]="getFieldError('nationality')"
+              placeholder="Enter your nationality">
+            <span class="error-text" *ngIf="getFieldError('nationality')">
+              {{getFieldError('nationality')}}
+            </span>
+          </div>
+
+          <!-- Address Fields -->
+          <div class="form-section">
+            <h4 class="section-title">Address Information</h4>
+            
+            <div class="form-group">
+              <label for="street">Street Address</label>
+              <input 
+                type="text" 
+                id="street" 
+                formControlName="address.street"
+                class="form-input"
+                [class.error]="getFieldError('address.street')"
+                placeholder="Enter street address">
+              <span class="error-text" *ngIf="getFieldError('address.street')">
+                {{getFieldError('address.street')}}
+              </span>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="city">City</label>
+                <input 
+                  type="text" 
+                  id="city" 
+                  formControlName="address.city"
+                  class="form-input"
+                  [class.error]="getFieldError('address.city')"
+                  placeholder="Enter city">
+                <span class="error-text" *ngIf="getFieldError('address.city')">
+                  {{getFieldError('address.city')}}
+                </span>
+              </div>
+              <div class="form-group">
+                <label for="state">State</label>
+                <input 
+                  type="text" 
+                  id="state" 
+                  formControlName="address.state"
+                  class="form-input"
+                  [class.error]="getFieldError('address.state')"
+                  placeholder="Enter state">
+                <span class="error-text" *ngIf="getFieldError('address.state')">
+                  {{getFieldError('address.state')}}
+                </span>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="country">Country</label>
+                <input 
+                  type="text" 
+                  id="country" 
+                  formControlName="address.country"
+                  class="form-input"
+                  [class.error]="getFieldError('address.country')"
+                  placeholder="Enter country">
+                <span class="error-text" *ngIf="getFieldError('address.country')">
+                  {{getFieldError('address.country')}}
+                </span>
+              </div>
+              <div class="form-group">
+                <label for="postalCode">Postal Code</label>
+                <input 
+                  type="text" 
+                  id="postalCode" 
+                  formControlName="address.postalCode"
+                  class="form-input"
+                  [class.error]="getFieldError('address.postalCode')"
+                  placeholder="Enter postal code">
+                <span class="error-text" *ngIf="getFieldError('address.postalCode')">
+                  {{getFieldError('address.postalCode')}}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Education Fields -->
+          <div class="form-section">
+            <h4 class="section-title">Education Information</h4>
+            
+            <div class="form-group">
+              <label for="highestQualification">Highest Qualification</label>
+              <input 
+                type="text" 
+                id="highestQualification" 
+                formControlName="education.highestQualification"
+                class="form-input"
+                [class.error]="getFieldError('education.highestQualification')"
+                placeholder="e.g., Bachelor's Degree, Master's Degree">
+              <span class="error-text" *ngIf="getFieldError('education.highestQualification')">
+                {{getFieldError('education.highestQualification')}}
+              </span>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="fieldOfStudy">Field of Study</label>
+                <input 
+                  type="text" 
+                  id="fieldOfStudy" 
+                  formControlName="education.fieldOfStudy"
+                  class="form-input"
+                  placeholder="e.g., Computer Science, Engineering">
+              </div>
+              <div class="form-group">
+                <label for="university">University</label>
+                <input 
+                  type="text" 
+                  id="university" 
+                  formControlName="education.university"
+                  class="form-input"
+                  placeholder="University name">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="graduationYear">Graduation Year</label>
+                <input 
+                  type="number" 
+                  id="graduationYear" 
+                  formControlName="education.graduationYear"
+                  class="form-input"
+                  placeholder="2020">
+              </div>
+              <div class="form-group">
+                <label for="gpa">GPA (Optional)</label>
+                <input 
+                  type="number" 
+                  id="gpa" 
+                  formControlName="education.gpa"
+                  class="form-input"
+                  step="0.01"
+                  min="0"
+                  max="4"
+                  placeholder="3.5">
+              </div>
+            </div>
+          </div>
+
+          <!-- Work Experience Fields -->
+          <div class="form-section">
+            <h4 class="section-title">Work Experience (Optional)</h4>
+            
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" formControlName="workExperience.hasExperience" class="checkbox-input">
+                <span class="checkbox-text">I have work experience</span>
+              </label>
+            </div>
+
+            <div class="form-group" *ngIf="authForm.get('workExperience.hasExperience')?.value">
+              <label for="yearsOfExperience">Years of Experience</label>
+              <input 
+                type="number" 
+                id="yearsOfExperience" 
+                formControlName="workExperience.yearsOfExperience"
+                class="form-input"
+                min="0"
+                placeholder="2">
+            </div>
+
+            <div class="form-row" *ngIf="authForm.get('workExperience.hasExperience')?.value">
+              <div class="form-group">
+                <label for="currentCompany">Current Company</label>
+                <input 
+                  type="text" 
+                  id="currentCompany" 
+                  formControlName="workExperience.currentCompany"
+                  class="form-input"
+                  placeholder="Company name">
+              </div>
+              <div class="form-group">
+                <label for="currentPosition">Current Position</label>
+                <input 
+                  type="text" 
+                  id="currentPosition" 
+                  formControlName="workExperience.currentPosition"
+                  class="form-input"
+                  placeholder="Job title">
+              </div>
+            </div>
+          </div>
+
+          <!-- Career Goals Fields -->
+          <div class="form-section">
+            <h4 class="section-title">Career Goals (Optional)</h4>
+            
+            <div class="form-group">
+              <label for="interestedFields">Interested Fields</label>
+              <input 
+                type="text" 
+                id="interestedFields" 
+                formControlName="careerGoals.interestedFields"
+                class="form-input"
+                placeholder="e.g., Software Development, Data Science">
+            </div>
+
+            <div class="form-group">
+              <label for="preferredJobRoles">Preferred Job Roles</label>
+              <input 
+                type="text" 
+                id="preferredJobRoles" 
+                formControlName="careerGoals.preferredJobRoles"
+                class="form-input"
+                placeholder="e.g., Software Engineer, Data Analyst">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="salaryMin">Expected Salary (Min)</label>
+                <input 
+                  type="number" 
+                  id="salaryMin" 
+                  formControlName="careerGoals.salaryExpectation.min"
+                  class="form-input"
+                  placeholder="50000">
+              </div>
+              <div class="form-group">
+                <label for="salaryMax">Expected Salary (Max)</label>
+                <input 
+                  type="number" 
+                  id="salaryMax" 
+                  formControlName="careerGoals.salaryExpectation.max"
+                  class="form-input"
+                  placeholder="80000">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="preferredWorkMode">Preferred Work Mode</label>
+              <select 
+                id="preferredWorkMode" 
+                formControlName="careerGoals.preferredWorkMode"
+                class="form-input">
+                <option value="remote">Remote</option>
+                <option value="onsite">On-site</option>
+                <option value="hybrid">Hybrid</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="preferredLocation">Preferred Location</label>
+              <input 
+                type="text" 
+                id="preferredLocation" 
+                formControlName="careerGoals.preferredLocation"
+                class="form-input"
+                placeholder="e.g., New York, San Francisco">
+            </div>
+          </div>
+        </div>
+
+        <!-- Trainer Signup Fields -->
+        <div *ngIf="mode === 'trainer-signup'">
+          
+          <!-- Trainer Basic Info -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="trainerFirstName">First Name</label>
+              <input 
+                type="text" 
+                id="trainerFirstName" 
+                formControlName="firstName"
+                class="form-input"
+                [class.error]="getFieldError('firstName')"
+                placeholder="Enter your first name">
+              <span class="error-text" *ngIf="getFieldError('firstName')">
+                {{getFieldError('firstName')}}
+              </span>
+            </div>
+            <div class="form-group">
+              <label for="trainerLastName">Last Name</label>
+              <input 
+                type="text" 
+                id="trainerLastName" 
+                formControlName="lastName"
+                class="form-input"
+                [class.error]="getFieldError('lastName')"
+                placeholder="Enter your last name">
+              <span class="error-text" *ngIf="getFieldError('lastName')">
+                {{getFieldError('lastName')}}
+              </span>
+            </div>
+          </div>
+
+          <!-- Trainer Phone -->
+          <div class="form-group">
+            <label for="trainerPhone">Phone Number</label>
+            <input 
+              type="tel" 
+              id="trainerPhone" 
+              formControlName="phone"
+              class="form-input"
+              [class.error]="getFieldError('phone')"
+              placeholder="Enter your phone number">
+            <span class="error-text" *ngIf="getFieldError('phone')">
+              {{getFieldError('phone')}}
+            </span>
+          </div>
+
+          <!-- Trainer Specialization -->
+          <div class="form-group">
+            <label for="specialization">Specialization</label>
+            <input 
+              type="text" 
+              id="specialization" 
+              formControlName="specialization"
+              class="form-input"
+              [class.error]="getFieldError('specialization')"
+              placeholder="e.g., Web Development, Data Science">
+            <span class="error-text" *ngIf="getFieldError('specialization')">
+              {{getFieldError('specialization')}}
+            </span>
+          </div>
+
+          <!-- Trainer Experience -->
+          <div class="form-group">
+            <label for="experience">Years of Experience</label>
+            <input 
+              type="number" 
+              id="experience" 
+              formControlName="experience"
+              class="form-input"
+              [class.error]="getFieldError('experience')"
+              placeholder="5">
+            <span class="error-text" *ngIf="getFieldError('experience')">
+              {{getFieldError('experience')}}
+            </span>
+          </div>
+
+          <!-- Trainer Bio -->
+          <div class="form-group">
+            <label for="bio">Bio</label>
+            <textarea 
+              id="bio" 
+              formControlName="bio"
+              class="form-input"
+              [class.error]="getFieldError('bio')"
+              rows="3"
+              placeholder="Tell us about your expertise and teaching experience">
+            </textarea>
+            <span class="error-text" *ngIf="getFieldError('bio')">
+              {{getFieldError('bio')}}
+            </span>
+          </div>
+
+          <!-- Trainer Hourly Rate -->
+          <div class="form-group">
+            <label for="hourlyRate">Hourly Rate ($)</label>
+            <input 
+              type="number" 
+              id="hourlyRate" 
+              formControlName="hourlyRate"
+              class="form-input"
+              [class.error]="getFieldError('hourlyRate')"
+              placeholder="50">
+            <span class="error-text" *ngIf="getFieldError('hourlyRate')">
+              {{getFieldError('hourlyRate')}}
+            </span>
+          </div>
+        </div>
+
+        <!-- Mentor Signup Fields -->
+        <div *ngIf="mode === 'mentor-signup'">
+          
+          <!-- Mentor Basic Info -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="mentorFirstName">First Name</label>
+              <input 
+                type="text" 
+                id="mentorFirstName" 
+                formControlName="firstName"
+                class="form-input"
+                [class.error]="getFieldError('firstName')"
+                placeholder="Enter your first name">
+              <span class="error-text" *ngIf="getFieldError('firstName')">
+                {{getFieldError('firstName')}}
+              </span>
+            </div>
+            <div class="form-group">
+              <label for="mentorLastName">Last Name</label>
+              <input 
+                type="text" 
+                id="mentorLastName" 
+                formControlName="lastName"
+                class="form-input"
+                [class.error]="getFieldError('lastName')"
+                placeholder="Enter your last name">
+              <span class="error-text" *ngIf="getFieldError('lastName')">
+                {{getFieldError('lastName')}}
+              </span>
+            </div>
+          </div>
+
+          <!-- Mentor Phone -->
+          <div class="form-group">
+            <label for="mentorPhone">Phone Number</label>
+            <input 
+              type="tel" 
+              id="mentorPhone" 
+              formControlName="phone"
+              class="form-input"
+              [class.error]="getFieldError('phone')"
+              placeholder="Enter your phone number">
+            <span class="error-text" *ngIf="getFieldError('phone')">
+              {{getFieldError('phone')}}
+            </span>
+          </div>
+
+          <!-- Mentor Domain -->
+          <div class="form-group">
+            <label for="domain">Domain/Industry</label>
+            <input 
+              type="text" 
+              id="domain" 
+              formControlName="domain"
+              class="form-input"
+              [class.error]="getFieldError('domain')"
+              placeholder="e.g., Technology, Finance, Healthcare">
+            <span class="error-text" *ngIf="getFieldError('domain')">
+              {{getFieldError('domain')}}
+            </span>
+          </div>
+
+          <!-- Mentor Experience -->
+          <div class="form-group">
+            <label for="mentorExperience">Years of Experience</label>
+            <input 
+              type="number" 
+              id="mentorExperience" 
+              formControlName="experience"
+              class="form-input"
+              [class.error]="getFieldError('experience')"
+              placeholder="8">
+            <span class="error-text" *ngIf="getFieldError('experience')">
+              {{getFieldError('experience')}}
+            </span>
+          </div>
+
+          <!-- Mentor Bio -->
+          <div class="form-group">
+            <label for="mentorBio">Bio</label>
+            <textarea 
+              id="mentorBio" 
+              formControlName="bio"
+              class="form-input"
+              [class.error]="getFieldError('bio')"
+              rows="3"
+              placeholder="Tell us about your mentoring experience and areas of expertise">
+            </textarea>
+            <span class="error-text" *ngIf="getFieldError('bio')">
+              {{getFieldError('bio')}}
+            </span>
+          </div>
+
+          <!-- Mentor Hourly Rate -->
+          <div class="form-group">
+            <label for="mentorHourlyRate">Hourly Rate ($)</label>
+            <input 
+              type="number" 
+              id="mentorHourlyRate" 
+              formControlName="hourlyRate"
+              class="form-input"
+              [class.error]="getFieldError('hourlyRate')"
+              placeholder="75">
+            <span class="error-text" *ngIf="getFieldError('hourlyRate')">
+              {{getFieldError('hourlyRate')}}
+            </span>
+          </div>
+        </div>
+
+        <!-- Institution Signup Fields -->
+        <div *ngIf="mode === 'institution-signup'">
+          
+          <!-- Institution Name -->
+          <div class="form-group">
+            <label for="institutionName">Institution Name</label>
+            <input 
+              type="text" 
+              id="institutionName" 
+              formControlName="institutionName"
+              class="form-input"
+              [class.error]="getFieldError('institutionName')"
+              placeholder="Enter institution name">
+            <span class="error-text" *ngIf="getFieldError('institutionName')">
+              {{getFieldError('institutionName')}}
+            </span>
+          </div>
+
+          <!-- Contact Person -->
+          <div class="form-group">
+            <label for="contactPerson">Contact Person</label>
+            <input 
+              type="text" 
+              id="contactPerson" 
+              formControlName="contactPerson"
+              class="form-input"
+              [class.error]="getFieldError('contactPerson')"
+              placeholder="Enter contact person name">
+            <span class="error-text" *ngIf="getFieldError('contactPerson')">
+              {{getFieldError('contactPerson')}}
+            </span>
+          </div>
+
+          <!-- Institution Phone -->
+          <div class="form-group">
+            <label for="institutionPhone">Phone Number</label>
+            <input 
+              type="tel" 
+              id="institutionPhone" 
+              formControlName="phone"
+              class="form-input"
+              [class.error]="getFieldError('phone')"
+              placeholder="Enter phone number">
+            <span class="error-text" *ngIf="getFieldError('phone')">
+              {{getFieldError('phone')}}
+            </span>
+          </div>
+
+          <!-- Institution Address -->
+          <div class="form-group">
+            <label for="address">Address</label>
+            <textarea 
+              id="address" 
+              formControlName="address"
+              class="form-input"
+              [class.error]="getFieldError('address')"
+              rows="2"
+              placeholder="Enter institution address">
+            </textarea>
+            <span class="error-text" *ngIf="getFieldError('address')">
+              {{getFieldError('address')}}
+            </span>
+          </div>
+
+          <!-- Institution Specialization -->
+          <div class="form-group">
+            <label for="institutionSpecialization">Specialization</label>
+            <input 
+              type="text" 
+              id="institutionSpecialization" 
+              formControlName="specialization"
+              class="form-input"
+              [class.error]="getFieldError('specialization')"
+              placeholder="e.g., Computer Science, Engineering, Business">
+            <span class="error-text" *ngIf="getFieldError('specialization')">
+              {{getFieldError('specialization')}}
+            </span>
+          </div>
+
+          <!-- Institution Description -->
+          <div class="form-group">
+            <label for="description">Description</label>
+            <textarea 
+              id="description" 
+              formControlName="description"
+              class="form-input"
+              [class.error]="getFieldError('description')"
+              rows="3"
+              placeholder="Tell us about your institution and programs offered">
+            </textarea>
+            <span class="error-text" *ngIf="getFieldError('description')">
+              {{getFieldError('description')}}
+            </span>
+          </div>
+        </div>
+
+        <!-- Remember Me (Sign In Only) -->
+        <div class="form-options" *ngIf="mode === 'signin'">
+          <label class="checkbox-label">
+            <input type="checkbox" class="checkbox-input">
+            <span class="checkbox-text">Remember me</span>
+          </label>
+          <a href="#" class="forgot-password">Forgot Password?</a>
+        </div>
+
+        <!-- Submit Button -->
+        <button 
+          type="submit" 
+          class="submit-btn"
+          [disabled]="isLoading || authForm.invalid">
+          <i class="fa fa-spinner fa-spin" *ngIf="isLoading"></i>
+          <i class="fa fa-sign-in" *ngIf="!isLoading && mode === 'signin'"></i>
+          <i class="fa fa-user-plus" *ngIf="!isLoading && mode === 'signup'"></i>
+          {{getButtonText()}}
+        </button>
+
+        <!-- Mode Switch -->
+        <div class="mode-switch">
+          <p class="switch-text">{{getSwitchText()}}</p>
+          <button type="button" class="switch-btn" (click)="switchMode()">
+            {{mode === 'signin' ? 'Sign Up' : 'Sign In'}}
+          </button>
+        </div>
+
+        <!-- Social Login -->
+        <div class="social-login">
+          <div class="divider">
+            <span>Or continue with</span>
+          </div>
+          <div class="social-buttons">
+            <button type="button" class="social-btn google-btn">
+              <i class="fa fa-google"></i>
+              Google
+            </button>
+            <button type="button" class="social-btn facebook-btn">
+              <i class="fa fa-facebook"></i>
+              Facebook
+            </button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,412 @@
+<!-- Course Institutes Section -->
+<div class="course-institutes-container">
+  <!-- Page Header with Back Button -->
+  <app-page-header
+    [title]="getPageTitle()"
+    [breadcrumbItems]="breadcrumbs"
+    [showBack]="true"
+  >
+    <div class="institute-stats" *ngIf="filteredInstitutions.length > 0">
+      <div class="stat-item">
+        <i class="fa fa-building"></i>
+        <span>{{ filteredInstitutions.length }} Institutes</span>
+      </div>
+      <div class="stat-item">
+        <i class="fa fa-graduation-cap"></i>
+        <span>{{ courseTitle || 'Multiple Courses' }}</span>
+      </div>
+    </div>
+  </app-page-header>
+
+  <!-- Course Filter Section -->
+  <div class="course-filter-section" *ngIf="selectedCourseName">
+    <div class="container">
+      <div class="course-filter-card">
+        <div class="course-filter-content">
+          <div class="course-info">
+            <h3 class="course-filter-title">
+              <i class="fa fa-graduation-cap"></i>
+              Showing institutes for: {{ selectedCourseName }}
+            </h3>
+            <p class="course-filter-subtitle">
+              Found {{ filteredInstitutions.length }} institutes offering {{ selectedCourseName }} courses
+            </p>
+          </div>
+          <!-- <div class="course-filter-actions">
+            <button class="btn btn-outline-primary" (click)="clearCourseFilter()">
+              <i class="fa fa-times"></i>
+              Clear Course Filter
+            </button>
+          </div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Section -->
+  <div class="search-section">
+    <div class="container">
+      <div class="search-container">
+        <div class="search-box">
+          <i class="fa fa-search search-icon"></i>
+          <input 
+            type="text" 
+            class="search-input" 
+            placeholder="Search for institutes, courses, or locations..." 
+            autocomplete="off"
+            [(ngModel)]="searchTerm"
+            (input)="onSearch()">
+          <button type="button" class="search-button" (click)="onSearch()">
+            <i class="fa fa-search"></i>
+            Search
+          </button>
+        </div>
+        <div class="search-filters">
+          <select class="filter-select" [(ngModel)]="selectedLocation" (change)="onLocationChange()">
+            <option value="">All Locations</option>
+            <option value="hyderabad">Hyderabad</option>
+            <option value="bangalore">Bangalore</option>
+            <option value="mumbai">Mumbai</option>
+            <option value="pune">Pune</option>
+            <option value="delhi">Delhi</option>
+          </select>
+          <select class="filter-select" [(ngModel)]="selectedType" (change)="onTypeChange()">
+            <option value="">All Modes</option>
+            <option value="training-center">Online</option>
+            <option value="university">Offline</option>
+          </select>
+          <select class="filter-select" [(ngModel)]="selectedRating" (change)="onRatingChange()">
+            <option value="">All Timings</option>
+            <option value="4.5">7Am-8Am</option>
+            <option value="4.0">8Am-9Am</option>
+            <option value="3.5">9Am-10Am</option>
+            <option value="4.5">10Am-11Am</option>
+            <option value="4.0">11Am-12Am</option>
+            <option value="3.5">4Pm-5Pm</option>
+            <option value="3.5">5Pm-6Pm</option>
+            <option value="4.5">7Pm-8Pm</option>
+            <option value="4.0">9Pm-10Am</option>
+          </select>
+          <select class="filter-select" [(ngModel)]="selectedMode" (change)="onModeChange()">
+            <option value="">Price Range</option>
+            <option value="verified">₹4999-₹9999</option>
+            <option value="featured">₹9999-₹14999</option>
+            <option value="featured">₹14999-₹19999</option>
+            <option value="featured">₹19999-₹24999</option>
+            <option value="featured">₹24999-₹29999</option>
+            <option value="featured">₹29999-₹34999</option>
+            <option value="featured">₹34999-₹39999</option>
+            <option value="featured">₹39999-₹44999</option>
+            <option value="featured">₹44999-₹49999</option>
+            <option value="featured">₹49999-₹54999</option>
+          </select>
+          <select class="filter-select" [(ngModel)]="selectedRating" (change)="onRatingChange()">
+            <option value="">All Ratings</option>
+            <option value="4.5">4.5+ Stars</option>
+            <option value="4.0">4.0+ Stars</option>
+            <option value="3.5">3.5+ Stars</option>
+          </select>
+          
+          <!-- <select class="filter-select" [(ngModel)]="selectedMode" (change)="onModeChange()">
+            <option value="">All Facilities</option>
+            <option value="verified">Library/Wifi</option>
+            <option value="featured">AC</option>
+            <option value="online">Cafeteria</option>
+            <option value="offline">Parking</option>
+            <option value="offline">Hostel</option>
+          </select> -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Institutes Grid -->
+  <div class="institutes-grid">
+    <div class="container">
+      <!-- Loading State -->
+      <div *ngIf="isLoadingInstitutions" class="loading-state">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p>Loading institutions...</p>
+      </div>
+
+      <!-- Error State -->
+      <div *ngIf="institutionsError && !isLoadingInstitutions" class="alert alert-warning">
+        <i class="fa fa-exclamation-triangle me-2"></i>{{ institutionsError }}
+      </div>
+
+      <div class="grid-container" *ngIf="!isLoadingInstitutions">
+        <!-- Institute Card -->
+        <div class="institute-card" *ngFor="let data of filteredInstitutions; let i = index">
+          <div class="card-header">
+            <div class="institute-logo">
+              <img [src]="'/assets/photos/inistitution/' + data.img" [alt]="data.name + ' logo'" class="logo-img">
+            </div>
+            <div class="institute-badges">
+              <span class="badge online" *ngIf="data.modes?.online">Online</span>
+              <span class="badge offline" *ngIf="data.modes?.offline">Offline</span>
+              <span class="badge verified" *ngIf="data.isVerified">
+                <i class="fa fa-check-circle"></i>
+                Verified
+              </span>
+              <span class="badge featured" *ngIf="data.isFeatured">
+                <i class="fa fa-star"></i>
+                Featured
+              </span>
+            </div>
+          </div>
+          
+          <div class="card-body">
+            <div class="institute-header">
+              <h3 class="institute-name" (click)="redirectToSignIn()" style="cursor: pointer;">
+                {{data.name}}
+              </h3>
+              <div class="institute-type">
+                <span class="type-badge">{{courseTitle }}</span>
+                <span class="founded-year">Est. {{data.founded || '2010'}}
+                  <span class="price-amount" style="margin-left: 20px;">₹{{data.price}}</span>
+                </span>
+              </div>
+            </div>
+            
+            <!-- <div class="course-info">
+              <span class="course-name" (click)="redirectToSignIn()" style="cursor: pointer;">{{data.courseName}}</span>
+              <span class="course-subtitle">{{data.courseTitle2}}</span>
+            </div> -->
+
+            <div class="institute-stats">
+              <div class="stat-item">
+                <i class="fa fa-users"></i>
+                <span>{{data.students?.total || '5000'}} Students</span>
+              </div>
+              <div class="stat-item">
+                <i class="fa fa-graduation-cap"></i>
+                <span>{{data.courses?.total || '50'}}+ Courses</span>
+              </div>
+              <div class="stat-item">
+                <i class="fa fa-clock-o"></i>
+                <span>{{data.experience?.years || '10'}}+ Years</span>
+              </div>
+              <div class="stat-item">
+                <i class="fa fa-chalkboard-teacher"></i>
+                <span>{{data.faculty?.total || '25'}} Faculty</span>
+              </div>
+            </div>
+
+            <!-- <div class="institute-description">
+              <p>{{data.description || 'TOP RATED #1 Master ' + data.courseName + ' course - 5 Million students learning worldwide with great collaboration'}}</p>
+            </div> -->
+
+            <div class="course-categories">
+              <h4>Course Categories</h4>
+              <div class="category-tags">
+                <span class="tag" *ngFor="let category of data.courses?.categories ">
+                {{category.courseName}}</span>
+              </div>
+            </div>
+
+            <!-- Trainer Cards Section -->
+            <div class="trainers-section" *ngIf="getTrainersForInstitute(data).length > 0">
+              <h4>
+                <i class="fa fa-users"></i>
+                Trainers
+              </h4>
+              <div class="trainers-grid">
+                <div class="trainer-card" *ngFor="let trainer of getTrainersForInstitute(data)">
+                  <div class="trainer-card-header">
+                    <div class="trainer-avatar">
+                      <i class="fa fa-user-circle"></i>
+                    </div>
+                    <div class="trainer-basic-info">
+                      <h5 class="trainer-name">{{trainer.name || 'Trainer'}}</h5>
+                      <p class="trainer-designation">{{trainer.designation || 'Instructor'}}</p>
+                    </div>
+                  </div>
+                  <div class="trainer-card-body">
+                    <div class="trainer-detail-item">
+                      <i class="fa fa-briefcase"></i>
+                      <span><strong>Experience:</strong> {{trainer.experience || 'N/A'}} years</span>
+                    </div>
+                    <div class="trainer-detail-item" *ngIf="trainer.education">
+                      <i class="fa fa-graduation-cap"></i>
+                      <span><strong>Education:</strong> {{trainer.education}}</span>
+                    </div>
+                    <div class="trainer-detail-item" *ngIf="trainer.location">
+                      <i class="fa fa-map-marker"></i>
+                      <span><strong>Location:</strong> {{trainer.location}}</span>
+                    </div>
+                    <div class="trainer-detail-item" *ngIf="trainer.languagesKnown && trainer.languagesKnown.length > 0">
+                      <i class="fa fa-language"></i>
+                      <span><strong>Languages:</strong> {{trainer.languagesKnown.join(', ')}}</span>
+                    </div>
+                    <div class="trainer-skills" *ngIf="trainer.expertiseSkills && trainer.expertiseSkills.length > 0">
+                      <strong>Skills:</strong>
+                      <div class="skills-tags">
+                        <span class="skill-tag" *ngFor="let skill of trainer.expertiseSkills.slice(0, 4)">
+                          {{skill}}
+                        </span>
+                        <span class="skill-tag-more" *ngIf="trainer.expertiseSkills.length > 4">
+                          +{{trainer.expertiseSkills.length - 4}} more
+                        </span>
+                      </div>
+                    </div>
+                    <div class="trainer-achievements" *ngIf="trainer.achievements && trainer.achievements.length > 0">
+                      <strong>Achievements:</strong>
+                      <ul class="achievements-list">
+                        <li *ngFor="let achievement of trainer.achievements.slice(0, 2)">
+                          <i class="fa fa-trophy"></i> {{achievement}}
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="placement-info">
+              <h4>Placement Statistics</h4>
+              <div class="placement-stats">
+                <div class="placement-item">
+                  <span class="placement-label">Placement Rate</span>
+                  <span class="placement-value">{{data.placement?.placementRate || '95'}}%</span>
+                </div>
+                <div class="placement-item">
+                  <span class="placement-label">Avg Package</span>
+                  <span class="placement-value">₹{{data.placement?.averagePackage || '8'}}L</span>
+                </div>
+                <div class="placement-item">
+                  <span class="placement-label">Highest Package</span>
+                  <span class="placement-value">₹{{data.placement?.highestPackage || '25'}}L</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="location-info">
+              <i class="fa fa-map-marker"></i>
+              <span class="location-text">
+                <strong>{{data.address?.city || 'Hyderabad'}}, {{data.address?.state || 'Telangana'}}</strong>
+                <span class="address-detail">{{data.address?.street || 'Tech Park, HITEC City'}}</span>
+              </span>
+            </div>
+
+            <div class="rating-section">
+              <div class="rating-display">
+                <div class="stars">
+                  <span class="fa fa-star" *ngFor="let star of [1,2,3,4,5]" 
+                        [class.checked]="star <= (data.rating?.overall || 4.6)"></span>
+                </div>
+                <span class="rating-text">{{data.rating?.overall || data.rating}} out of 5</span>
+                <span class="reviews">({{data.rating?.totalReviews || data.reviews}} reviews)</span>
+              </div>
+              <div class="rating-breakdown">
+                <div class="rating-item">
+                  <span>Teaching: {{data.rating?.teaching || '4.7'}}</span>
+                </div>
+                <div class="rating-item">
+                  <span>Facilities: {{data.rating?.facilities || '4.5'}}</span>
+                </div>
+                <div class="rating-item">
+                  <span>Placement: {{data.rating?.placement || '4.8'}}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="facilities-info">
+              <h4>Facilities</h4>
+              <div class="facilities-list">
+                <span class="facility-item" *ngIf="data.facilities?.library !== false">
+                  <i class="fa fa-book"></i> Library
+                </span>
+                <span class="facility-item" *ngIf="data.facilities?.cafeteria !== false">
+                  <i class="fa fa-coffee"></i> Cafeteria
+                </span>
+                <span class="facility-item" *ngIf="data.facilities?.hostel !== false">
+                  <i class="fa fa-bed"></i> Hostel
+                </span>
+                <span class="facility-item" *ngIf="data.facilities?.parking !== false">
+                  <i class="fa fa-car"></i> Parking
+                </span>
+                <span class="facility-item" *ngIf="data.facilities?.wifi !== false">
+                  <i class="fa fa-wifi"></i> WiFi
+                </span>
+                <span class="facility-item" *ngIf="data.facilities?.airConditioning !== false">
+                  <i class="fa fa-snowflake-o"></i> AC
+                </span>
+              </div>
+            </div>
+
+            <!-- <div class="accreditation-info">
+              <h4>Accreditation & Partnerships</h4>
+              <div class="accreditation-list">
+                <span class="accreditation-item" *ngFor="let accreditation of data.accreditations || ['ISO 9001:2015', 'NASSCOM Certified', 'Microsoft Partner']">
+                  <i class="fa fa-certificate"></i> {{accreditation}}
+                </span>
+              </div>
+            </div> -->
+
+            <div class="action-buttons">
+              <button class="btn btn-primary" (click)="viewCourseDetails(data)">
+                <i class="fa fa-eye"></i>
+                View Details
+              </button>
+              <button 
+                class="btn btn-secondary" 
+                [class.added]="isCourseInCart(data)" 
+                (click)="addInstituteCourseToCart(data)">
+                <i class="fa" [ngClass]="isCourseInCart(data) ? 'fa-check' : 'fa-heart'"></i>
+                {{ isCourseInCart(data) ? 'Added to Cart' : 'Wishlist' }}
+              </button>
+            </div>
+          </div>
+
+          <div class="card-footer">
+            <div class="price-section">
+              <span class="price-label">Starting from</span>
+              <span class="price-amount">₹{{data.price}}</span>
+            </div>
+            <div class="contact-info">
+              <button class="btn btn-outline-primary btn-sm">
+                <i class="fa fa-phone"></i>
+                Contact
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- No Results Message -->
+        <div class="no-results" *ngIf="filteredInstitutions.length === 0">
+          <div class="no-results-content">
+            <i class="fa fa-search fa-3x"></i>
+            <h3>No institutes found</h3>
+            <p>Try adjusting your search criteria or filters</p>
+            <button class="btn btn-primary" (click)="clearFilters()">
+              <i class="fa fa-refresh"></i>
+              Clear All Filters
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Call to Action Section -->
+  <div class="cta-section">
+    <div class="container">
+      <div class="cta-content">
+        <h2>Ready to Start Your {{course}} Journey?</h2>
+        <p>Choose from our carefully selected institutes and take the first step towards mastering {{course}} with expert guidance</p>
+        <div class="cta-buttons">
+          <button class="btn btn-primary btn-large">
+            <i class="fa fa-graduation-cap"></i>
+            Browse All Courses
+          </button>
+          <button class="btn btn-outline btn-large">
+            <i class="fa fa-info-circle"></i>
+            Get Course Guide
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

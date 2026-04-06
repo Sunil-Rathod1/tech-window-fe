@@ -1,0 +1,169 @@
+<!-- Institute Courses Section -->
+<div class="institute-courses-container">
+  <!-- Hero Section -->
+  <div class="hero-section">
+    <div class="container">
+      <div class="hero-content">
+        <h1 class="hero-title">{{instituteName}} - Courses</h1>
+        <p class="hero-subtitle">Explore comprehensive training programs offered by {{instituteName}} with expert instructors and industry-recognized certifications</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Section -->
+  <div class="search-section">
+    <div class="container">
+      <div class="search-container">
+        <div class="search-box">
+          <i class="fa fa-search search-icon"></i>
+          <input 
+            type="text" 
+            class="search-input" 
+            placeholder="Search for courses, technologies, or skills..." 
+            autocomplete="off"
+            [(ngModel)]="searchTerm"
+            (input)="onSearch()">
+        </div>
+        <div class="search-filters">
+          <select class="filter-select" [(ngModel)]="selectedCategory" (change)="onCategoryChange()">
+            <option value="">All Categories</option>
+            <option value="testing tools">Testing Tools</option>
+            <option value="data science">Data Science</option>
+            <option value="java">Java</option>
+            <option value="web development">Web Development</option>
+            <option value="python">Python</option>
+            <option value="devops">DevOps</option>
+          </select>
+          <select class="filter-select" [(ngModel)]="selectedLevel" (change)="onLevelChange()">
+            <option value="">All Levels</option>
+            <option value="beginner">Beginner</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="advanced">Advanced</option>
+          </select>
+          <select class="filter-select" [(ngModel)]="selectedPrice" (change)="onPriceChange()">
+            <option value="">All Prices</option>
+            <option value="under-10k">Under ₹10K</option>
+            <option value="10k-20k">₹10K - ₹20K</option>
+            <option value="20k-30k">₹20K - ₹30K</option>
+            <option value="above-30k">Above ₹30K</option>
+          </select>
+          <button class="btn btn-outline btn-sm" (click)="clearFilters()">
+            <i class="fa fa-refresh"></i>
+            Clear Filters
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results Count -->
+  <div class="results-count">
+    <div class="container">
+      <p>Showing {{filteredCourses.length}} of {{courses.length}} courses</p>
+    </div>
+  </div>
+
+  <!-- Courses Grid -->
+  <div class="courses-grid">
+    <div class="container">
+      <div class="grid-container">
+        <!-- Course Card -->
+        <div class="course-card" *ngFor="let course of filteredCourses; let i = index">
+          <div class="card-header">
+            <div class="course-banner">
+              <img [src]="'/assets/photos/courses/' + course.image" [alt]="course.name" class="course-img">
+              <div class="course-overlay">
+                <span class="course-category">{{course.category}}</span>
+                <span class="course-price">{{course.price}}</span>
+              </div>
+              <div class="course-badges">
+                <span class="badge" 
+                      *ngFor="let status of course.status" 
+                      [class.new]="status === 'NEW'"
+                      [class.popular]="status === 'POPULAR'">
+                  {{status}}
+                </span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card-body">
+            <div class="course-info">
+              <h3 class="course-title" (click)="redirectToSignIn()" style="cursor: pointer;">
+                {{course.name}}
+              </h3>
+              <p class="course-subtitle">{{course.title}}</p>
+              <p class="course-description">{{course.description}}</p>
+            </div>
+
+            <div class="course-details">
+              <div class="detail-item">
+                <i class="fa fa-clock-o"></i>
+                <span>{{course.duration}}</span>
+              </div>
+              <div class="detail-item">
+                <i class="fa fa-book"></i>
+                <span>{{course.modules}} Modules</span>
+              </div>
+              <div class="detail-item">
+                <i class="fa fa-users"></i>
+                <span>{{course.students}} Students</span>
+              </div>
+            </div>
+
+            <div class="course-technologies">
+              <h4>Technologies Covered</h4>
+              <div class="tech-tags">
+                <span class="tag" *ngFor="let tech of course.technologies">{{tech}}</span>
+              </div>
+            </div>
+
+            <div class="action-buttons">
+              <button class="btn btn-primary" (click)="viewCourseDetails(course)">
+                <i class="fa fa-eye"></i>
+                View Details
+              </button>
+              <button class="btn btn-secondary">
+                <i class="fa fa-heart"></i>
+                Wishlist
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- No Results Message -->
+        <div class="no-results" *ngIf="filteredCourses.length === 0">
+          <div class="no-results-content">
+            <i class="fa fa-search fa-3x"></i>
+            <h3>No courses found</h3>
+            <p>Try adjusting your search criteria or filters</p>
+            <button class="btn btn-primary" (click)="clearFilters()">
+              <i class="fa fa-refresh"></i>
+              Clear All Filters
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Call to Action Section -->
+  <div class="cta-section">
+    <div class="container">
+      <div class="cta-content">
+        <h2>Ready to Start Your Learning Journey with {{instituteName}}?</h2>
+        <p>Choose from our comprehensive course offerings and take the first step towards mastering new technologies</p>
+        <div class="cta-buttons">
+          <button class="btn btn-primary btn-large">
+            <i class="fa fa-graduation-cap"></i>
+            Browse All Courses
+          </button>
+          <button class="btn btn-outline btn-large">
+            <i class="fa fa-info-circle"></i>
+            Get Course Guide
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

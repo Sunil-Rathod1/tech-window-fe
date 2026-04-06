@@ -1,0 +1,35 @@
+<div class="container">
+    <h4 class="course-head">Techwindows</h4>
+</div>
+
+
+<div class="row course-row" >
+    <div class="col-md-3" *ngFor="let data of coursesList" style="margin-top: 25px;">
+        <div class="img-section">
+          <img class="courses-img" src="/assets/photos/course-1.jpg"  alt="...">
+          <br>
+          <div class="course-title" (click)="getCourse()">{{data.course}}</div>
+          <h6 class="course-heading" >{{data.title}}</h6>
+          <p class="course-description">
+            Et architecto provident deleniti facere repellat nobis iste. Id facere quia quae dolores dolorem tempore.
+          </p>
+            <div class="row ml--5 mr-4">
+                <div class="col-md-3">Rating</div>
+                <div class="col-md-9">
+                <i class="fa fa-star" aria-hidden="true"></i>
+                <i class="fa fa-star" aria-hidden="true"></i>
+                <i class="fa fa-star" aria-hidden="true"></i>
+                <i class="fa fa-star" aria-hidden="true"></i>
+                <i class="fa fa-star" aria-hidden="true"></i>
+                <span class="reviewrs">(12,321)</span>
+                </div>
+            </div>
+            <!-- <div class="row ml--5">
+                <div class="col-3">Price</div>
+                <div class="col-md-9">3999-29999</div>
+            </div> -->
+
+        </div>
+    </div>
+
+</div>

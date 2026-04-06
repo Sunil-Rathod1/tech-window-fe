@@ -1,0 +1,344 @@
+<!-- Book Session Component -->
+<div class="book-session-container">
+  <!-- Header Section -->
+  <div class="booking-header">
+    <div class="container">
+      <div class="header-content">
+        <button class="back-button" (click)="goBack()">
+          <i class="fa fa-arrow-left"></i>
+          Back to Mentors
+        </button>
+        
+        <div class="mentor-info">
+          <div class="mentor-avatar">
+            <img [src]="mentor.avatar" [alt]="mentor.name" class="avatar-img">
+          </div>
+          <div class="mentor-details">
+            <h1 class="mentor-name">{{ mentor.name }}</h1>
+            <p class="mentor-title">{{ mentor.title }}</p>
+            <div class="mentor-stats">
+              <div class="stat-item">
+                <i class="fa fa-star"></i>
+                <span>{{ mentor.rating }} Rating</span>
+              </div>
+              <div class="stat-item">
+                <i class="fa fa-users"></i>
+                <span>{{ mentor.mentees }} Mentees</span>
+              </div>
+              <div class="stat-item">
+                <i class="fa fa-clock-o"></i>
+                <span>{{ mentor.sessions }} Sessions</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <h2 class="booking-title">Book a Session</h2>
+        <p class="booking-subtitle">Schedule your mentoring session with {{ mentor.name }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="progress-section">
+    <div class="container">
+      <div class="progress-bar">
+        <div class="step-indicator">
+          <div class="step" [class.active]="currentStep >= 1" [class.completed]="currentStep > 1" (click)="goToStep(1)">
+            <div class="step-number">1</div>
+            <div class="step-label">Session Details</div>
+          </div>
+          <div class="step" [class.active]="currentStep >= 2" [class.completed]="currentStep > 2" (click)="goToStep(2)">
+            <div class="step-number">2</div>
+            <div class="step-label">Schedule</div>
+          </div>
+          <div class="step" [class.active]="currentStep >= 3" [class.completed]="currentStep > 3" (click)="goToStep(3)">
+            <div class="step-number">3</div>
+            <div class="step-label">Preferences</div>
+          </div>
+          <div class="step" [class.active]="currentStep >= 4" [class.completed]="currentStep > 4" (click)="goToStep(4)">
+            <div class="step-number">4</div>
+            <div class="step-label">Payment</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Booking Form -->
+  <div class="booking-form-section">
+    <div class="container">
+      <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()">
+        
+        <!-- Step 1: Session Details -->
+        <div class="step-content" *ngIf="currentStep === 1">
+          <div class="step-header">
+            <h3>Choose Session Type</h3>
+            <p>Select the type of session that best fits your needs</p>
+          </div>
+          
+          <div class="session-types">
+            <div class="session-type-card" 
+                 *ngFor="let sessionType of sessionTypes" 
+                 [class.selected]="selectedSessionType?.id === sessionType.id"
+                 (click)="selectSessionType(sessionType)">
+              <div class="session-header">
+                <h4>{{ sessionType.name }}</h4>
+                <div class="session-price">{{ formatPrice(sessionType.price) }}</div>
+              </div>
+              <div class="session-details">
+                <div class="detail-item">
+                  <i class="fa fa-clock-o"></i>
+                  <span>{{ sessionType.duration }} minutes</span>
+                </div>
+                <div class="detail-item" *ngIf="sessionType.maxParticipants">
+                  <i class="fa fa-users"></i>
+                  <span>Up to {{ sessionType.maxParticipants }} participants</span>
+                </div>
+              </div>
+              <p class="session-description">{{ sessionType.description }}</p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Communication Mode</label>
+            <div class="communication-modes">
+              <div class="mode-option" 
+                   *ngFor="let mode of communicationModes"
+                   [class.selected]="bookingForm.get('communicationMode')?.value === mode.id">
+                <input type="radio" 
+                       [id]="mode.id" 
+                       [value]="mode.id" 
+                       formControlName="communicationMode">
+                <label [for]="mode.id">
+                  <i class="fa" [class]="mode.icon"></i>
+                  <div class="mode-info">
+                    <div class="mode-name">{{ mode.name }}</div>
+                    <div class="mode-description">{{ mode.description }}</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Scheduling -->
+        <div class="step-content" *ngIf="currentStep === 2">
+          <div class="step-header">
+            <h3>Select Date & Time</h3>
+            <p>Choose your preferred date and available time slot</p>
+          </div>
+          
+          <div class="scheduling-section">
+            <div class="date-selection">
+              <label>Select Date</label>
+              <input type="date" 
+                     [(ngModel)]="selectedDate" 
+                     (change)="onDateChange()"
+                     [min]="getCurrentDate()"
+                     class="date-input">
+            </div>
+            
+            <div class="time-slots">
+              <label>Available Time Slots</label>
+              <div class="slots-grid">
+                <div class="time-slot" 
+                     *ngFor="let slot of getFilteredSlots()"
+                     [class.selected]="selectedTimeSlot?.id === slot.id"
+                     [class.unavailable]="!slot.available"
+                     (click)="selectTimeSlot(slot)">
+                  <div class="slot-time">{{ slot.time }}</div>
+                  <div class="slot-type">{{ slot.type }}</div>
+                </div>
+              </div>
+              
+              <div class="no-slots" *ngIf="getFilteredSlots().length === 0">
+                <i class="fa fa-calendar-times-o"></i>
+                <p>No available slots for the selected date</p>
+                <p>Please choose a different date or session type</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Preferences -->
+        <div class="step-content" *ngIf="currentStep === 3">
+          <div class="step-header">
+            <h3>Session Preferences</h3>
+            <p>Tell us about your goals and preferences for this session</p>
+          </div>
+          
+          <div class="preferences-section">
+            <div class="form-group">
+              <label>Session Goals (Select all that apply)</label>
+              <div class="goals-grid">
+                <div class="goal-option" *ngFor="let goal of sessionGoals">
+                  <input type="checkbox" 
+                         [id]="'goal-' + goal" 
+                         [value]="goal"
+                         (change)="onGoalChange(goal, $event)">
+                  <label [for]="'goal-' + goal">{{ goal }}</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Preferred Language</label>
+              <select formControlName="preferredLanguage" class="language-select">
+                <option *ngFor="let lang of languages" [value]="lang">{{ lang }}</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Special Requirements</label>
+              <textarea formControlName="specialRequirements" 
+                        placeholder="Any specific requirements or accommodations needed..."
+                        class="requirements-textarea"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Additional Notes</label>
+              <textarea formControlName="notes" 
+                        placeholder="Any additional information you'd like to share with your mentor..."
+                        class="notes-textarea"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Payment -->
+        <div class="step-content" *ngIf="currentStep === 4">
+          <div class="step-header">
+            <h3>Payment & Confirmation</h3>
+            <p>Complete your booking with secure payment</p>
+          </div>
+          
+          <div class="payment-section">
+            <div class="booking-summary">
+              <h4>Booking Summary</h4>
+              <div class="summary-item">
+                <span>Session Type:</span>
+                <span>{{ selectedSessionType?.name }}</span>
+              </div>
+              <div class="summary-item">
+                <span>Duration:</span>
+                <span>{{ selectedSessionType?.duration }} minutes</span>
+              </div>
+              <div class="summary-item">
+                <span>Date & Time:</span>
+                <span>{{ selectedDate }} at {{ selectedTimeSlot?.time }}</span>
+              </div>
+              <div class="summary-item">
+                <span>Mentor:</span>
+                <span>{{ mentor.name }}</span>
+              </div>
+              <div class="summary-item total">
+                <span>Total Amount:</span>
+                <span>{{ formatPrice(getTotalPrice()) }}</span>
+              </div>
+            </div>
+
+            <div class="coupon-section">
+              <label>Coupon Code (Optional)</label>
+              <div class="coupon-input">
+                <input type="text" 
+                       [(ngModel)]="couponCode" 
+                       placeholder="Enter coupon code"
+                       class="coupon-field">
+                <button type="button" (click)="applyCouponCode()" class="apply-coupon-btn">
+                  Apply
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Payment Method</label>
+              <div class="payment-methods">
+                <div class="payment-option" 
+                     *ngFor="let method of paymentMethods"
+                     [class.selected]="selectedPaymentMethod === method.id"
+                     (click)="selectPaymentMethod(method.id)">
+                  <input type="radio" 
+                         [id]="method.id" 
+                         [value]="method.id" 
+                         formControlName="paymentMethod">
+                  <label [for]="method.id">
+                    <i class="fa" [class]="method.icon"></i>
+                    <span>{{ method.name }}</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="terms-section">
+              <div class="checkbox-group">
+                <input type="checkbox" 
+                       id="terms" 
+                       formControlName="agreeToTerms">
+                <label for="terms">
+                  I agree to the <a href="#" class="terms-link">Terms of Service</a> and 
+                  <a href="#" class="terms-link">Cancellation Policy</a>
+                </label>
+              </div>
+              
+              <div class="checkbox-group">
+                <input type="checkbox" 
+                       id="privacy" 
+                       formControlName="agreeToPrivacy">
+                <label for="privacy">
+                  I agree to the <a href="#" class="terms-link">Privacy Policy</a>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="form-navigation">
+          <button type="button" 
+                  class="btn btn-secondary" 
+                  (click)="prevStep()" 
+                  [disabled]="currentStep === 1">
+            <i class="fa fa-arrow-left"></i>
+            Previous
+          </button>
+          
+          <button type="button" 
+                  class="btn btn-primary" 
+                  (click)="nextStep()" 
+                  [disabled]="!isCurrentStepValid() || currentStep === totalSteps">
+            Next
+            <i class="fa fa-arrow-right"></i>
+          </button>
+          
+          <button type="submit" 
+                  class="btn btn-success" 
+                  *ngIf="currentStep === totalSteps"
+                  [disabled]="!isCurrentStepValid() || isSubmitting">
+            <i class="fa fa-check" *ngIf="!isSubmitting"></i>
+            <i class="fa fa-spinner fa-spin" *ngIf="isSubmitting"></i>
+            {{ isSubmitting ? 'Processing...' : 'Complete Booking' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Mentor Expertise Section -->
+  <div class="mentor-expertise-section">
+    <div class="container">
+      <div class="expertise-content">
+        <h3>Mentor Expertise</h3>
+        <div class="expertise-tags">
+          <span class="expertise-tag" *ngFor="let skill of mentor.expertise">{{ skill }}</span>
+        </div>
+        
+        <div class="mentor-achievements">
+          <h4>Achievements</h4>
+          <ul>
+            <li *ngFor="let achievement of mentor.achievements">{{ achievement }}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

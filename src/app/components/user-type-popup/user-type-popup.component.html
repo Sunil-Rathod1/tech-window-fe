@@ -1,0 +1,40 @@
+<!-- User Type Selection Popup Overlay -->
+<div class="user-type-popup-overlay" (click)="onBackdropClick($event)">
+  <div class="user-type-popup-container">
+    <!-- Close Button -->
+    <button class="close-btn" (click)="closePopup()">
+      <i class="fa fa-times"></i>
+    </button>
+
+    <!-- Popup Content -->
+    <div class="user-type-popup-card">
+      <div class="popup-header">
+        <h2>{{getTitle()}}</h2>
+        <p>{{getSubtitle()}}</p>
+      </div>
+      
+      <!-- User Type Cards -->
+      <div class="user-type-cards">
+        <div 
+          class="user-type-card" 
+          *ngFor="let userType of userTypes"
+          (click)="onCardClick(userType.type)"
+          [style.--card-color]="userType.color"
+          [style.--card-gradient]="userType.gradient">
+          
+          <div class="card-icon">
+            <i [class]="userType.icon"></i>
+          </div>
+          
+          <div class="card-content">
+            <h3 class="card-title">{{ userType.title }}</h3>
+          </div>
+          
+          <div class="card-arrow">
+            <i class="fas fa-arrow-right"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

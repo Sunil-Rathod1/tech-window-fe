@@ -1,0 +1,437 @@
+/* You can add global styles to this file, and also import other style files */
+@import "~font-awesome/css/font-awesome.css";
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&family=Raleway:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
+
+body{
+    font-family: "Open Sans", sans-serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    color: #111827;
+    background-color: #FFFFFF;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+/* ===== HEADER STYLES ===== */
+.main-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: linear-gradient(135deg, #6D28D9 0%, #7C3AED 100%);
+    box-shadow: 0 2px 20px rgba(109, 40, 217, 0.15);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(221, 214, 254, 0.2);
+}
+
+.main-header .navbar {
+    padding: 0.5rem 1rem;
+    min-height: 80px;
+}
+
+.main-header .navbar-brand {
+    padding: 0;
+    margin: 0;
+}
+
+.main-header .logo {
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+}
+
+.main-header .logo a {
+    background: linear-gradient(135deg, #FFFFFF 0%, #DDD6FE 50%, #FFFFFF 100%);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-decoration: none;
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-family: 'Montserrat', 'Poppins', 'Raleway', sans-serif;
+    transition: all 0.5s ease;
+    position: relative;
+    display: inline-block;
+    animation: gradientShift 3s ease-in-out infinite;
+    text-shadow: 0 0 30px rgba(221, 214, 254, 0.3);
+}
+
+.main-header .logo a::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #FFFFFF 0%, #DDD6FE 50%, #FFFFFF 100%);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+}
+
+.main-header .logo a:hover {
+    animation: gradientShift 1s ease-in-out infinite;
+    transform: scale(1.05);
+    text-shadow: 0 0 40px rgba(221, 214, 254, 0.5);
+}
+
+.main-header .logo a:hover::before {
+    opacity: 1;
+}
+
+/* Gradient Animation */
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Logo Glow Effect */
+.main-header .logo a::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120%;
+    height: 120%;
+    background: radial-gradient(circle, rgba(221, 214, 254, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -2;
+}
+
+.main-header .logo a:hover::after {
+    opacity: 1;
+    animation: logoGlow 2s ease-in-out infinite;
+}
+
+@keyframes logoGlow {
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.3;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 0.6;
+    }
+}
+
+.main-header .navbar-nav {
+    margin-left: 2rem;
+}
+
+.main-header .nav-item {
+    margin: 0 0.5rem;
+}
+
+.main-header .nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 500;
+    padding: 0.75rem 1rem !important;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.main-header .nav-link:hover {
+    color: #DDD6FE !important;
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.main-header .nav-link.active {
+    color: #DDD6FE !important;
+    background: rgba(221, 214, 254, 0.1);
+    border: 1px solid rgba(221, 214, 254, 0.3);
+}
+
+.main-header .nav-link i {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* Auth Buttons */
+.navbar-auth {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.navbar-auth .btn {
+    padding: 0.5rem 1.25rem;
+    font-size: 0.875rem;
+    min-width: auto;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+}
+
+.navbar-auth .btn-outline-light {
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    background: transparent;
+}
+
+.navbar-auth .btn-outline-light:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+}
+
+.navbar-auth .btn-primary {
+    background: linear-gradient(135deg, #6D28D9, #7C3AED);
+    color: #FFFFFF;
+    border: none;
+    box-shadow: 0 4px 15px rgba(109, 40, 217, 0.3);
+}
+
+.navbar-auth .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(109, 40, 217, 0.4);
+}
+
+/* Mobile Navigation */
+.main-header .navbar-toggler {
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 0.375rem 0.75rem;
+}
+
+.main-header .navbar-toggler:focus {
+    box-shadow: 0 0 0 0.2rem rgba(221, 214, 254, 0.25);
+}
+
+.main-header .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.9%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Main Content Area */
+.main-content {
+    min-height: calc(100vh - 80px); /* Adjust based on new navbar height */
+    position: relative;
+    z-index: 1;
+}
+
+/* ===== RESPONSIVE HEADER ===== */
+
+/* Large Desktop */
+@media (min-width: 1200px) {
+    .main-header .navbar-nav {
+        margin-left: 3rem;
+    }
+    
+    .main-header .nav-item {
+        margin: 0 0.75rem;
+    }
+    
+    .main-header .logo a {
+        font-size: 2.5rem;
+        letter-spacing: 4px;
+    }
+}
+
+/* Desktop */
+@media (max-width: 1199px) and (min-width: 992px) {
+    .main-header .navbar-nav {
+        margin-left: 1.5rem;
+    }
+    
+    .main-header .nav-item {
+        margin: 0 0.25rem;
+    }
+    
+    .main-header .logo a {
+        font-size: 2.2rem;
+        letter-spacing: 3px;
+    }
+}
+
+/* Tablet */
+@media (max-width: 991px) and (min-width: 768px) {
+    .main-header .navbar-nav {
+        margin-left: 1rem;
+    }
+    
+    .main-header .nav-link {
+        padding: 0.5rem 0.75rem !important;
+        font-size: 0.875rem;
+    }
+    
+    .navbar-auth .btn {
+        padding: 0.375rem 1rem;
+        font-size: 0.8rem;
+    }
+    
+    .main-header .logo a {
+        font-size: 2rem;
+        letter-spacing: 2px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+    .main-header .navbar {
+        padding: 0.5rem;
+        min-height: 60px;
+    }
+    
+    .main-header .logo a {
+        font-size: 1.8rem;
+        letter-spacing: 2px;
+    }
+    
+    .main-header .navbar-nav {
+        margin: 1rem 0;
+        text-align: center;
+    }
+    
+    .main-header .nav-item {
+        margin: 0.25rem 0;
+    }
+    
+    .main-header .nav-link {
+        padding: 0.75rem 1rem !important;
+        justify-content: center;
+    }
+    
+    .navbar-auth {
+        flex-direction: column;
+        width: 100%;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+    
+    .navbar-auth .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .main-content {
+        min-height: calc(100vh - 60px);
+    }
+}
+
+/* Extra Small Mobile */
+@media (max-width: 575px) {
+    .main-header .logo a {
+        font-size: 1.6rem;
+        letter-spacing: 1px;
+    }
+    
+    .main-header .navbar {
+        min-height: 55px;
+    }
+    
+    .main-content {
+        min-height: calc(100vh - 55px);
+    }
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.primery-bg{
+ background-color: #2C3E50;   
+}
+
+.secondary-bg{
+    background-color: #BDC3C7;   
+}
+
+/* Button base styles */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    font-size: 14px;
+    min-width: 120px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #6D28D9, #7C3AED);
+    color: #FFFFFF;
+    box-shadow: 0 4px 15px rgba(109, 40, 217, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(109, 40, 217, 0.4);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.btn-outline {
+    background: transparent;
+    color: #6D28D9;
+    border: 2px solid #6D28D9;
+}
+
+.btn-outline:hover {
+    background: #6D28D9;
+    color: #FFFFFF;
+}
+
+.btn-large {
+    padding: 16px 32px;
+    font-size: 16px;
+    min-width: 180px;
+}
+
+/* Utility classes */
+.text-center {
+    text-align: center;
+}
+
+.mb-0 { margin-bottom: 0; }
+.mb-1 { margin-bottom: 0.25rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-3 { margin-bottom: 1rem; }
+.mb-4 { margin-bottom: 1.5rem; }
+.mb-5 { margin-bottom: 3rem; }
+
+.mt-0 { margin-top: 0; }
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+}

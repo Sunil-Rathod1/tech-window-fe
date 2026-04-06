@@ -1,0 +1,203 @@
+<div class="cart-page">
+  <!-- Page Header with Back Button -->
+  <app-page-header
+    title="My Learning Cart"
+    [breadcrumbItems]="breadcrumbs"
+    [showBack]="true"
+    backLink="/Home"
+  >
+  </app-page-header>
+
+  <ng-container *ngIf="cartItems.length; else emptyCart">
+    <div class="row g-4 align-items-start">
+      <div class="col-lg-8">
+        <div class="card cart-section">
+          <div class="section-header">
+            <div>
+              <h3>Courses in Your Cart</h3>
+               <!-- <p class="section-subtitle">Review the course benefits and confirm your enrollment preferences.</p> -->
+            </div>
+            <button class="btn btn-link text-danger" (click)="clearCart()">
+              <i class="fas fa-trash-alt me-1"></i>Clear Cart
+            </button>
+          </div>
+
+          <div *ngFor="let course of cartItems" class="cart-item">
+            <img [src]="course.image" [alt]="course.title" class="item-image" />
+            <div class="item-details">
+              <div class="item-header">
+                <h4>{{ course.title }}</h4>
+                <div class="price-wrapper">
+                  <span class="price">{{ course.price | currency: 'INR':'symbol':'1.0-0' }}</span>
+                  <span *ngIf="course.originalPrice" class="price-original">
+                    {{ course.originalPrice | currency: 'INR':'symbol':'1.0-0' }}
+                  </span>
+                </div>
+              </div>
+              <p class="item-description">{{ course.description }}</p>
+
+              <div class="item-meta">
+                <span><i class="fas fa-university me-1"></i>{{ course.institute }}</span>
+                <span><i class="fas fa-user-tie me-1"></i>{{ course.mentor }}</span>
+                <span><i class="fas fa-clock me-1"></i>{{ course.duration }}</span>
+                <span><i class="fas fa-laptop-house me-1"></i>{{ course.mode }}</span>
+                <span><i class="fas fa-seedling me-1"></i>{{ course.level }}</span>
+              </div>
+
+              <div class="item-footer">
+                <div class="tags">
+                  <span class="tag" *ngFor="let tag of course.tags">{{ tag }}</span>
+                </div>
+                <div class="rating">
+                  <span class="rating-score"><i class="fas fa-star"></i>{{ course.rating }}</span>
+                  <span class="rating-reviews">({{ course.reviews }} reviews)</span>
+                </div>
+              </div>
+
+              <div class="item-actions">
+                <button class="btn btn-outline-primary">
+                  <i class="fas fa-book-open me-1"></i>View Course Details
+                </button>
+                <!-- <button class="btn btn-outline-secondary">
+                  <i class="fas fa-bookmark me-1"></i>Move to Wishlist
+                </button> -->
+                <button class="btn btn-link text-danger" (click)="removeItem(course.id)">
+                  <i class="fas fa-times me-1"></i>Remove
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="promo-card">
+            <div>
+              <h5>Have a promo or referral code?</h5>
+              <p>Apply a coupon or referral code to unlock exclusive discounts, EMI offers, and alumni bonuses.</p>
+            </div>
+            <div class="promo-input">
+              <input type="text" class="form-control" placeholder="Enter promo code" />
+              <button class="btn btn-gradient">Apply & Recalculate</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- <div class="card assurance-card">
+          <div class="assurance-item">
+            <i class="fas fa-calendar-check"></i>
+            <div>
+              <h5>Flexible Start Dates</h5>
+              <p>Reserve your seat now and choose the cohort that fits your schedule.</p>
+            </div>
+          </div>
+          <div class="assurance-item">
+            <i class="fas fa-shield-alt"></i>
+            <div>
+              <h5>Secure Payment</h5>
+              <p>128-bit encrypted payments with instant confirmation and invoice.</p>
+            </div>
+          </div>
+          <div class="assurance-item">
+            <i class="fas fa-sync"></i>
+            <div>
+              <h5>7-Day Refund Window</h5>
+              <p>Full refund if you choose to opt out before the first live session.</p>
+            </div>
+          </div>
+        </div> -->
+
+        <!-- <div class="card recommendation-card" *ngIf="recommendedCourses.length">
+          <div class="section-header">
+            <div>
+              <h3>Recommended for You</h3>
+              <p class="section-subtitle">Enhance your learning path with these curated programs.</p>
+            </div>
+            <button class="btn btn-outline-light purple-btn">Explore More</button>
+          </div>
+          <div class="recommended-list">
+            <div class="recommended-item" *ngFor="let item of recommendedCourses">
+              <img [src]="item.image" [alt]="item.title" />
+              <div>
+                <h5>{{ item.title }}</h5>
+                <p>{{ item.category }}</p>
+                <span class="recommended-meta">{{ item.duration }}</span>
+              </div>
+              <div class="recommended-price">
+                {{ item.price | currency: 'INR':'symbol':'1.0-0' }}
+              </div>
+              <button 
+                class="btn btn-outline-primary" 
+                [disabled]="isRecommendedAdded(item)"
+                (click)="addRecommendedCourse(item)">
+                {{ isRecommendedAdded(item) ? 'Added' : 'Add' }}
+              </button>
+            </div>
+          </div>
+        </div> -->
+      </div>
+
+      <div class="col-lg-4">
+        <div class="card summary-card">
+          <h3>Order Summary</h3>
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <span>{{ subtotal | currency: 'INR':'symbol':'1.0-0' }}</span>
+          </div>
+          <div class="summary-row">
+            <span>Savings & Offers</span>
+            <span class="text-success">-{{ discount | currency: 'INR':'symbol':'1.0-0' }}</span>
+          </div>
+          <div class="summary-row">
+            <span>GST (18%)</span>
+            <span>{{ taxes | currency: 'INR':'symbol':'1.0-0' }}</span>
+          </div>
+          <hr />
+          <div class="summary-total">
+            <span>Total Payable</span>
+            <div>
+              <div class="total-amount">{{ total | currency: 'INR':'symbol':'1.0-0' }}</div>
+              <small class="text-muted">All taxes included</small>
+            </div>
+          </div>
+          <button class="btn btn-gradient w-100 mt-3" (click)="goToPayment()">
+            <i class="fas fa-lock me-2"></i>Proceed to Secure Payment
+          </button>
+          <p class="emi-note">
+            Need EMIs? Pay as low as ₹{{ monthlyEmi | number: '1.0-0' }}/month with 6-month interest-free plans.
+          </p>
+        </div>
+
+        <!-- <div class="card support-card">
+          <h4>Need Assistance?</h4>
+          <p>Our counselors can help you choose the right track, clarify payment options, and fast track your onboarding.</p>
+          <div class="support-channel" *ngFor="let channel of supportChannels">
+            <i class="fas" [ngClass]="channel.icon"></i>
+            <div>
+              <strong>{{ channel.label }}</strong>
+              <p>{{ channel.detail }}</p>
+            </div>
+          </div>
+          <button class="btn btn-outline-primary w-100">
+            <i class="fas fa-calendar-plus me-1"></i>Schedule a Call Back
+          </button>
+        </div> -->
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #emptyCart>
+    <div class="card empty-state">
+      <div class="empty-icon">
+        <i class="fas fa-heart-broken"></i>
+      </div>
+      <h3>Your Cart is Waiting</h3>
+      <p>Add courses to your cart to see them here. Explore trending programs, compare modules, and continue learning without losing your selections.</p>
+      <div class="empty-actions">
+        <a class="btn btn-gradient" [routerLink]="['/Courses']">
+          <i class="fas fa-search me-1"></i>Browse Courses
+        </a>
+        <a class="btn btn-outline-primary" [routerLink]="['/wishlist']">
+          <i class="fas fa-heart me-1"></i>Go to Wishlist
+        </a>
+      </div>
+    </div>
+  </ng-template>
+</div>

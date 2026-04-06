@@ -1,0 +1,248 @@
+<!-- Mentors Component - Professional Mentorship Platform -->
+
+<!-- Hero Section -->
+<section class="mentors-hero">
+  <div class="hero-content">
+    <h1 class="hero-title">
+      <span class="gradient-text-1">Find the best mentor</span>
+      <!-- <span class="gradient-text-2">that fits you</span> -->
+    </h1>
+    <!-- <p class="hero-subtitle">Connect with industry experts who can guide your career growth, provide personalized advice, and help you achieve your professional goals</p> -->
+    
+    <!-- Search Section -->
+    <div class="search-section">
+      <div class="search-container">
+        <div class="search-input-wrapper">
+          <i class="fa fa-search search-icon"></i>
+          <input 
+            type="text" 
+            class="search-input" 
+            placeholder="Search for mentors, specializations, or industries..." 
+            autocomplete="off"
+            [(ngModel)]="searchTerm"
+            (input)="onSearch()">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Search Filters Section -->
+<section class="filters-section">
+  <div class="container">
+    <div class="filters-container">
+      <div class="filter-group">
+        <select class="filter-select" [(ngModel)]="selectedSpecialization" (change)="onFilterChange()">
+          <option value="">All Specializations</option>
+          <option value="software architecture">Software Architecture</option>
+          <option value="web development">Web Development</option>
+          <option value="data science">Data Science</option>
+          <option value="devops">DevOps</option>
+          <option value="product management">Product Management</option>
+          <option value="mobile development">Mobile Development</option>
+        </select>
+        
+        <select class="filter-select" [(ngModel)]="selectedExperience" (change)="onFilterChange()">
+          <option value="">All Experience Levels</option>
+          <option value="5+">5+ Years</option>
+          <option value="8+">8+ Years</option>
+          <option value="10+">10+ Years</option>
+          <option value="12+">12+ Years</option>
+          <option value="15+">15+ Years</option>
+        </select>
+        
+        <select class="filter-select" [(ngModel)]="selectedLocation" (change)="onFilterChange()">
+          <option value="">All Locations</option>
+          <option value="san francisco">San Francisco</option>
+          <option value="bangalore">Bangalore</option>
+          <option value="new york">New York</option>
+          <option value="mumbai">Mumbai</option>
+          <option value="seattle">Seattle</option>
+          <option value="austin">Austin</option>
+        </select>
+        
+        <select class="filter-select" [(ngModel)]="selectedIndustry" (change)="onFilterChange()">
+          <option value="">All Industries</option>
+          <option value="technology">Technology</option>
+          <option value="finance">Finance</option>
+          <option value="healthcare">Healthcare</option>
+          <option value="ecommerce">E-commerce</option>
+        </select>
+        
+        <select class="filter-select" [(ngModel)]="selectedAvailability" (change)="onFilterChange()">
+          <option value="">All Availability</option>
+          <option value="weekdays">Weekdays</option>
+          <option value="weekends">Weekends</option>
+          <option value="flexible">Flexible Schedule</option>
+          <option value="evenings">Evenings</option>
+        </select>
+      </div>
+      
+      <button class="clear-filters-btn" (click)="clearFilters()">
+        <i class="fa fa-times"></i>
+        Clear All Filters
+      </button>
+      
+      <div class="results-info">
+        <p>Showing {{ filteredCount }} of {{ totalCount }} mentors</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Mentors Grid Section -->
+<section class="mentors-grid-section">
+  <div class="container">
+    <div class="mentors-grid">
+      <!-- Mentor Card -->
+      <div class="mentor-card" *ngFor="let mentor of filteredMentors">
+        <!-- <div class="card-header">
+          <div class="mentor-banner">
+            <img [src]="mentor.backgroundImage" [alt]="mentor.specialization" class="banner-img">
+            <div class="banner-overlay">
+              <span class="specialization-badge">{{ mentor.specialization }}</span>
+              <span class="consultation-fee">{{ formatPrice(mentor.consultationFee) }}/hr</span>
+            </div>
+          </div>
+        </div> -->
+
+        <div class="card-body">
+          <div class="mentor-profile">
+            <div class="mentor-avatar">
+              <img [src]="mentor.avatar" [alt]="mentor.name" class="avatar-img">
+              <div class="online-status" [class]="getOnlineStatusClass(mentor.online)"></div>
+            </div>
+            <div class="mentor-info">
+              <h3 class="mentor-name">{{ mentor.name }}</h3>
+              <p class="mentor-title">{{ mentor.title }}</p>
+              <div class="company-info">
+                <i class="fa fa-building"></i>
+                <span>{{ mentor.company }}</span>
+              </div>
+              <div class="mentor-stats">
+                <div class="stat-item">
+                  <i class="fa fa-users"></i>
+                  <span>{{ mentor.mentees.toLocaleString() }} Mentees</span>
+                </div>
+                <div class="stat-item">
+                  <i class="fa fa-calendar-check-o"></i>
+                  <span>{{ mentor.sessions.toLocaleString() }} Sessions</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- <div class="mentor-description">
+            <p>{{ mentor.description }}</p>
+          </div> -->
+
+          <div class="expertise-areas">
+            <h4>Expertise Areas</h4>
+            <div class="expertise-tags">
+              <span class="tag" *ngFor="let skill of mentor.expertise.slice(0, 4)">{{ skill }}</span>
+              <span class="tag more-tag" *ngIf="mentor.expertise.length > 4">+{{ mentor.expertise.length - 4 }} more</span>
+            </div>
+          </div>
+
+          <div class="mentor-details">
+            <div class="detail-item">
+              <i class="fa fa-clock-o"></i>
+              <span>Experience: {{ mentor.experience }}</span>
+            </div>
+            <div class="detail-item">
+              <i class="fa fa-map-marker"></i>
+              <span>Location: {{ mentor.location }}</span>
+            </div>
+            <div class="detail-item">
+              <i class="fa fa-industry"></i>
+              <span>Industry: {{ mentor.industry }}</span>
+            </div>
+            <div class="detail-item">
+              <i class="fa fa-calendar"></i>
+              <span class="availability-badge" [class]="getAvailabilityBadge(mentor.availability)">
+                {{ mentor.availability }}
+              </span>
+            </div>
+          </div>
+
+          <div class="achievements">
+            <div class="achievement-item" *ngFor="let achievement of mentor.achievements.slice(0, 2)">
+              <i class="fa fa-trophy"></i>
+              <span>{{ achievement }}</span>
+            </div>
+          </div>
+
+          <div class="rating-section">
+            <div class="rating-display">
+              <div class="stars">
+                <span class="fa fa-star" [class.checked]="star" *ngFor="let star of getRatingStars(mentor.rating)"></span>
+              </div>
+              <span class="rating-text">{{ mentor.rating }} out of 5</span>
+            </div>
+          </div>
+
+          <div class="social-links">
+            <a [href]="mentor.linkedin" target="_blank" class="social-link linkedin">
+              <i class="fa fa-linkedin"></i>
+            </a>
+            <a [href]="mentor.github" target="_blank" class="social-link github">
+              <i class="fa fa-github"></i>
+            </a>
+            <a [href]="mentor.portfolio" target="_blank" class="social-link portfolio">
+              <i class="fa fa-globe"></i>
+            </a>
+          </div>
+
+          <div class="action-buttons">
+            <button class="btn btn-primary" (click)="bookSession(mentor)">
+              <i class="fa fa-calendar-plus-o"></i>
+              Book Session
+            </button>
+            <button class="btn btn-secondary" (click)="viewProfile(mentor)">
+              <i class="fa fa-eye"></i>
+              View Profile
+            </button>
+            <button class="btn btn-outline" (click)="contactMentor(mentor)">
+              <i class="fa fa-envelope"></i>
+              Contact
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- No Results Message -->
+      <div class="no-results" *ngIf="filteredMentors.length === 0">
+        <div class="no-results-content">
+          <i class="fa fa-search fa-3x"></i>
+          <h3>No mentors found</h3>
+          <p>Try adjusting your search criteria or filters</p>
+          <button class="btn btn-primary" (click)="clearFilters()">
+            <i class="fa fa-refresh"></i>
+            Clear All Filters
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Call to Action Section -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-content">
+      <h2>Ready to Accelerate Your Career?</h2>
+      <p>Join thousands of professionals who have transformed their careers with expert mentorship</p>
+      <div class="cta-buttons">
+        <button class="btn btn-primary btn-large">
+          <i class="fa fa-search"></i>
+          Find Your Mentor
+        </button>
+        <button class="btn btn-outline btn-large" (click)="becomeMentor()">
+          <i class="fa fa-user-plus"></i>
+          Become a Mentor
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+  

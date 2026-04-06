@@ -1,0 +1,227 @@
+<!-- Course Details Popup Modal -->
+<div class="modal-overlay" *ngIf="isOpen" (click)="onBackdropClick($event)">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <div class="header-content">
+        <div class="course-badge">
+          <i class="fa fa-graduation-cap"></i>
+          <span>{{courseDetails.courseCategory}}</span>
+        </div>
+        <h2 class="course-title">{{courseDetails.name}}</h2>
+        <p class="course-subtitle">{{courseDetails.title}}</p>
+      </div>
+      <button class="close-btn" (click)="closeModal()">
+        <i class="fa fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body">
+      
+      <!-- Video Section -->
+      <div class="video-section">
+        <div class="video-container">
+          <iframe 
+            [src]="courseDetails.demoVideo" 
+            frameborder="0" 
+            allowfullscreen
+            title="Course Demo Video">
+          </iframe>
+        </div>
+        <div class="video-info">
+          <h3 class="video-title">
+            <i class="fa fa-play-circle"></i>
+            Course Overview & Demo
+          </h3>
+          <p class="video-description">
+            Watch this comprehensive overview covering all languages and technologies in this course
+          </p>
+        </div>
+      </div>
+
+      <!-- Course Information Grid -->
+      <div class="course-info-grid">
+        
+        <!-- Left Column -->
+        <div class="info-column">
+          
+          <!-- Course Overview -->
+          <div class="info-section">
+            <h3 class="section-title">
+              <i class="fa fa-info-circle"></i>
+              Course Overview
+            </h3>
+            <p class="overview-text">{{courseDetails.overview}}</p>
+          </div>
+
+          <!-- What You'll Learn -->
+          <div class="info-section">
+            <h3 class="section-title">
+              <i class="fa fa-check-circle"></i>
+              What You'll Learn
+            </h3>
+            <div class="learning-points">
+              <div class="point-item" *ngFor="let skill of courseDetails.expertise">
+                <i class="fa fa-check"></i>
+                <span>{{skill}}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Course Curriculum -->
+          <div class="info-section">
+            <h3 class="section-title">
+              <i class="fa fa-list-alt"></i>
+              Course Curriculum
+            </h3>
+            <div class="curriculum-list">
+              <div class="curriculum-item" *ngFor="let module of courseDetails.curriculum">
+                <div class="module-header">
+                  <h4 class="module-title">{{module.title}}</h4>
+                  <div class="module-meta">
+                    <span class="lesson-count">{{module.lessons}} Lessons</span>
+                    <span class="duration">{{module.duration}}</span>
+                  </div>
+                </div>
+                <div class="module-topics">
+                  <span class="topic-tag" *ngFor="let topic of module.topics">{{topic}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Prerequisites -->
+          <div class="info-section">
+            <h3 class="section-title">
+              <i class="fa fa-exclamation-triangle"></i>
+              Prerequisites
+            </h3>
+            <div class="prerequisites-list">
+              <div class="prerequisite-item" *ngFor="let prereq of courseDetails.prerequisites">
+                <i class="fa fa-arrow-right"></i>
+                <span>{{prereq}}</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Column -->
+        <div class="info-column">
+          
+          <!-- Course Details Card -->
+          <div class="course-details-card">
+            <div class="card-header">
+              <div class="instructor-info">
+                <img [src]="courseDetails.avatar" alt="Instructor" class="instructor-avatar">
+                <div class="instructor-details">
+                  <h4 class="instructor-name">{{courseDetails.name}}</h4>
+                  <p class="instructor-title">{{courseDetails.title}}</p>
+                  <div class="instructor-rating">
+                    <div class="stars">
+                      <i class="fa fa-star" *ngFor="let star of getRatingStars(courseDetails.rating)" [class.filled]="star"></i>
+                    </div>
+                    <span class="rating-text">{{courseDetails.rating}}/5</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="course-stats">
+              <div class="stat-item">
+                <i class="fa fa-users"></i>
+                <div class="stat-info">
+                  <span class="stat-value">{{courseDetails.students.toLocaleString()}}+</span>
+                  <span class="stat-label">Students</span>
+                </div>
+              </div>
+              <div class="stat-item">
+                <i class="fa fa-clock-o"></i>
+                <div class="stat-info">
+                  <span class="stat-value">{{courseDetails.duration}}</span>
+                  <span class="stat-label">Duration</span>
+                </div>
+              </div>
+              <div class="stat-item">
+                <i class="fa fa-book"></i>
+                <div class="stat-info">
+                  <span class="stat-value">{{courseDetails.modules}}</span>
+                  <span class="stat-label">Modules</span>
+                </div>
+              </div>
+              <div class="stat-item">
+                <i class="fa fa-map-marker"></i>
+                <div class="stat-info">
+                  <span class="stat-value">{{courseDetails.location}}</span>
+                  <span class="stat-label">Location</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="pricing-section">
+              <div class="price-display">
+                <span class="current-price">{{formatPrice(courseDetails.coursePrice)}}</span>
+                <span class="price-note">One-time payment</span>
+              </div>
+            </div>
+
+            <div class="action-buttons">
+              <button class="btn-enroll" (click)="enrollNow()">
+                <i class="fa fa-graduation-cap"></i>
+                Enroll Now
+              </button>
+              <button class="btn-wishlist">
+                <i class="fa fa-heart"></i>
+                Add to Wishlist
+              </button>
+            </div>
+
+            <div class="guarantees">
+              <div class="guarantee-item">
+                <i class="fa fa-shield"></i>
+                <span>30-Day Money Back Guarantee</span>
+              </div>
+              <div class="guarantee-item">
+                <i class="fa fa-certificate"></i>
+                <span>Industry-Recognized Certificate</span>
+              </div>
+              <div class="guarantee-item">
+                <i class="fa fa-support"></i>
+                <span>24/7 Learning Support</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Career Opportunities -->
+          <div class="info-section">
+            <h3 class="section-title">
+              <i class="fa fa-briefcase"></i>
+              Career Opportunities
+            </h3>
+            <div class="career-list">
+              <div class="career-item" *ngFor="let career of courseDetails.careerOpportunities">
+                <i class="fa fa-arrow-right"></i>
+                <span>{{career}}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Supported Languages -->
+          <div class="info-section">
+            <h3 class="section-title">
+              <i class="fa fa-language"></i>
+              Supported Languages
+            </h3>
+            <div class="languages-list">
+              <span class="language-tag" *ngFor="let language of courseDetails.languages">{{language}}</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

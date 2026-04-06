@@ -1,0 +1,2075 @@
+<!-- Admin Dashboard Container -->
+<div class="admin-dashboard" style="margin-top: -11OUR HIGHLIGHTS
+4px !important;">
+  <!-- Sidebar -->
+  <div class="sidebar" [class.collapsed]="sidebarCollapsed">
+    <!-- Logo Section -->
+    <div class="sidebar-header">
+      <div class="logo">
+        <i class="fa fa-shield"></i>
+        <span *ngIf="!sidebarCollapsed" class="logo-text">TechWindows Admin</span>
+      </div>
+      <button class="collapse-btn" (click)="sidebarCollapsed = !sidebarCollapsed">
+        <i class="fa" [class.fa-angle-left]="!sidebarCollapsed" [class.fa-angle-right]="sidebarCollapsed"></i>
+      </button>
+    </div>
+
+    <!-- Navigation Menu -->
+    <nav class="sidebar-nav">
+      <a class="nav-item" (click)="setActiveSection('overview')" [class.active]="activeSection === 'overview'">
+        <i class="fa fa-dashboard"></i>
+        <span *ngIf="!sidebarCollapsed">Overview</span>
+      </a>
+      <a class="nav-item" (click)="setActiveSection('users')" [class.active]="activeSection === 'users'">
+        <i class="fa fa-users"></i>
+        <span *ngIf="!sidebarCollapsed">Users</span>
+      </a>
+      <a class="nav-item" (click)="setActiveSection('courses')" [class.active]="activeSection === 'courses'">
+        <i class="fa fa-book"></i>
+        <span *ngIf="!sidebarCollapsed">Courses</span>
+      </a>
+      <a class="nav-item" (click)="setActiveSection('trending')" [class.active]="activeSection === 'trending'">
+        <i class="fa fa-line-chart"></i>
+        <span *ngIf="!sidebarCollapsed">Trending Courses</span>
+      </a>
+      <a class="nav-item" (click)="setActiveSection('institutes')" [class.active]="activeSection === 'institutes'">
+        <i class="fa fa-university"></i>
+        <span *ngIf="!sidebarCollapsed">Institutes</span>
+      </a>
+      <a class="nav-item" (click)="setActiveSection('orders')" [class.active]="activeSection === 'orders'">
+        <i class="fa fa-shopping-cart"></i>
+        <span *ngIf="!sidebarCollapsed">Orders</span>
+      </a>
+      <a class="nav-item" (click)="setActiveSection('payments')" [class.active]="activeSection === 'payments'">
+        <i class="fa fa-credit-card"></i>
+        <span *ngIf="!sidebarCollapsed">Payments</span>
+      </a>
+      <a class="nav-item" (click)="setActiveSection('analytics')" [class.active]="activeSection === 'analytics'">
+        <i class="fa fa-line-chart"></i>
+        <span *ngIf="!sidebarCollapsed">Analytics</span>
+      </a>
+      <a class="nav-item" (click)="setActiveSection('notifications')"
+        [class.active]="activeSection === 'notifications'">
+        <i class="fa fa-bell"></i>
+        <span *ngIf="!sidebarCollapsed">Notifications</span>
+      </a>
+      <a class="nav-item" (click)="setActiveSection('support')" [class.active]="activeSection === 'support'">
+        <i class="fa fa-life-ring"></i>
+        <span *ngIf="!sidebarCollapsed">Help & Support</span>
+      </a>
+      <a class="nav-item" (click)="setActiveSection('settings')" [class.active]="activeSection === 'settings'">
+        <i class="fa fa-cog"></i>
+        <span *ngIf="!sidebarCollapsed">Settings</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="sidebar-logout" (click)="onLogout()">
+        <i class="fa fa-sign-out"></i>
+        <span *ngIf="!sidebarCollapsed">Logout</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <button class="menu-toggle" (click)="sidebarCollapsed = !sidebarCollapsed">
+          <i class="fa fa-bars"></i>
+        </button>
+        <h1 class="page-title">{{getPageTitle()}}</h1>
+      </div>
+      <div class="header-right">
+        <div class="search-box">
+          <i class="fa fa-search"></i>
+          <input type="text" placeholder="Search..." [(ngModel)]="searchTerm" (input)="onSearch()">
+        </div>
+        <div class="notifications-icon" (click)="toggleNotificationDropdown()">
+          <i class="fa fa-bell"></i>
+          <span class="badge" *ngIf="notifications.length > 0">{{notifications.length}}</span>
+          <div class="notification-dropdown" *ngIf="showNotificationDropdown">
+            <div class="dropdown-header">
+              <h3>Notifications</h3>
+              <span class="badge">{{notifications.length}}</span>
+            </div>
+            <div class="dropdown-body">
+              <div class="notification-dropdown-item" *ngFor="let notification of notifications"
+                (click)="setActiveSection('notifications'); showNotificationDropdown = false">
+                <div class="notification-icon-wrapper">
+                  <i class="fa" [class.fa-exclamation-triangle]="notification.type === 'warning'"
+                    [class.fa-info-circle]="notification.type === 'info'"
+                    [class.fa-check-circle]="notification.type === 'success'"
+                    [class.fa-times-circle]="notification.type === 'error'"
+                    [ngClass]="'notification-' + notification.type"></i>
+                </div>
+                <div class="notification-dropdown-content">
+                  <p>{{notification.message}}</p>
+                  <span class="notification-dropdown-time">{{notification.time}}</span>
+                </div>
+              </div>
+              <div class="notification-dropdown-item empty" *ngIf="notifications.length === 0">
+                <p>No notifications</p>
+              </div>
+            </div>
+            <div class="dropdown-footer">
+              <a (click)="setActiveSection('notifications'); showNotificationDropdown = false">
+                View All Notifications
+                <i class="fa fa-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="user-dropdown" (click)="toggleUserDropdown(); $event.stopPropagation()">
+          <div class="user-avatar" *ngIf="adminProfile">
+            <i class="fas fa-user-shield"></i>
+          </div>
+          <span class="user-name">{{adminProfile?.name || 'Admin'}}</span>
+          <i class="fa fa-chevron-down" [class.fa-chevron-up]="showDropdown"></i>
+          <div class="dropdown-menu" *ngIf="showDropdown" (click)="$event.stopPropagation()">
+            <div class="dropdown-item" style="cursor: default;">
+              <i class="fa fa-user"></i>
+              <span>{{adminProfile?.email || 'admin@techwindows.com'}}</span>
+            </div>
+            <div class="dropdown-item" style="cursor: default;">
+              <i class="fa fa-shield"></i>
+              <span>{{adminProfile?.role || 'Admin'}}</span>
+            </div>
+            <hr class="divider">
+            <a href="#" class="dropdown-item logout-item"
+              (click)="onLogout(); $event.preventDefault(); $event.stopPropagation()">
+              <i class="fa fa-sign-out"></i>
+              <span>Logout</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content Area -->
+    <div class="content-area">
+      <!-- Overview Section -->
+      <div class="section" *ngIf="activeSection === 'overview'">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon total-users">
+              <i class="fa fa-users"></i>
+            </div>
+            <div class="stat-info">
+              <h3>{{stats.totalUsers}}</h3>
+              <p>Total Users</p>
+              <span class="stat-change neutral">{{stats.totalStudents || 0}} Students, {{stats.totalTrainers || 0}}
+                Trainers</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon active-users">
+              <i class="fa fa-user-check"></i>
+            </div>
+            <div class="stat-info">
+              <h3>{{stats.activeUsers}}</h3>
+              <p>Active Users</p>
+              <span class="stat-change neutral">{{stats.activeStudents || 0}} Active Students</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon total-courses">
+              <i class="fa fa-book"></i>
+            </div>
+            <div class="stat-info">
+              <h3>{{stats.totalCourses}}</h3>
+              <p>Total Courses</p>
+              <span class="stat-change positive">{{stats.activeCourses || 0}} Active</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon total-revenue">
+              <i class="fa fa-rupee"></i>
+            </div>
+            <div class="stat-info">
+              <h3>{{formatCurrency(stats.totalRevenue)}}</h3>
+              <p>Total Revenue</p>
+              <span class="stat-change positive">↑ {{stats.growthRate}}%</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon pending">
+              <i class="fa fa-clock"></i>
+            </div>
+            <div class="stat-info">
+              <h3>{{0}}</h3>
+              <p>Pending Verifications</p>
+              <span class="stat-change neutral">{{0}} pending</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon conversion">
+              <i class="fa fa-chart-line"></i>
+            </div>
+            <div class="stat-info">
+              <h3>{{stats.conversionRate || 0}}%</h3>
+              <p>Conversion Rate</p>
+              <span class="stat-change neutral">{{stats.totalEnrollments || 0}} Enrollments</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-row">
+          <div class="chart-card">
+            <h3>Revenue Overview</h3>
+            <canvas id="revenueChart"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>User Growth</h3>
+            <canvas id="userChart"></canvas>
+          </div>
+        </div>
+
+        <div class="content-row">
+          <div class="table-card">
+            <div class="card-header">
+              <h3>Recent Users</h3>
+              <button class="btn-view-all">View All</button>
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th>Join Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let user of getRecentUsers()">
+                  <td>{{user.name || user.studentName || 'N/A'}}</td>
+                  <td>{{user.email || 'N/A'}}</td>
+                  <td>{{user._role}}</td>
+                  <td><span class="badge"
+                      [ngClass]="getStatusClass(user.isActive ? 'active' : 'inactive')">{{user.isActive ? 'Active' :
+                      'Inactive'}}</span></td>
+                  <td>{{formatDate(user.createdAt)}}</td>
+                  <td>
+                    <button class="action-btn view"
+                      (click)="viewUserDetails(user, user._role.toLowerCase())">View</button>
+                  </td>
+                </tr>
+                <tr *ngIf="getRecentUsers().length === 0">
+                  <td colspan="6" class="text-center">No recent users found</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Users Section -->
+      <div class="section" *ngIf="activeSection === 'users'">
+        <div class="section-header">
+          <h2>User Management</h2>
+          <div class="header-actions">
+            <button class="btn btn-primary" (click)="exportData()">
+              <i class="fa fa-download"></i>
+              Export
+            </button>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <button class="tab-btn" [class.active]="activeUserTab === 'students'" (click)="setActiveUserTab('students')">
+            <i class="fa fa-graduation-cap"></i> Students
+          </button>
+          <button class="tab-btn" [class.active]="activeUserTab === 'trainers'" (click)="setActiveUserTab('trainers')">
+            <i class="fa fa-chalkboard-teacher"></i> Trainers
+          </button>
+          <button class="tab-btn" [class.active]="activeUserTab === 'mentors'" (click)="setActiveUserTab('mentors')"
+            title="Mentors are managed as trainers">
+            <i class="fa fa-user-graduate"></i> Mentors
+          </button>
+          <button class="tab-btn" [class.active]="activeUserTab === 'institutions'"
+            (click)="setActiveUserTab('institutions')">
+            <i class="fa fa-university"></i> Institutions
+          </button>
+        </div>
+
+        <div class="filter-bar">
+          <input type="text" class="filter-input" placeholder="Search users..." [(ngModel)]="searchTerm"
+            (input)="onSearch()">
+          <select class="filter-select" [(ngModel)]="selectedStatus" (change)="onFilterChange()">
+            <option value="all">All Status</option>
+            <option value="active">Active</option>
+            <option value="pending">Pending</option>
+            <option value="inactive">Inactive</option>
+          </select>
+          <button class="btn btn-secondary" (click)="clearFilters()">
+            <i class="fa fa-times"></i>
+            Clear
+          </button>
+        </div>
+
+        <div class="loading" *ngIf="isLoading">
+          <i class="fas fa-spinner fa-spin"></i>
+        </div>
+
+        <div class="table-card" *ngIf="!isLoading">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Verification</th>
+                <th>Join Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Students Tab -->
+              <ng-container *ngIf="activeUserTab === 'students' || activeUserTab === 'all'">
+                <tr *ngFor="let user of userManagement.students">
+                  <td>
+                    <div class="user-name-cell">
+                      <img [src]="user.avatar " [alt]="user.name || user.studentName" class="user-avatar-small">
+                      <span>{{user.name || user.studentName || 'N/A'}}</span>
+                    </div>
+                  </td>
+                  <td>{{user.email || 'N/A'}}</td>
+                  <td>{{user.phone || 'N/A'}}</td>
+                  <td><span class="badge badge-info">Student</span></td>
+                  <td><span class="badge"
+                      [ngClass]="getStatusClass(user.isActive ? 'active' : 'inactive')">{{user.isActive ? 'Active' :
+                      'Inactive'}}</span></td>
+                  <td>-</td>
+                  <td>{{formatDate(user.createdAt)}}</td>
+                  <td>
+                    <div class="action-buttons">
+                      <button class="action-btn view" (click)="viewUserDetails(user, 'student')"
+                        title="View Details">View</button>
+                      <button class="action-btn edit" (click)="openEditUser(user, 'student')"
+                        title="Edit Student">Edit</button>
+                      <button class="action-btn approve" *ngIf="!user.isActive"
+                        (click)="updateUserStatus(user._id || user.id, 'student', 'active')" title="Activate User">
+                        <i class="fa fa-check"></i> Activate
+                      </button>
+                      <button class="action-btn reject" *ngIf="user.isActive"
+                        (click)="updateUserStatus(user._id || user.id, 'student', 'inactive')" title="Deactivate User">
+                        <i class="fa fa-ban"></i> Deactivate
+                      </button>
+                      <button class="action-btn delete" (click)="deleteUser(user._id || user.id, 'student')"
+                        title="Delete User">
+                        <i class="fa fa-trash"></i> Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </ng-container>
+
+              <!-- Trainers Tab -->
+              <ng-container *ngIf="activeUserTab === 'trainers' || activeUserTab === 'all'">
+                <tr *ngFor="let user of userManagement.trainers">
+                  <td>
+                    <div class="user-name-cell">
+                      <img [src]="user.avatar " [alt]="user.name" class="user-avatar-small">
+                      <div>
+                        <div><strong>{{user.name || 'N/A'}}</strong></div>
+                        <div class="user-spec">{{user.specialization || 'N/A'}}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>{{user.email || 'N/A'}}</td>
+                  <td>{{user.phone || 'N/A'}}</td>
+                  <td><span class="badge badge-info">Trainer</span></td>
+                  <td><span class="badge"
+                      [ngClass]="getStatusClass(user.isActive ? 'active' : 'inactive')">{{user.isActive ? 'Active' :
+                      'Inactive'}}</span></td>
+                  <td>
+                    <span class="badge" [ngClass]="getStatusClass(user.verificationStatus || 'pending')">
+                      {{user.verificationStatus || 'Pending'}}
+                    </span>
+                  </td>
+                  <td>{{formatDate(user.createdAt)}}</td>
+                  <td>
+                    <div class="action-buttons">
+                      <button class="action-btn view" (click)="viewUserDetails(user, 'trainer')"
+                        title="View Details">View</button>
+                      <button class="action-btn edit" (click)="openEditUser(user, 'trainer')"
+                        title="Edit Trainer">Edit</button>
+                      <button class="action-btn approve" *ngIf="user.verificationStatus === 'pending'"
+                        (click)="verifyUser(user._id || user.id, 'trainer', 'verified')" title="Verify Trainer">
+                        <i class="fa fa-check-circle"></i> Verify
+                      </button>
+                      <button class="action-btn approve" *ngIf="!user.isActive"
+                        (click)="updateUserStatus(user._id || user.id, 'trainer', 'active')" title="Activate Trainer">
+                        <i class="fa fa-power-off"></i> Activate
+                      </button>
+                      <button class="action-btn reject" *ngIf="user.isActive"
+                        (click)="updateUserStatus(user._id || user.id, 'trainer', 'inactive')"
+                        title="Deactivate Trainer">
+                        <i class="fa fa-ban"></i> Deactivate
+                      </button>
+                      <button class="action-btn delete" (click)="deleteUser(user._id || user.id, 'trainer')"
+                        title="Delete Trainer">
+                        <i class="fa fa-trash"></i> Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </ng-container>
+
+              <!-- Mentors Tab (Note: Mentors are managed as trainers in this system) -->
+              <ng-container *ngIf="activeUserTab === 'mentors'">
+                <tr *ngIf="userManagement.trainers.length === 0">
+                  <td colspan="8" class="text-center">
+                    <div class="empty-state">
+                      <i class="fa fa-user-graduate" style="font-size: 48px; color: #8b949e; margin-bottom: 16px;"></i>
+                      <p style="color: #8b949e;">No mentors found. Mentors are managed as trainers in this system.</p>
+                      <button class="btn btn-secondary" (click)="setActiveUserTab('trainers')">
+                        View Trainers Instead
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr *ngFor="let user of userManagement.trainers">
+                  <td>
+                    <div class="user-name-cell">
+                      <img [src]="user.avatar " [alt]="user.name" class="user-avatar-small">
+                      <div>
+                        <div><strong>{{user.name || 'N/A'}}</strong></div>
+                        <div class="user-spec">{{user.specialization || 'N/A'}}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>{{user.email || 'N/A'}}</td>
+                  <td>{{user.phone || 'N/A'}}</td>
+                  <td><span class="badge badge-info">Mentor</span></td>
+                  <td><span class="badge"
+                      [ngClass]="getStatusClass(user.isActive ? 'active' : 'inactive')">{{user.isActive ? 'Active' :
+                      'Inactive'}}</span></td>
+                  <td>
+                    <span class="badge" [ngClass]="getStatusClass(user.verificationStatus || 'pending')">
+                      {{user.verificationStatus || 'Pending'}}
+                    </span>
+                  </td>
+                  <td>{{formatDate(user.createdAt)}}</td>
+                  <td>
+                    <div class="action-buttons">
+                      <button class="action-btn view" (click)="viewUserDetails(user, 'trainer')"
+                        title="View Details">View</button>
+                      <button class="action-btn edit" (click)="openEditUser(user, 'trainer')"
+                        title="Edit Mentor">Edit</button>
+                      <button class="action-btn approve" *ngIf="user.verificationStatus === 'pending'"
+                        (click)="verifyUser(user._id || user.id, 'trainer', 'verified')" title="Verify Mentor">
+                        <i class="fa fa-check-circle"></i> Verify
+                      </button>
+                      <button class="action-btn approve" *ngIf="!user.isActive"
+                        (click)="updateUserStatus(user._id || user.id, 'trainer', 'active')" title="Activate Mentor">
+                        <i class="fa fa-power-off"></i> Activate
+                      </button>
+                      <button class="action-btn reject" *ngIf="user.isActive"
+                        (click)="updateUserStatus(user._id || user.id, 'trainer', 'inactive')"
+                        title="Deactivate Mentor">
+                        <i class="fa fa-ban"></i> Deactivate
+                      </button>
+                      <button class="action-btn delete" (click)="deleteUser(user._id || user.id, 'trainer')"
+                        title="Delete Mentor">
+                        <i class="fa fa-trash"></i> Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </ng-container>
+
+              <!-- Institutions Tab -->
+              <ng-container *ngIf="activeUserTab === 'institutions' || activeUserTab === 'all'">
+                <tr *ngFor="let user of userManagement.institutions">
+                  <td>
+                    <div class="user-name-cell">
+                      <img [src]="user.logo " [alt]="user.name" class="user-avatar-small">
+                      <span>{{user.name || 'N/A'}}</span>
+                    </div>
+                  </td>
+                  <td>{{user.email || 'N/A'}}</td>
+                  <td>{{user.phone || 'N/A'}}</td>
+                  <td><span class="badge badge-info">Institution</span></td>
+                  <td><span class="badge"
+                      [ngClass]="getStatusClass(user.isActive ? 'active' : 'inactive')">{{user.isActive ? 'Active' :
+                      'Inactive'}}</span></td>
+                  <td>
+                    <span class="badge" [ngClass]="getStatusClass(user.verificationStatus || 'pending')">
+                      {{user.verificationStatus || 'Pending'}}
+                    </span>
+                  </td>
+                  <td>{{formatDate(user.createdAt)}}</td>
+                  <td>
+                    <div class="action-buttons">
+                      <button class="action-btn view" (click)="viewUserDetails(user, 'institution')"
+                        title="View Details">View</button>
+                      <button class="action-btn edit" (click)="openEditUser(user, 'institution')"
+                        title="Edit Institution">Edit</button>
+                      <button class="action-btn approve" *ngIf="user.verificationStatus === 'pending'"
+                        (click)="verifyUser(user._id || user.id, 'institution', 'verified')" title="Verify Institution">
+                        <i class="fa fa-check-circle"></i> Verify
+                      </button>
+                      <button class="action-btn approve" *ngIf="!user.isActive"
+                        (click)="updateUserStatus(user._id || user.id, 'institution', 'active')"
+                        title="Activate Institution">
+                        <i class="fa fa-power-off"></i> Activate
+                      </button>
+                      <button class="action-btn reject" *ngIf="user.isActive"
+                        (click)="updateUserStatus(user._id || user.id, 'institution', 'inactive')"
+                        title="Deactivate Institution">
+                        <i class="fa fa-ban"></i> Deactivate
+                      </button>
+                      <button class="action-btn delete" (click)="deleteUser(user._id || user.id, 'institution')"
+                        title="Delete Institution">
+                        <i class="fa fa-trash"></i> Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </ng-container>
+
+              <!-- Empty State -->
+              <ng-container *ngIf="(activeUserTab === 'students' && userManagement.students.length === 0) || 
+                                    (activeUserTab === 'trainers' && userManagement.trainers.length === 0) || 
+                                    (activeUserTab === 'mentors' && userManagement.trainers.length === 0) ||
+                                    (activeUserTab === 'institutions' && userManagement.institutions.length === 0)">
+                <tr>
+                  <td colspan="8" class="text-center">
+                    <div class="empty-state">
+                      <i class="fa fa-users" style="font-size: 48px; color: #8b949e; margin-bottom: 16px;"></i>
+                      <p style="color: #8b949e;">No {{activeUserTab}} found</p>
+                    </div>
+                  </td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- User Details Modal -->
+      <div class="modal-overlay" *ngIf="showUserDetails" (click)="closeUserDetails()">
+        <div class="modal-content user-detail-modal" (click)="$event.stopPropagation()">
+          <div class="modal-header">
+            <h2>
+              <i class="fa" [class.fa-graduation-cap]="userDetailType === 'student'"
+                [class.fa-chalkboard-teacher]="userDetailType === 'trainer'"
+                [class.fa-university]="userDetailType === 'institution'"></i>
+              {{userDetailType === 'student' ? 'Student' : userDetailType === 'trainer' ? 'Trainer' : 'Institution'}}
+              Details
+            </h2>
+            <button class="modal-close" (click)="closeUserDetails()">
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+          <div class="modal-body" *ngIf="selectedUser">
+            <div class="user-detail-header">
+              <img [src]="selectedUser.avatar || selectedUser.logo "
+                [alt]="selectedUser.name || selectedUser.studentName" class="user-detail-avatar">
+              <div class="user-detail-info">
+                <h3>{{selectedUser.name || selectedUser.studentName || 'N/A'}}</h3>
+                <p class="user-email"><i class="fa fa-envelope"></i> {{selectedUser.email || 'N/A'}}</p>
+                <p class="user-phone"><i class="fa fa-phone"></i> {{selectedUser.phone || 'N/A'}}</p>
+                <div class="user-status-badges">
+                  <span class="badge" [ngClass]="getStatusClass(selectedUser.isActive ? 'active' : 'inactive')">
+                    {{selectedUser.isActive ? 'Active' : 'Inactive'}}
+                  </span>
+                  <span class="badge" *ngIf="selectedUser.verificationStatus"
+                    [ngClass]="getStatusClass(selectedUser.verificationStatus)">
+                    {{selectedUser.verificationStatus}}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="user-detail-content">
+              <div class="detail-section">
+                <h4><i class="fa fa-info-circle"></i> Basic Information</h4>
+                <div class="detail-grid">
+                  <div class="detail-item">
+                    <label>Full Name:</label>
+                    <span>{{selectedUser.name || selectedUser.studentName || 'N/A'}}</span>
+                  </div>
+                  <div class="detail-item">
+                    <label>Email:</label>
+                    <span>{{selectedUser.email || 'N/A'}}</span>
+                  </div>
+                  <div class="detail-item">
+                    <label>Phone:</label>
+                    <span>{{selectedUser.phone || 'N/A'}}</span>
+                  </div>
+                  <div class="detail-item" *ngIf="selectedUser.bio">
+                    <label>Bio:</label>
+                    <span>{{selectedUser.bio || 'N/A'}}</span>
+                  </div>
+                  <div class="detail-item" *ngIf="selectedUser.specialization">
+                    <label>Specialization:</label>
+                    <span>{{selectedUser.specialization || 'N/A'}}</span>
+                  </div>
+                  <div class="detail-item" *ngIf="selectedUser.title">
+                    <label>Title:</label>
+                    <span>{{selectedUser.title || 'N/A'}}</span>
+                  </div>
+                  <div class="detail-item" *ngIf="selectedUser.location">
+                    <label>Location:</label>
+                    <span>{{selectedUser.location || 'N/A'}}</span>
+                  </div>
+                  <div class="detail-item" *ngIf="selectedUser.address">
+                    <label>Address:</label>
+                    <span>{{selectedUser.address || 'N/A'}}</span>
+                  </div>
+                  <div class="detail-item" *ngIf="selectedUser.city || selectedUser.state || selectedUser.country">
+                    <label>Location:</label>
+                    <span>{{selectedUser.city || ''}} {{selectedUser.state || ''}} {{selectedUser.country || ''}}</span>
+                  </div>
+                  <div class="detail-item">
+                    <label>Join Date:</label>
+                    <span>{{formatDate(selectedUser.createdAt)}}</span>
+                  </div>
+                  <div class="detail-item" *ngIf="selectedUser.lastLogin">
+                    <label>Last Login:</label>
+                    <span>{{formatDate(selectedUser.lastLogin)}}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="detail-section" *ngIf="userDetailType === 'trainer'">
+                <h4><i class="fa fa-star"></i> Trainer Information</h4>
+                <div class="detail-grid">
+                  <div class="detail-item" *ngIf="selectedUser.rating">
+                    <label>Rating:</label>
+                    <span>{{selectedUser.rating || 'N/A'}} <i class="fa fa-star" style="color: #ffc107;"></i></span>
+                  </div>
+                  <div class="detail-item" *ngIf="selectedUser.experienceYears">
+                    <label>Experience:</label>
+                    <span>{{selectedUser.experienceYears || 0}} years</span>
+                  </div>
+                  <div class="detail-item" *ngIf="selectedUser.skills && selectedUser.skills.length > 0">
+                    <label>Skills:</label>
+                    <div class="tags-list">
+                      <span class="tag" *ngFor="let skill of selectedUser.skills">{{skill.name || skill}}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="detail-section" *ngIf="userDetailType === 'institution'">
+                <h4><i class="fa fa-building"></i> Institution Information</h4>
+                <div class="detail-grid">
+                  <div class="detail-item" *ngIf="selectedUser.website">
+                    <label>Website:</label>
+                    <span><a [href]="selectedUser.website" target="_blank">{{selectedUser.website}}</a></span>
+                  </div>
+                  <div class="detail-item" *ngIf="selectedUser.bio">
+                    <label>Description:</label>
+                    <span>{{selectedUser.bio || 'N/A'}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button class="btn btn-secondary" (click)="closeUserDetails()">Close</button>
+              <button class="btn btn-primary" *ngIf="!selectedUser.isActive"
+                (click)="updateUserStatus(selectedUser._id || selectedUser.id, userDetailType, 'active'); closeUserDetails()">
+                Activate User
+              </button>
+              <button class="btn btn-danger" *ngIf="selectedUser.isActive"
+                (click)="updateUserStatus(selectedUser._id || selectedUser.id, userDetailType, 'inactive'); closeUserDetails()">
+                Deactivate User
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Edit Modal -->
+      <div class="modal-overlay" *ngIf="showUserEdit" (click)="closeUserEdit()">
+        <div class="modal-content user-edit-modal" (click)="$event.stopPropagation()">
+          <div class="modal-header">
+            <h2>
+              <i class="fa fa-pencil-square-o"></i>
+              Edit {{editUserType === 'student' ? 'Student' : editUserType === 'trainer' ? 'Trainer' : 'Institution'}}
+            </h2>
+            <button class="modal-close" (click)="closeUserEdit()">
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="edit-form">
+              <div class="form-row">
+                <div class="form-field">
+                  <label>Name</label>
+                  <input type="text" [(ngModel)]="editUserForm.name" />
+                </div>
+                <div class="form-field">
+                  <label>Email</label>
+                  <input type="email" [(ngModel)]="editUserForm.email" />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-field">
+                  <label>Phone</label>
+                  <input type="text" [(ngModel)]="editUserForm.phone" />
+                </div>
+                <div class="form-field">
+                  <label>Status</label>
+                  <select [(ngModel)]="editUserForm.isActive">
+                    <option [ngValue]="true">Active</option>
+                    <option [ngValue]="false">Inactive</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-field">
+                  <label>City</label>
+                  <input type="text" [(ngModel)]="editUserForm.city" />
+                </div>
+                <div class="form-field">
+                  <label>Country</label>
+                  <input type="text" [(ngModel)]="editUserForm.country" />
+                </div>
+              </div>
+              <div class="form-row" *ngIf="editUserType === 'trainer'">
+                <div class="form-field">
+                  <label>Title</label>
+                  <input type="text" [(ngModel)]="editUserForm.title" />
+                </div>
+                <div class="form-field">
+                  <label>Specialization</label>
+                  <input type="text" [(ngModel)]="editUserForm.specialization" />
+                </div>
+              </div>
+              <div class="form-row" *ngIf="editUserType === 'trainer'">
+                <div class="form-field">
+                  <label>Location</label>
+                  <input type="text" [(ngModel)]="editUserForm.location" />
+                </div>
+                <div class="form-field">
+                  <label>Experience (Years)</label>
+                  <input type="number" min="0" [(ngModel)]="editUserForm.experienceYears" />
+                </div>
+              </div>
+              <div class="form-row" *ngIf="editUserType === 'trainer' || editUserType === 'institution'">
+                <div class="form-field">
+                  <label>Verification Status</label>
+                  <select [(ngModel)]="editUserForm.verificationStatus">
+                    <option value="pending">Pending</option>
+                    <option value="verified">Verified</option>
+                    <option value="rejected">Rejected</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row" *ngIf="editUserType === 'institution'">
+                <div class="form-field">
+                  <label>Website</label>
+                  <input type="text" [(ngModel)]="editUserForm.website" />
+                </div>
+                <div class="form-field">
+                  <label>State</label>
+                  <input type="text" [(ngModel)]="editUserForm.state" />
+                </div>
+              </div>
+              <div class="form-row" *ngIf="editUserType === 'institution'">
+                <div class="form-field form-field-full">
+                  <label>Address</label>
+                  <input type="text" [(ngModel)]="editUserForm.address" />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-field form-field-full">
+                  <label>Bio</label>
+                  <textarea rows="3" [(ngModel)]="editUserForm.bio"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="closeUserEdit()">Cancel</button>
+            <button class="btn btn-primary" (click)="saveUserEdits()" [disabled]="isSavingUser">
+              <i class="fa fa-save"></i> Save Changes
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Courses Section -->
+      <div class="section" *ngIf="activeSection === 'courses'">
+        <div class="section-header">
+          <h2>Course Management</h2>
+          <button class="btn btn-primary">
+            <i class="fa fa-plus"></i>
+            Add Course
+          </button>
+        </div>
+
+        <div class="filter-bar">
+          <input type="text" class="filter-input" placeholder="Search courses..." [(ngModel)]="searchTerm"
+            (input)="onSearch()">
+          <select class="filter-select" [(ngModel)]="selectedCategory" (change)="onFilterChange()">
+            <option value="all">All Categories</option>
+            <option value="Web Dev">Web Development</option>
+            <option value="Data Science">Data Science</option>
+            <option value="Mobile">Mobile</option>
+          </select>
+          <select class="filter-select" [(ngModel)]="selectedStatus" (change)="onFilterChange()">
+            <option value="all">All Status</option>
+            <option value="active">Active</option>
+            <option value="pending">Pending</option>
+          </select>
+        </div>
+
+        <div class="table-card">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Enrollments</th>
+                <th>Revenue</th>
+                <th>Rating</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let course of courses">
+                <td>{{course.title}}</td>
+                <td>{{course.category}}</td>
+                <td>{{course.enrollments}}</td>
+                <td>{{formatCurrency(course.revenue)}}</td>
+                <td>{{course.rating || 0}}</td>
+                <td><span class="badge" [ngClass]="getStatusClass(course.status || '')">{{course.status ||
+                    'N/A'}}</span></td>
+                <td>
+                  <div class="action-buttons">
+                    <button class="action-btn view" (click)="viewCourseDetails(course)"
+                      title="View Course Details">View</button>
+                    <button class="action-btn edit" (click)="openEditCourse(course)" title="Edit Course">Edit</button>
+                    <button class="action-btn approve" *ngIf="course.status === 'pending' || course.status === 'draft'"
+                      (click)="approveCourse(course.id, course.type || 'trainer')">Approve</button>
+                    <button class="action-btn reject" *ngIf="course.status === 'pending' || course.status === 'draft'"
+                      (click)="rejectCourse(course.id, course.type || 'trainer')">Reject</button>
+                    <button class="action-btn delete"
+                      (click)="deleteCourse(course.id, course.type || 'trainer')">Delete</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Trending Courses Section -->
+      <div class="section" *ngIf="activeSection === 'trending'">
+        <div class="section-header">
+          <h2>Trending Courses</h2>
+          <button class="btn btn-primary" (click)="loadTrendingCourses()">
+            <i class="fa fa-refresh"></i>
+            Refresh
+          </button>
+        </div>
+
+        <div class="filter-bar">
+          <input type="text" class="filter-input" placeholder="Search courses..." [(ngModel)]="searchTerm"
+            (input)="onSearch()">
+          <select class="filter-select" [(ngModel)]="selectedCategory" (change)="onFilterChange()">
+            <option value="all">All Categories</option>
+            <option value="Web Dev">Web Development</option>
+            <option value="Data Science">Data Science</option>
+            <option value="Mobile">Mobile</option>
+          </select>
+          <select class="filter-select" [(ngModel)]="selectedStatus" (change)="onFilterChange()">
+            <option value="all">All Status</option>
+            <option value="active">Active</option>
+            <option value="pending">Pending</option>
+          </select>
+        </div>
+
+        <div class="table-card">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Instructor/Institute</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Trending</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let course of trendingCourses">
+                <td>{{course.title}}</td>
+                <td>{{course.category}}</td>
+                <td>{{course.instructor?.name || course.institution?.name || 'N/A'}}</td>
+                <td><span class="badge badge-info">{{course.type || course.source || 'trainer'}}</span></td>
+                <td><span class="badge" [ngClass]="getStatusClass(course.status || '')">{{course.status ||
+                    'N/A'}}</span></td>
+                <td>
+                  <span class="badge badge-success" *ngIf="course.isFeatured">Trending</span>
+                  <span class="badge badge-warning" *ngIf="!course.isFeatured">Normal</span>
+                </td>
+                <td>
+                  <div class="action-buttons">
+                    <button class="action-btn feature" *ngIf="!course.isFeatured"
+                      [disabled]="isUpdatingTrendingCourseId === (course.id || course.courseId) || !canToggleTrending(course)"
+                      (click)="setCourseTrending(course, true)">
+                      Add to Trending
+                    </button>
+                    <button class="action-btn delete" *ngIf="course.isFeatured"
+                      [disabled]="isUpdatingTrendingCourseId === (course.id || course.courseId) || !canToggleTrending(course)"
+                      (click)="setCourseTrending(course, false)">
+                      Remove
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="trendingCourses.length === 0">
+                <td colspan="7">
+                  <div class="empty-state">
+                    <i class="fa fa-book"></i>
+                    <p>No courses found.</p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Course Edit Modal -->
+      <div class="modal-overlay" *ngIf="showCourseEdit" (click)="closeCourseEdit()">
+        <div class="modal-content course-edit-modal" (click)="$event.stopPropagation()">
+          <div class="modal-header">
+            <h2>
+              <i class="fa fa-pencil-square-o"></i>
+              Edit Course
+            </h2>
+            <button class="modal-close" (click)="closeCourseEdit()">
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="edit-form">
+              <div class="form-row">
+                <div class="form-field">
+                  <label>Title</label>
+                  <input type="text" [(ngModel)]="editCourseForm.title" />
+                </div>
+                <div class="form-field">
+                  <label>Category</label>
+                  <input type="text" [(ngModel)]="editCourseForm.category" />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-field">
+                  <label>Level</label>
+                  <input type="text" [(ngModel)]="editCourseForm.level" />
+                </div>
+                <div class="form-field">
+                  <label>Price</label>
+                  <input type="number" min="0" [(ngModel)]="editCourseForm.price" />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-field">
+                  <label>Duration (Hours)</label>
+                  <input type="number" min="0" [(ngModel)]="editCourseForm.durationHours" />
+                </div>
+                <div class="form-field">
+                  <label>Status</label>
+                  <select [(ngModel)]="editCourseForm.status">
+                    <option *ngIf="editCourseType === 'trainer'" value="draft">Draft</option>
+                    <option *ngIf="editCourseType === 'trainer'" value="private">Private</option>
+                    <option *ngIf="editCourseType === 'trainer'" value="public">Public</option>
+                    <option *ngIf="editCourseType === 'trainer'" value="pending">Pending</option>
+                    <option *ngIf="editCourseType === 'trainer'" value="rejected">Rejected</option>
+                    <option *ngIf="editCourseType === 'institution'" value="active">Active</option>
+                    <option *ngIf="editCourseType === 'institution'" value="inactive">Inactive</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row" *ngIf="editCourseType === 'trainer'">
+                <div class="form-field">
+                  <label>Subtitle</label>
+                  <input type="text" [(ngModel)]="editCourseForm.subtitle" />
+                </div>
+                <div class="form-field">
+                  <label>Language</label>
+                  <input type="text" [(ngModel)]="editCourseForm.language" />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-field form-field-full">
+                  <label>Description</label>
+                  <textarea rows="4" [(ngModel)]="editCourseForm.description"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="closeCourseEdit()">Cancel</button>
+            <button class="btn btn-primary" (click)="saveCourseEdits()" [disabled]="isSavingCourse">
+              <i class="fa fa-save"></i> Save Changes
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Course Details Modal -->
+      <div class="modal-overlay" *ngIf="showCourseDetails" (click)="closeCourseDetails()">
+        <div class="modal-content course-detail-modal" (click)="$event.stopPropagation()">
+          <div class="modal-header">
+            <h2>
+              <i class="fa fa-book"></i>
+              Course Details
+            </h2>
+            <button class="modal-close" (click)="closeCourseDetails()">
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+          <div class="modal-body" *ngIf="selectedCourse">
+            <div class="course-detail-header">
+              <div class="course-detail-info">
+                <h3>{{selectedCourse.title || 'N/A'}}</h3>
+                <div class="course-meta">
+                  <span class="badge" [ngClass]="getStatusClass(selectedCourse.status)">{{selectedCourse.status ||
+                    'N/A'}}</span>
+                  <span class="badge badge-info">{{selectedCourse.category || 'N/A'}}</span>
+                  <span class="badge" *ngIf="selectedCourse.type">
+                    {{selectedCourse.type === 'trainer' ? 'Trainer Course' : 'Institution Course'}}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="course-detail-content">
+              <div class="detail-section">
+                <h4><i class="fa fa-info-circle"></i> Course Information</h4>
+                <div class="detail-grid">
+                  <div class="detail-item">
+                    <label>Title:</label>
+                    <span>{{selectedCourse.title || 'N/A'}}</span>
+                  </div>
+                  <div class="detail-item">
+                    <label>Category:</label>
+                    <span>{{selectedCourse.category || 'N/A'}}</span>
+                  </div>
+                  <div class="detail-item">
+                    <label>Status:</label>
+                    <span class="badge" [ngClass]="getStatusClass(selectedCourse.status)">{{selectedCourse.status ||
+                      'N/A'}}</span>
+                  </div>
+                  <div class="detail-item" *ngIf="selectedCourse.type">
+                    <label>Course Type:</label>
+                    <span>{{selectedCourse.type === 'trainer' ? 'Trainer Course' : 'Institution Course'}}</span>
+                  </div>
+                  <div class="detail-item">
+                    <label>Enrollments:</label>
+                    <span>{{selectedCourse.enrollments || 0}}</span>
+                  </div>
+                  <div class="detail-item">
+                    <label>Revenue:</label>
+                    <span>{{formatCurrency(selectedCourse.revenue || 0)}}</span>
+                  </div>
+                  <div class="detail-item">
+                    <label>Rating:</label>
+                    <span>
+                      {{selectedCourse.rating || 0}}
+                      <i class="fa fa-star" style="color: #ffc107;"></i>
+                    </span>
+                  </div>
+                  <div class="detail-item" *ngIf="selectedCourse.createdAt">
+                    <label>Created Date:</label>
+                    <span>{{formatDate(selectedCourse.createdAt)}}</span>
+                  </div>
+                  <div class="detail-item" *ngIf="selectedCourse.price">
+                    <label>Price:</label>
+                    <span>{{formatCurrency(selectedCourse.price)}}</span>
+                  </div>
+                  <div class="detail-item" *ngIf="selectedCourse.duration">
+                    <label>Duration:</label>
+                    <span>{{selectedCourse.duration || 'N/A'}}</span>
+                  </div>
+                  <div class="detail-item" *ngIf="selectedCourse.level">
+                    <label>Level:</label>
+                    <span>{{selectedCourse.level || 'N/A'}}</span>
+                  </div>
+                  <div class="detail-item" *ngIf="selectedCourse.description">
+                    <label>Description:</label>
+                    <span>{{selectedCourse.description || 'N/A'}}</span>
+                  </div>
+                  <div class="detail-item" *ngIf="selectedCourse.instructorName">
+                    <label>Instructor:</label>
+                    <span>{{selectedCourse.instructorName || 'N/A'}}</span>
+                  </div>
+                  <div class="detail-item" *ngIf="selectedCourse.institutionName">
+                    <label>Institution:</label>
+                    <span>{{selectedCourse.institutionName || 'N/A'}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button class="btn btn-secondary" (click)="closeCourseDetails()">Close</button>
+              <button class="btn btn-primary"
+                *ngIf="selectedCourse.status === 'pending' || selectedCourse.status === 'draft'"
+                (click)="approveCourse(selectedCourse.id, selectedCourse.type || 'trainer'); closeCourseDetails()">
+                Approve Course
+              </button>
+              <button class="btn btn-danger"
+                *ngIf="selectedCourse.status === 'pending' || selectedCourse.status === 'draft'"
+                (click)="rejectCourse(selectedCourse.id, selectedCourse.type || 'trainer'); closeCourseDetails()">
+                Reject Course
+              </button>
+              <button class="btn btn-danger"
+                (click)="deleteCourse(selectedCourse.id, selectedCourse.type || 'trainer'); closeCourseDetails()">
+                Delete Course
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Orders Section -->
+      <div class="section" *ngIf="activeSection === 'orders'">
+        <div class="section-header">
+          <h2>Order Management</h2>
+          <button class="btn btn-primary" (click)="exportData()">
+            <i class="fa fa-download"></i>
+            Export
+          </button>
+        </div>
+
+        <div class="filter-bar">
+          <input type="text" class="filter-input" placeholder="Search orders..." [(ngModel)]="searchTerm"
+            (input)="onSearch()">
+          <select class="filter-select" [(ngModel)]="selectedStatus" (change)="onFilterChange()">
+            <option value="all">All Status</option>
+            <option value="completed">Completed</option>
+            <option value="pending">Pending</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+
+        <div class="table-card">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>User</th>
+                <th>Course</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let order of orders">
+                <td>#{{order.id}}</td>
+                <td>{{order.userName}}</td>
+                <td>{{order.course}}</td>
+                <td>{{formatCurrency(order.amount)}}</td>
+                <td><span class="badge" [ngClass]="getStatusClass(order.status)">{{order.status}}</span></td>
+                <td>{{formatDate(order.date)}}</td>
+                <td>
+                  <div class="action-buttons">
+                    <button class="action-btn view">View</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Payments Section -->
+      <div class="section" *ngIf="activeSection === 'payments'">
+        <div class="section-header">
+          <h2>Payment Management</h2>
+          <button class="btn btn-primary" (click)="exportData()">
+            <i class="fa fa-download"></i>
+            Export
+          </button>
+        </div>
+
+        <div class="filter-bar">
+          <input type="text" class="filter-input" placeholder="Search payments..." [(ngModel)]="searchTerm"
+            (input)="onSearch()">
+          <select class="filter-select" [(ngModel)]="selectedStatus" (change)="onFilterChange()">
+            <option value="all">All Status</option>
+            <option value="success">Success</option>
+            <option value="pending">Pending</option>
+            <option value="failed">Failed</option>
+          </select>
+        </div>
+
+        <div class="table-card">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Payment ID</th>
+                <th>User</th>
+                <th>Amount</th>
+                <th>Method</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let payment of payments">
+                <td>#{{payment.id}}</td>
+                <td>{{payment.userName}}</td>
+                <td>{{formatCurrency(payment.amount)}}</td>
+                <td>{{payment.method}}</td>
+                <td><span class="badge" [ngClass]="getStatusClass(payment.status)">{{payment.status}}</span></td>
+                <td>{{formatDate(payment.date)}}</td>
+                <td>
+                  <div class="action-buttons">
+                    <button class="action-btn view" (click)="viewPaymentDetails(payment)"
+                      title="View Payment Details">View</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Payment Details Modal -->
+      <div class="modal-overlay" *ngIf="showPaymentDetails" (click)="closePaymentDetails()">
+        <div class="modal-content payment-detail-modal" (click)="$event.stopPropagation()">
+          <div class="modal-header">
+            <h2>
+              <i class="fa fa-credit-card"></i>
+              Payment Details
+            </h2>
+            <button class="modal-close" (click)="closePaymentDetails()">
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+          <div class="modal-body" *ngIf="selectedPayment">
+            <div class="payment-detail-header">
+              <div class="payment-detail-info">
+                <h3>Payment #{{selectedPayment.id || selectedPayment._id || 'N/A'}}</h3>
+                <div class="payment-meta">
+                  <span class="badge" [ngClass]="getStatusClass(selectedPayment.status)">{{selectedPayment.status ||
+                    'N/A'}}</span>
+                  <span class="badge badge-info">{{formatCurrency(selectedPayment.amount || 0)}}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="payment-detail-content">
+              <div class="detail-section">
+                <h4><i class="fa fa-info-circle"></i> Payment Information</h4>
+                <div class="detail-grid">
+                  <div class="detail-item">
+                    <label>Payment ID:</label>
+                    <span>{{selectedPayment.id || selectedPayment._id || selectedPayment.transactionId || 'N/A'}}</span>
+                  </div>
+                  <div class="detail-item">
+                    <label>Transaction ID:</label>
+                    <span>{{selectedPayment.transactionId || selectedPayment.id || 'N/A'}}</span>
+                  </div>
+                  <div class="detail-item">
+                    <label>User Name:</label>
+                    <span>{{selectedPayment.userName || selectedPayment.studentName || 'N/A'}}</span>
+                  </div>
+                  <div class="detail-item" *ngIf="selectedPayment.userId">
+                    <label>User ID:</label>
+                    <span>{{selectedPayment.userId || 'N/A'}}</span>
+                  </div>
+                  <div class="detail-item">
+                    <label>Amount:</label>
+                    <span class="amount-highlight">{{formatCurrency(selectedPayment.amount || 0)}}</span>
+                  </div>
+                  <div class="detail-item">
+                    <label>Payment Method:</label>
+                    <span>{{selectedPayment.method || selectedPayment.paymentMethod || 'N/A'}}</span>
+                  </div>
+                  <div class="detail-item">
+                    <label>Status:</label>
+                    <span class="badge" [ngClass]="getStatusClass(selectedPayment.status)">{{selectedPayment.status ||
+                      'N/A'}}</span>
+                  </div>
+                  <div class="detail-item">
+                    <label>Payment Date:</label>
+                    <span>{{formatDate(selectedPayment.date || selectedPayment.paymentDate ||
+                      selectedPayment.createdAt)}}</span>
+                  </div>
+                  <div class="detail-item" *ngIf="selectedPayment.courseTitle">
+                    <label>Course:</label>
+                    <span>{{selectedPayment.courseTitle || 'N/A'}}</span>
+                  </div>
+                  <div class="detail-item" *ngIf="selectedPayment.courseType">
+                    <label>Course Type:</label>
+                    <span>{{selectedPayment.courseType || 'N/A'}}</span>
+                  </div>
+                  <div class="detail-item" *ngIf="selectedPayment.instructorName">
+                    <label>Instructor:</label>
+                    <span>{{selectedPayment.instructorName || 'N/A'}}</span>
+                  </div>
+                  <div class="detail-item" *ngIf="selectedPayment.institutionName">
+                    <label>Institution:</label>
+                    <span>{{selectedPayment.institutionName || 'N/A'}}</span>
+                  </div>
+                  <div class="detail-item" *ngIf="selectedPayment.email">
+                    <label>Email:</label>
+                    <span>{{selectedPayment.email || 'N/A'}}</span>
+                  </div>
+                  <div class="detail-item" *ngIf="selectedPayment.phone">
+                    <label>Phone:</label>
+                    <span>{{selectedPayment.phone || 'N/A'}}</span>
+                  </div>
+                  <div class="detail-item" *ngIf="selectedPayment.description">
+                    <label>Description:</label>
+                    <span>{{selectedPayment.description || 'N/A'}}</span>
+                  </div>
+                  <div class="detail-item" *ngIf="selectedPayment.notes">
+                    <label>Notes:</label>
+                    <span>{{selectedPayment.notes || 'N/A'}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button class="btn btn-secondary" (click)="closePaymentDetails()">Close</button>
+              <button class="btn btn-primary"
+                *ngIf="selectedPayment.status === 'pending' || selectedPayment.status === 'failed'"
+                (click)="closePaymentDetails()">
+                Process Payment
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Help & Support Section -->
+      <div class="section" *ngIf="activeSection === 'support'">
+        <div class="section-header">
+          <h2>Help & Support</h2>
+          <button class="btn btn-primary" (click)="loadSupportTickets()">
+            <i class="fa fa-refresh"></i>
+            Refresh
+          </button>
+        </div>
+
+        <div class="filter-bar">
+          <input type="text" class="filter-input" placeholder="Search tickets..." [(ngModel)]="searchTerm"
+            (input)="onSearch()">
+          <select class="filter-select" [(ngModel)]="selectedStatus" (change)="onFilterChange()">
+            <option value="all">All Status</option>
+            <option value="Open">Open</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Pending">Pending</option>
+            <option value="Resolved">Resolved</option>
+            <option value="Closed">Closed</option>
+          </select>
+          <select class="filter-select" [(ngModel)]="selectedCategory" (change)="onFilterChange()">
+            <option value="all">All Categories</option>
+            <option value="Technical">Technical</option>
+            <option value="Billing">Billing</option>
+            <option value="Account">Account</option>
+            <option value="Course">Course</option>
+            <option value="Payment">Payment</option>
+            <option value="General">General</option>
+            <option value="Other">Other</option>
+          </select>
+          <select class="filter-select" [(ngModel)]="supportPriorityFilter" (change)="onFilterChange()">
+            <option value="all">All Priority</option>
+            <option value="Urgent">Urgent</option>
+            <option value="High">High</option>
+            <option value="Medium">Medium</option>
+            <option value="Low">Low</option>
+          </select>
+        </div>
+
+        <div class="table-card" *ngIf="!isLoading">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Ticket</th>
+                <th>Subject</th>
+                <th>Student</th>
+                <th>Category</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let ticket of supportTickets">
+                <td>#{{ticket.ticketNumber}}</td>
+                <td>{{ticket.subject}}</td>
+                <td>{{ticket.student?.name || 'Unknown'}}</td>
+                <td><span class="badge badge-info">{{ticket.category}}</span></td>
+                <td><span class="badge" [ngClass]="getPriorityClass(ticket.priority)">{{ticket.priority}}</span></td>
+                <td><span class="badge" [ngClass]="getStatusClass(ticket.status)">{{ticket.status}}</span></td>
+                <td>{{formatDate(ticket.createdAt)}}</td>
+                <td>
+                  <div class="action-buttons">
+                    <button class="action-btn view" (click)="viewSupportTicket(ticket)"
+                      title="View Ticket">View</button>
+                    <button class="action-btn resolve"
+                      *ngIf="ticket.status !== 'Resolved' && ticket.status !== 'Closed'"
+                      (click)="viewSupportTicket(ticket)" title="Resolve Ticket">
+                      Resolve
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="supportTickets.length === 0">
+                <td colspan="8">
+                  <div class="empty-state">
+                    <i class="fa fa-life-ring"></i>
+                    <p>No support tickets found.</p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Support Ticket Details Modal -->
+      <div class="modal-overlay" *ngIf="showSupportDetails" (click)="closeSupportTicketDetails()">
+        <div class="modal-content support-ticket-modal" (click)="$event.stopPropagation()">
+          <div class="modal-header">
+            <h2>
+              <i class="fa fa-life-ring"></i>
+              Support Ticket
+            </h2>
+            <button class="modal-close" (click)="closeSupportTicketDetails()">
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+          <div class="modal-body" *ngIf="selectedSupportTicket">
+            <div class="support-ticket-header">
+              <div>
+                <h3>#{{selectedSupportTicket.ticketNumber}} - {{selectedSupportTicket.subject}}</h3>
+                <p>{{selectedSupportTicket.description}}</p>
+              </div>
+              <div class="support-ticket-badges">
+                <span class="badge"
+                  [ngClass]="getStatusClass(selectedSupportTicket.status)">{{selectedSupportTicket.status}}</span>
+                <span class="badge"
+                  [ngClass]="getPriorityClass(selectedSupportTicket.priority)">{{selectedSupportTicket.priority}}</span>
+              </div>
+            </div>
+
+            <div class="support-detail-grid">
+              <div class="detail-item">
+                <label>Student:</label>
+                <span>{{selectedSupportTicket.student?.name || 'Unknown'}}</span>
+              </div>
+              <div class="detail-item">
+                <label>Email:</label>
+                <span>{{selectedSupportTicket.student?.email || 'N/A'}}</span>
+              </div>
+              <div class="detail-item">
+                <label>Category:</label>
+                <span>{{selectedSupportTicket.category}}</span>
+              </div>
+              <div class="detail-item">
+                <label>Created:</label>
+                <span>{{formatDate(selectedSupportTicket.createdAt)}}</span>
+              </div>
+            </div>
+
+            <div class="support-messages" *ngIf="selectedSupportTicket.messages?.length">
+              <h4>Conversation</h4>
+              <div class="support-message" *ngFor="let message of selectedSupportTicket.messages">
+                <div class="support-message-meta">
+                  <span class="support-message-sender">{{message.sender}}</span>
+                  <span class="support-message-time">{{formatDate(message.createdAt)}}</span>
+                </div>
+                <p>{{message.message}}</p>
+              </div>
+            </div>
+
+            <div class="support-resolution">
+              <label>Resolution Notes</label>
+              <textarea rows="4" [(ngModel)]="supportResolution"
+                placeholder="Add resolution or internal notes..."></textarea>
+            </div>
+            <div class="support-status">
+              <label>Update Status</label>
+              <select [(ngModel)]="supportStatusUpdate">
+                <option value="Open">Open</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Pending">Pending</option>
+                <option value="Resolved">Resolved</option>
+                <option value="Closed">Closed</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="closeSupportTicketDetails()">Close</button>
+            <button class="btn btn-primary" [disabled]="isSavingSupportTicket" (click)="resolveSupportTicket()">
+              {{isSavingSupportTicket ? 'Saving...' : 'Update Ticket'}}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Institutes Section -->
+      <div class="section" *ngIf="activeSection === 'institutes' && !showInstitutionDetails">
+        <div class="section-header">
+          <h2>Institute Management</h2>
+          <button class="btn btn-primary" (click)="exportData()">
+            <i class="fa fa-download"></i>
+            Export
+          </button>
+        </div>
+
+        <div class="filter-bar">
+          <input type="text" class="filter-input" placeholder="Search institutions..." [(ngModel)]="searchTerm"
+            (input)="onSearch()">
+          <select class="filter-select" [(ngModel)]="selectedStatus" (change)="onFilterChange()">
+            <option value="all">All Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+          <select class="filter-select" [(ngModel)]="selectedCategory" (change)="onFilterChange()">
+            <option value="all">All Verification</option>
+            <option value="verified">Verified</option>
+            <option value="pending">Pending</option>
+            <option value="rejected">Rejected</option>
+          </select>
+          <button class="btn btn-secondary" (click)="clearFilters()">
+            <i class="fa fa-times"></i>
+            Clear
+          </button>
+        </div>
+
+        <div class="loading" *ngIf="isLoading">
+          <i class="fas fa-spinner fa-spin"></i>
+        </div>
+
+        <div class="table-card" *ngIf="!isLoading">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Location</th>
+                <th>Courses</th>
+                <th>Students</th>
+                <th>Revenue</th>
+                <th>Status</th>
+                <th>Verification</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let institution of institutions">
+                <td>
+                  <div class="institution-name-cell">
+                    <img [src]="institution.logo " [alt]="institution.name" class="institution-logo-small">
+                    <span>{{institution.name || 'N/A'}}</span>
+                  </div>
+                </td>
+                <td>{{institution.email || 'N/A'}}</td>
+                <td>{{institution.phone || 'N/A'}}</td>
+                <td>{{institution.address || institution.city || 'N/A'}}</td>
+                <td>{{institution.coursesCount || 0}}</td>
+                <td>{{institution.studentsCount || 0}}</td>
+                <td>{{formatCurrency(institution.totalRevenue || 0)}}</td>
+                <td>
+                  <span class="badge" [ngClass]="getStatusClass(institution.isActive ? 'active' : 'inactive')">
+                    {{institution.isActive ? 'Active' : 'Inactive'}}
+                  </span>
+                </td>
+                <td>
+                  <span class="badge" [ngClass]="getStatusClass(institution.verificationStatus || 'pending')">
+                    {{institution.verificationStatus || 'Pending'}}
+                  </span>
+                </td>
+                <td>
+                  <div class="action-buttons">
+                    <button class="action-btn view" (click)="viewInstitutionDetails(institution)">
+                      <i class="fa fa-eye"></i> View
+                    </button>
+                    <button class="action-btn edit" (click)="openEditInstitution(institution)">
+                      <i class="fa fa-pencil"></i> Edit
+                    </button>
+                    <button class="action-btn approve" *ngIf="institution.verificationStatus === 'pending'"
+                      (click)="verifyUser(institution.id || institution._id, 'institution', 'verified')">
+                      <i class="fa fa-check"></i> Verify
+                    </button>
+                    <button class="action-btn approve" *ngIf="!institution.isActive"
+                      (click)="updateInstitutionStatus(institution.id || institution._id, 'active')">
+                      <i class="fa fa-power-off"></i> Activate
+                    </button>
+                    <button class="action-btn reject" *ngIf="institution.isActive"
+                      (click)="updateInstitutionStatus(institution.id || institution._id, 'inactive')">
+                      <i class="fa fa-ban"></i> Deactivate
+                    </button>
+                    <button class="action-btn delete" (click)="deleteInstitution(institution.id || institution._id)">
+                      <i class="fa fa-trash"></i> Delete
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="institutions.length === 0">
+                <td colspan="10" class="text-center">No institutions found</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination" *ngIf="!isLoading && institutions.length > 0">
+          <button class="btn btn-secondary" [disabled]="currentPage === 1"
+            (click)="currentPage = currentPage - 1; loadInstitutions()">
+            <i class="fa fa-chevron-left"></i> Previous
+          </button>
+          <span class="page-info">Page {{currentPage}}</span>
+          <button class="btn btn-secondary" [disabled]="institutions.length < itemsPerPage"
+            (click)="currentPage = currentPage + 1; loadInstitutions()">
+            Next <i class="fa fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Institution Edit Modal -->
+      <div class="modal-overlay" *ngIf="showInstitutionEdit" (click)="closeInstitutionEdit()">
+        <div class="modal-content institution-edit-modal" (click)="$event.stopPropagation()">
+          <div class="modal-header">
+            <h2>
+              <i class="fa fa-pencil-square-o"></i>
+              Edit Institution
+            </h2>
+            <button class="modal-close" (click)="closeInstitutionEdit()">
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="edit-form">
+              <div class="form-row">
+                <div class="form-field">
+                  <label>Name</label>
+                  <input type="text" [(ngModel)]="editInstitutionForm.name" />
+                </div>
+                <div class="form-field">
+                  <label>Email</label>
+                  <input type="email" [(ngModel)]="editInstitutionForm.email" />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-field">
+                  <label>Phone</label>
+                  <input type="text" [(ngModel)]="editInstitutionForm.phone" />
+                </div>
+                <div class="form-field">
+                  <label>Website</label>
+                  <input type="text" [(ngModel)]="editInstitutionForm.website" />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-field">
+                  <label>City</label>
+                  <input type="text" [(ngModel)]="editInstitutionForm.city" />
+                </div>
+                <div class="form-field">
+                  <label>State</label>
+                  <input type="text" [(ngModel)]="editInstitutionForm.state" />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-field">
+                  <label>Country</label>
+                  <input type="text" [(ngModel)]="editInstitutionForm.country" />
+                </div>
+                <div class="form-field">
+                  <label>Status</label>
+                  <select [(ngModel)]="editInstitutionForm.isActive">
+                    <option [ngValue]="true">Active</option>
+                    <option [ngValue]="false">Inactive</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-field">
+                  <label>Verification</label>
+                  <select [(ngModel)]="editInstitutionForm.verificationStatus">
+                    <option value="pending">Pending</option>
+                    <option value="verified">Verified</option>
+                    <option value="rejected">Rejected</option>
+                  </select>
+                </div>
+                <div class="form-field">
+                  <label>Logo URL</label>
+                  <input type="text" [(ngModel)]="editInstitutionForm.logo" />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-field form-field-full">
+                  <label>Address</label>
+                  <input type="text" [(ngModel)]="editInstitutionForm.address" />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-field form-field-full">
+                  <label>Bio</label>
+                  <textarea rows="3" [(ngModel)]="editInstitutionForm.bio"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="closeInstitutionEdit()">Cancel</button>
+            <button class="btn btn-primary" (click)="saveInstitutionEdits()" [disabled]="isSavingInstitution">
+              <i class="fa fa-save"></i> Save Changes
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Institution Details View -->
+      <div class="section" *ngIf="activeSection === 'institutes' && showInstitutionDetails">
+        <div class="institution-details-header">
+          <button class="btn btn-secondary" (click)="backToInstitutionsList()">
+            <i class="fa fa-arrow-left"></i> Back to List
+          </button>
+          <h2>{{selectedInstitution?.name || 'Institution Details'}}</h2>
+          <button class="btn btn-primary" (click)="openEditInstitution(selectedInstitution)">
+            <i class="fa fa-pencil"></i> Edit Institution
+          </button>
+        </div>
+
+        <div class="loading" *ngIf="isLoading">
+          <i class="fas fa-spinner fa-spin"></i>
+        </div>
+
+        <div *ngIf="!isLoading && selectedInstitution">
+          <!-- Institution Info Card -->
+          <div class="institution-info-card">
+            <div class="institution-header-info">
+              <img [src]="selectedInstitution.logo " [alt]="selectedInstitution.name" class="institution-logo-large">
+              <div class="institution-basic-info">
+                <h3>{{selectedInstitution.name}}</h3>
+                <p class="institution-bio">{{selectedInstitution.bio || 'No description available'}}</p>
+                <div class="institution-meta">
+                  <span><i class="fa fa-envelope"></i> {{selectedInstitution.email || 'N/A'}}</span>
+                  <span><i class="fa fa-phone"></i> {{selectedInstitution.phone || 'N/A'}}</span>
+                  <span *ngIf="selectedInstitution.website">
+                    <i class="fa fa-globe"></i>
+                    <a [href]="selectedInstitution.website" target="_blank">{{selectedInstitution.website}}</a>
+                  </span>
+                </div>
+                <div class="institution-location">
+                  <i class="fa fa-map-marker"></i>
+                  {{selectedInstitution.address || selectedInstitution.city || 'Location not specified'}}
+                </div>
+                <div class="institution-status-badges">
+                  <span class="badge" [ngClass]="getStatusClass(selectedInstitution.isActive ? 'active' : 'inactive')">
+                    {{selectedInstitution.isActive ? 'Active' : 'Inactive'}}
+                  </span>
+                  <span class="badge" [ngClass]="getStatusClass(selectedInstitution.verificationStatus || 'pending')">
+                    {{selectedInstitution.verificationStatus || 'Pending Verification'}}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stats Cards -->
+          <div class="stats-grid" *ngIf="institutionStats">
+            <div class="stat-card">
+              <div class="stat-icon total-courses">
+                <i class="fa fa-book"></i>
+              </div>
+              <div class="stat-info">
+                <h3>{{institutionStats.totalCourses || 0}}</h3>
+                <p>Total Courses</p>
+                <span class="stat-change neutral">{{institutionStats.activeCourses || 0}} active</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon active-users">
+                <i class="fa fa-users"></i>
+              </div>
+              <div class="stat-info">
+                <h3>{{institutionStats.totalStudents || 0}}</h3>
+                <p>Total Students</p>
+                <span class="stat-change neutral">{{institutionStats.activeEnrollments || 0}} active</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon total-users">
+                <i class="fa fa-chalkboard-teacher"></i>
+              </div>
+              <div class="stat-info">
+                <h3>{{institutionStats.totalTrainers || 0}}</h3>
+                <p>Total Trainers</p>
+                <span class="stat-change neutral">{{institutionStats.activeTrainers || 0}} active</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon total-revenue">
+                <i class="fa fa-rupee"></i>
+              </div>
+              <div class="stat-info">
+                <h3>{{formatCurrency(institutionStats.totalRevenue || 0)}}</h3>
+                <p>Total Revenue</p>
+                <span class="stat-change positive">₹{{(institutionStats.monthlyRevenue || 0).toLocaleString()}} this
+                  month</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tabs -->
+          <div class="tabs">
+            <button class="tab-btn" [class.active]="activeInstitutionTab === 'overview'"
+              (click)="setInstitutionTab('overview')">
+              <i class="fa fa-info-circle"></i> Overview
+            </button>
+            <button class="tab-btn" [class.active]="activeInstitutionTab === 'courses'"
+              (click)="setInstitutionTab('courses')">
+              <i class="fa fa-book"></i> Courses ({{institutionCourses.length}})
+            </button>
+            <button class="tab-btn" [class.active]="activeInstitutionTab === 'students'"
+              (click)="setInstitutionTab('students')">
+              <i class="fa fa-users"></i> Students ({{institutionStudents.length}})
+            </button>
+          </div>
+
+          <!-- Overview Tab -->
+          <div class="tab-content" *ngIf="activeInstitutionTab === 'overview'">
+            <div class="content-row">
+              <div class="info-card">
+                <h4><i class="fa fa-info-circle"></i> Institution Information</h4>
+                <table class="info-table">
+                  <tr>
+                    <td><strong>Name:</strong></td>
+                    <td>{{selectedInstitution.name}}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Email:</strong></td>
+                    <td>{{selectedInstitution.email || 'N/A'}}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Phone:</strong></td>
+                    <td>{{selectedInstitution.phone || 'N/A'}}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Address:</strong></td>
+                    <td>{{selectedInstitution.address || 'N/A'}}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>City:</strong></td>
+                    <td>{{selectedInstitution.city || 'N/A'}}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>State:</strong></td>
+                    <td>{{selectedInstitution.state || 'N/A'}}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Country:</strong></td>
+                    <td>{{selectedInstitution.country || 'N/A'}}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Website:</strong></td>
+                    <td>
+                      <a *ngIf="selectedInstitution.website" [href]="selectedInstitution.website" target="_blank">
+                        {{selectedInstitution.website}}
+                      </a>
+                      <span *ngIf="!selectedInstitution.website">N/A</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>Created:</strong></td>
+                    <td>{{formatDate(selectedInstitution.createdAt)}}</td>
+                  </tr>
+                </table>
+              </div>
+
+              <div class="info-card" *ngIf="selectedInstitution.trainers && selectedInstitution.trainers.length > 0">
+                <h4><i class="fa fa-chalkboard-teacher"></i> Trainers ({{selectedInstitution.trainers.length}})</h4>
+                <div class="trainers-list">
+                  <div class="trainer-item" *ngFor="let trainer of selectedInstitution.trainers">
+                    <div class="trainer-info">
+                      <strong>{{trainer.name}}</strong>
+                      <span class="trainer-spec">{{trainer.specialization || 'N/A'}}</span>
+                    </div>
+                    <span class="badge" [ngClass]="getStatusClass(trainer.isActive ? 'active' : 'inactive')">
+                      {{trainer.isActive ? 'Active' : 'Inactive'}}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Courses Tab -->
+          <div class="tab-content" *ngIf="activeInstitutionTab === 'courses'">
+            <div class="filter-bar">
+              <input type="text" class="filter-input" placeholder="Search courses..." [(ngModel)]="searchTerm"
+                (input)="loadInstitutionCourses()">
+              <select class="filter-select" [(ngModel)]="selectedStatus" (change)="loadInstitutionCourses()">
+                <option value="all">All Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+
+            <div class="table-card">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Level</th>
+                    <th>Price</th>
+                    <th>Students</th>
+                    <th>Rating</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let course of institutionCourses">
+                    <td>{{course.title}}</td>
+                    <td>{{course.category || 'N/A'}}</td>
+                    <td>{{course.level || 'N/A'}}</td>
+                    <td>{{formatCurrency(course.price || 0)}}</td>
+                    <td>{{course.students || 0}}</td>
+                    <td>{{course.rating || 0}}</td>
+                    <td>
+                      <span class="badge" [ngClass]="getStatusClass(course.isActive ? 'active' : 'inactive')">
+                        {{course.isActive ? 'Active' : 'Inactive'}}
+                      </span>
+                    </td>
+                    <td>
+                      <div class="action-buttons">
+                        <button class="action-btn view">View</button>
+                        <button class="action-btn approve" *ngIf="!course.isActive"
+                          (click)="updateCourseStatus(course._id || course.id, 'institution', 'active')">
+                          Activate
+                        </button>
+                        <button class="action-btn reject" *ngIf="course.isActive"
+                          (click)="updateCourseStatus(course._id || course.id, 'institution', 'inactive')">
+                          Deactivate
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr *ngIf="institutionCourses.length === 0">
+                    <td colspan="8" class="text-center">No courses found</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Students Tab -->
+          <div class="tab-content" *ngIf="activeInstitutionTab === 'students'">
+            <div class="filter-bar">
+              <input type="text" class="filter-input" placeholder="Search students..." [(ngModel)]="searchTerm"
+                (input)="loadInstitutionStudents()">
+              <select class="filter-select" [(ngModel)]="selectedStatus" (change)="loadInstitutionStudents()">
+                <option value="all">All Status</option>
+                <option value="active">Active</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
+
+            <div class="table-card">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Student</th>
+                    <th>Course</th>
+                    <th>Amount Paid</th>
+                    <th>Payment Method</th>
+                    <th>Payment Status</th>
+                    <th>Enrollment Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let student of institutionStudents">
+                    <td>
+                      <div class="student-cell">
+                        <img [src]="student.studentId?.avatar " [alt]="student.studentId?.name"
+                          class="student-avatar-small">
+                        <div>
+                          <div><strong>{{student.studentId?.name || 'Unknown'}}</strong></div>
+                          <div class="student-email">{{student.studentId?.email || 'N/A'}}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>{{student.courseTitle || student.courseId?.title || 'N/A'}}</td>
+                    <td>{{formatCurrency(student.amountPaid || 0)}}</td>
+                    <td>{{student.paymentMethod || 'N/A'}}</td>
+                    <td>
+                      <span class="badge" [ngClass]="getStatusClass(student.paymentStatus)">
+                        {{student.paymentStatus || 'N/A'}}
+                      </span>
+                    </td>
+                    <td>{{formatDate(student.enrollmentDate)}}</td>
+                    <td>
+                      <span class="badge" [ngClass]="getStatusClass(student.status)">
+                        {{student.status || 'N/A'}}
+                      </span>
+                    </td>
+                    <td>
+                      <div class="action-buttons">
+                        <button class="action-btn view">View</button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr *ngIf="institutionStudents.length === 0">
+                    <td colspan="8" class="text-center">No students found</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Other sections (analytics, notifications, settings) -->
+      <div class="section" *ngIf="activeSection === 'analytics'">
+        <h2>Analytics & Reports</h2>
+        <p>Analytics dashboard coming soon...</p>
+      </div>
+
+      <div class="section" *ngIf="activeSection === 'notifications'">
+        <h2>Notifications</h2>
+        <div class="notifications-list">
+          <div class="notification-item" *ngFor="let notification of notifications">
+            <i class="fa" [ngClass]="'fa-' + notification.type"></i>
+            <div class="notification-content">
+              <p>{{notification.message}}</p>
+              <span class="notification-time">{{notification.time}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" *ngIf="activeSection === 'settings'">
+        <h2>Settings</h2>
+        <p>System settings coming soon...</p>
+      </div>
+    </div>
+  </div>
+</div>

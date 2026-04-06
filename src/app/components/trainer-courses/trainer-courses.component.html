@@ -1,0 +1,183 @@
+<!-- Trainer Courses Component -->
+<div class="trainer-courses-container">
+  <!-- Header Section -->
+  <div class="courses-header">
+    <div class="container">
+      <div class="header-content">
+        <button class="back-button" (click)="goBack()">
+          <i class="fa fa-arrow-left"></i>
+          Back to Trainers
+        </button>
+        
+        <div class="trainer-info">
+          <div class="trainer-avatar">
+            <img [src]="trainer.avatar" [alt]="trainer.trainerName" class="avatar-img">
+            <div class="online-status" [class]="trainer.trainerOnline ? 'online' : 'offline'"></div>
+          </div>
+          <div class="trainer-details">
+            <h1 class="trainer-name">{{ trainer.trainerName }}</h1>
+            <p class="trainer-title">{{ trainer.trainerTitle }}</p>
+            <div class="trainer-stats">
+              <div class="stat-item">
+                <i class="fa fa-star"></i>
+                <span>{{ trainer.rating }} Rating</span>
+              </div>
+              <div class="stat-item">
+                <i class="fa fa-users"></i>
+                <span>{{ trainer.students?.toLocaleString() }} Students</span>
+              </div>
+              <div class="stat-item">
+                <i class="fa fa-briefcase"></i>
+                <span>{{ trainer.experience }} Experience</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <h2 class="courses-title">Courses by {{ trainer.trainerName }}</h2>
+        <p class="courses-subtitle">Choose from the courses taught by this expert trainer</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search and Filter Section -->
+  <div class="search-section">
+    <div class="container">
+      <div class="search-container">
+        <div class="search-box">
+          <i class="fa fa-search search-icon"></i>
+          <input 
+            type="text" 
+            class="search-input" 
+            placeholder="Search courses..." 
+            autocomplete="off"
+            [(ngModel)]="searchTerm"
+            (input)="onSearch()">
+          <button type="button" class="search-button" (click)="onSearch()">
+            <i class="fa fa-search"></i>
+            Search
+          </button>
+        </div>
+        
+        <div class="search-filters">
+          <select class="filter-select" [(ngModel)]="selectedLevel" (change)="onLevelChange()">
+            <option value="">All Levels</option>
+            <option value="Beginner">Beginner</option>
+            <option value="Intermediate">Intermediate</option>
+            <option value="Advanced">Advanced</option>
+          </select>
+          
+          <select class="filter-select"  (change)="onDurationChange()">
+            <option value="">All Durations</option>
+            <option value="3 months">3 months</option>
+            <option value="4 months">4 months</option>
+            <option value="6 months">6 months</option>
+            <option value="8 months">8 months</option>
+          </select>
+          
+          <button class="btn btn-outline btn-sm" (click)="clearFilters()">
+            <i class="fa fa-refresh"></i>
+            Clear Filters
+          </button>
+        </div>
+        
+        <div class="search-results">
+          <p>Showing {{ filteredCount }} of {{ totalCount }} courses</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Courses Grid Section -->
+  <div class="courses-grid-section">
+    <div class="container">
+      <div class="courses-grid">
+        <!-- Course Card -->
+        <div class="course-card" *ngFor="let course of filteredCourses">
+          <div class="card-header">
+            <div class="course-image">
+              <img [src]="course.image" [alt]="course.name" class="course-img">
+              <div class="course-overlay">
+                <span class="course-level">{{ course.level }}</span>
+                <span class="course-price">{{ formatPrice(course.price) }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card-body">
+            <h3 class="course-name">{{ course.name }}</h3>
+            <p class="course-description">{{ course.description }}</p>
+            
+            <div class="course-details">
+              <div class="detail-item">
+                <i class="fa fa-clock-o"></i>
+                <span>{{ course.duration }}</span>
+              </div>
+              <div class="detail-item">
+                <i class="fa fa-book"></i>
+                <span>{{ course.modules }} Modules</span>
+              </div>
+              <div class="detail-item">
+                <i class="fa fa-users"></i>
+                <span>{{ course.students.toLocaleString() }} Students</span>
+              </div>
+              <div class="detail-item" *ngIf="course.certification">
+                <i class="fa fa-certificate"></i>
+                <span>Certification</span>
+              </div>
+            </div>
+            
+            <div class="rating-section">
+              <div class="rating-display">
+                <div class="stars">
+                  <span class="fa fa-star" [class.checked]="star" *ngFor="let star of getRatingStars(course.rating)"></span>
+                </div>
+                <span class="rating-text">{{ course.rating }} out of 5</span>
+              </div>
+            </div>
+            
+            <div class="action-buttons">
+              <button class="btn btn-primary" (click)="redirectToSignIn()">
+                <i class="fa fa-graduation-cap"></i>
+                Enroll Now
+              </button>
+              <button class="btn btn-secondary">
+                <i class="fa fa-info-circle"></i>
+                View Details
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- No Results Message -->
+        <div class="no-results" *ngIf="filteredCourses.length === 0">
+          <div class="no-results-content">
+            <i class="fa fa-search fa-3x"></i>
+            <h3>No courses found</h3>
+            <p>Try adjusting your search criteria or filters</p>
+            <button class="btn btn-primary" (click)="clearFilters()">
+              <i class="fa fa-refresh"></i>
+              Clear All Filters
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Call to Action Section -->
+  <div class="cta-section">
+    <div class="container">
+      <div class="cta-content">
+        <h2>Ready to Learn with {{ trainer.trainerName }}?</h2>
+        <p>Join thousands of students who have transformed their careers with expert training</p>
+        <div class="cta-buttons">
+          <button class="btn btn-primary btn-large" (click)="goBack()">
+            <i class="fa fa-arrow-left"></i>
+            Back to All Trainers
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

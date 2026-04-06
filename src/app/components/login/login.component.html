@@ -1,0 +1,112 @@
+<div class="premium-login-wrapper">
+  <!-- Aesthetic Background Elements -->
+  <div class="ambient-bg">
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+    <div class="glow-orb orb-3"></div>
+  </div>
+
+  <div class="login-glass-container">
+    <div class="back-navigation">
+      <a routerLink="/Home" class="nav-back-link">
+        <i class="fas fa-arrow-left"></i> Home
+      </a>
+    </div>
+
+    <div class="login-header">
+      <div class="brand-icon">
+        <i class="fas fa-layer-group"></i>
+      </div>
+      <h2 class="welcome-title">Welcome Back</h2>
+      <p class="role-subtitle">
+        <i [class]="activeRoleMeta?.icon || 'fas fa-sign-in-alt'"></i>
+        {{ roleSubtitle }} Portal
+      </p>
+    </div>
+
+    <!-- Admin Form -->
+    <form *ngIf="role === 'admin'" class="glass-form" [formGroup]="adminForm" (ngSubmit)="onSubmitAdmin()">
+      <div class="auth-form-group">
+        <label for="admin-username">Username or Email</label>
+        <div class="input-field-wrapper">
+          <i class="fas fa-user field-icon"></i>
+          <input id="admin-username" type="text" formControlName="username" placeholder="admin@example.com"
+            [class.has-error]="adminForm.get('username')?.invalid && adminForm.get('username')?.touched" />
+        </div>
+        <span class="validation-error" *ngIf="adminForm.get('username')?.invalid && adminForm.get('username')?.touched">
+          Username is required
+        </span>
+      </div>
+
+      <div class="auth-form-group">
+        <label for="admin-password">Password</label>
+        <div class="input-field-wrapper">
+          <i class="fas fa-lock field-icon"></i>
+          <input id="admin-password" [type]="showAdminPassword ? 'text' : 'password'" formControlName="password"
+            placeholder="••••••••"
+            [class.has-error]="adminForm.get('password')?.invalid && adminForm.get('password')?.touched" />
+          <button type="button" class="btn-eye" (click)="toggleAdminPassword()" aria-label="Toggle visibility">
+            <i class="fas" [class.fa-eye]="!showAdminPassword" [class.fa-eye-slash]="showAdminPassword"></i>
+          </button>
+        </div>
+        <span class="validation-error" *ngIf="adminForm.get('password')?.invalid && adminForm.get('password')?.touched">
+          Password is required
+        </span>
+      </div>
+
+      <div class="form-actions">
+        <label class="custom-checkbox">
+          <input type="checkbox" />
+          <span class="checkmark"></span>
+          Remember me
+        </label>
+        <a href="javascript:void(0)" class="forgot-pwd">Forgot password?</a>
+      </div>
+
+      <div *ngIf="errorMessage" class="error-banner">
+        <i class="fas fa-exclamation-triangle"></i> {{ errorMessage }}
+      </div>
+
+      <button type="submit" class="btn-glow-submit" [disabled]="isLoading || adminForm.invalid">
+        <span *ngIf="!isLoading">Sign In Automatically</span>
+        <div *ngIf="isLoading" class="spinner"></div>
+      </button>
+    </form>
+
+    <!-- OTP Based Forms -->
+    <form *ngIf="isOtpRole" class="glass-form" [formGroup]="otpForm" (ngSubmit)="onSubmitOtp()">
+      <div class="auth-form-group">
+        <label for="otp-phone">Mobile Number</label>
+        <div class="input-field-wrapper has-prefix">
+          <div class="prefix-code">+91</div>
+          <input id="otp-phone" type="tel" formControlName="phone" [placeholder]="phonePlaceholder"
+            [class.has-error]="hasOtpError('phone')" />
+        </div>
+        <span class="validation-error" *ngIf="hasOtpError('phone')">
+          {{ getOtpErrorMessage('phone') }}
+        </span>
+      </div>
+
+      <div class="auth-form-group">
+        <label for="otp-display-name">{{ nameFieldLabel }}</label>
+        <div class="input-field-wrapper">
+          <i class="fas fa-user field-icon"></i>
+          <input id="otp-display-name" type="text" formControlName="displayName" [placeholder]="namePlaceholder"
+            [class.has-error]="hasOtpError('displayName')" />
+        </div>
+        <span class="validation-error" *ngIf="hasOtpError('displayName')">
+          {{ getOtpErrorMessage('displayName') }}
+        </span>
+      </div>
+
+      <div *ngIf="errorMessage" class="error-banner">
+        <i class="fas fa-exclamation-triangle"></i> {{ errorMessage }}
+      </div>
+
+      <button type="submit" class="btn-glow-submit" [disabled]="isLoading || otpForm.invalid">
+        <span *ngIf="!isLoading">Continue Securely <i class="fas fa-arrow-right"></i></span>
+        <div *ngIf="isLoading" class="spinner"></div>
+      </button>
+    </form>
+  </div>
+</div>
